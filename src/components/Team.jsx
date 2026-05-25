@@ -39,6 +39,17 @@ export default function Team() {
         linkedin: 'https://www.linkedin.com/in/muneeb-ahmed-butt-4a384438a/',
         github: 'https://github.com/muneeb10305896-rgb',
       }
+    },
+    {
+      _id: 'farheen-e-sehar',
+      name: 'Farheen E Sehar',
+      position: 'Digital Media Marketer & Content Creator',
+      bio: 'Versatile marketing professional with rich experience in social media strategy, content creation, and digital campaign management across B2C and B2B sectors. Dedicated to driving brand growth and fostering strong audience connections through data-driven insights.',
+      image: 'https://i.ibb.co/Z6hKMn6B/1762450046043.jpg',
+      expertise: ['Social Media Marketing', 'Content Creation', 'Digital Marketing', 'Brand Strategy', 'Campaign Management'],
+      social: {
+        linkedin: 'https://www.linkedin.com/in/farheen-e-sehar-8b0868177/',
+      }
     }
   ];
 
@@ -76,7 +87,7 @@ export default function Team() {
             <p className="font-dm" style={{ color: 'var(--text-muted)' }}>Team members coming soon!</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 32 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 40 }}>
             {members.map((member, i) => (
               <motion.div
                 key={member._id}
