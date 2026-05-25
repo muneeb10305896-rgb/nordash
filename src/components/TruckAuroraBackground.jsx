@@ -1,276 +1,167 @@
 'use client';
 
-import { useRef, useEffect, useState, useMemo, Suspense } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Points, PointMaterial } from '@react-three/drei';
+import { useRef, useEffect, useState } from 'react';
 import { useScroll, useAnimationFrame } from 'framer-motion';
-import * as THREE from 'three';
 
-// ── Simple Truck Model ───────────────────────────────────────
-function SimpleTruck({ scrollRef }) {
-  const groupRef = useRef();
-
-  useFrame(({ clock }) => {
-    if (!groupRef.current) return;
-
-    const progress = scrollRef.current;
-    const time = clock.getElapsedTime();
-
-    // Truck moves across screen based on scroll
-    groupRef.current.position.x = -8 + progress * 16;
-
-    // Slight vertical bob
-    groupRef.current.position.y = 3 + Math.sin(time * 0.5) * 0.2;
-  });
-
-  return (
-    <group ref={groupRef} position={[-8, 3, 0]}>
-      {/* Truck body - LARGE and bright */}
-      <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[3, 1.2, 1.2]} />
-        <meshBasicMaterial color="#FFB300" />
-      </mesh>
-
-      {/* Cabin */}
-      <mesh position={[1.8, 0.3, 0]}>
-        <boxGeometry args={[1, 1, 1.2]} />
-        <meshBasicMaterial color="#1A2B8C" />
-      </mesh>
-
-      {/* Roof */}
-      <mesh position={[1.5, 1.2, 0]}>
-        <boxGeometry args={[1.5, 0.3, 1.2]} />
-        <meshBasicMaterial color="#007A4C" />
-      </mesh>
-
-      {/* Wheels */}
-      <mesh position={[-0.7, -0.8, -0.6]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.5, 0.5, 0.3, 16]} />
-        <meshBasicMaterial color="#222222" />
-      </mesh>
-      <mesh position={[-0.7, -0.8, 0.6]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.5, 0.5, 0.3, 16]} />
-        <meshBasicMaterial color="#222222" />
-      </mesh>
-      <mesh position={[1.2, -0.8, -0.6]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.5, 0.5, 0.3, 16]} />
-        <meshBasicMaterial color="#222222" />
-      </mesh>
-      <mesh position={[1.2, -0.8, 0.6]} rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.5, 0.5, 0.3, 16]} />
-        <meshBasicMaterial color="#222222" />
-      </mesh>
-
-      {/* Decorative elements */}
-      <mesh position={[-0.5, 0.8, 0.7]}>
-        <boxGeometry args={[0.3, 0.3, 0.3]} />
-        <meshBasicMaterial color="#007A4C" />
-      </mesh>
-      <mesh position={[0.5, 0.8, 0.7]}>
-        <boxGeometry args={[0.3, 0.3, 0.3]} />
-        <meshBasicMaterial color="#FFB300" />
-      </mesh>
-
-      {/* Exhaust */}
-      <mesh position={[1.5, 1.8, 0]}>
-        <cylinderGeometry args={[0.15, 0.15, 1, 8]} />
-        <meshBasicMaterial color="#666666" />
-      </mesh>
-
-      {/* Headlights */}
-      <pointLight position={[2.5, 0.3, -0.6]} color="#00E5FF" intensity={1.5} distance={5} />
-      <pointLight position={[2.5, 0.3, 0.6]} color="#00E5FF" intensity={1.5} distance={5} />
-    </group>
-  );
-}
-
-// ── Aurora Particles ─────────────────────────────────────────
-function AuroraParticles() {
-  const pointsRef = useRef();
-  const count = 200;
-
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = Math.random() * 5 + 0.5;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 5;
-    }
-    return pos;
-  }, []);
-
-  const colors = useMemo(() => {
-    const col = new Float32Array(count * 3);
-    const colorChoices = [
-      new THREE.Color('#00E5FF'),
-      new THREE.Color('#7B61FF'),
-      new THREE.Color('#00FF94'),
-    ];
-    for (let i = 0; i < count; i++) {
-      const c = colorChoices[i % colorChoices.length];
-      col[i * 3] = c.r;
-      col[i * 3 + 1] = c.g;
-      col[i * 3 + 2] = c.b;
-    }
-    return col;
-  }, []);
-
-  useFrame(({ clock }) => {
-    if (pointsRef.current) {
-      pointsRef.current.rotation.y = clock.getElapsedTime() * 0.02;
-    }
-  });
-
-  return (
-    <Points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
-        <bufferAttribute attach="attributes-color" count={count} array={colors} itemSize={3} />
-      </bufferGeometry>
-      <PointMaterial size={0.08} vertexColors transparent opacity={0.8} sizeAttenuation />
-    </Points>
-  );
-}
-
-// ── Simple Aurora Ribbon ─────────────────────────────────────
-function AuroraRibbon({ color, phase, amplitude, scrollRef }) {
-  const linesRef = useRef([]);
-  const POINTS = 50;
-
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    const progress = scrollRef.current;
-    const truckX = -8 + progress * 16;
-
-    for (let layer = 0; layer < 2; layer++) {
-      if (!linesRef.current[layer]) return;
-
-      const positions = new Float32Array(POINTS * 3);
-      const offsetZ = (layer - 0.5) * 0.3;
-
-      for (let i = 0; i < POINTS; i++) {
-        const x = truckX - (i / POINTS) * (progress * 16 + 3);
-        const y = 3 + Math.sin(i * 0.2 + phase + t * 0.4) * amplitude;
-        const z = Math.cos(i * 0.1 + phase + t * 0.3) * 1 + offsetZ;
-
-        positions[i * 3] = x;
-        positions[i * 3 + 1] = y;
-        positions[i * 3 + 2] = z;
-      }
-
-      if (linesRef.current[layer].geometry.attributes.position) {
-        linesRef.current[layer].geometry.attributes.position.array = positions;
-        linesRef.current[layer].geometry.attributes.position.needsUpdate = true;
-      }
-    }
-  });
-
-  return (
-    <group>
-      {Array.from({ length: 2 }).map((_, i) => (
-        <line key={i} ref={el => (linesRef.current[i] = el)}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              count={POINTS}
-              array={new Float32Array(POINTS * 3)}
-              itemSize={3}
-            />
-          </bufferGeometry>
-          <lineBasicMaterial color={color} transparent opacity={0.7 - i * 0.2} linewidth={3} />
-        </line>
-      ))}
-    </group>
-  );
-}
-
-// ── Star Field ───────────────────────────────────────────────
-function StarField() {
-  const pointsRef = useRef();
-  const count = 150;
-
-  const positions = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const r = 20;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      pos[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      pos[i * 3 + 2] = r * Math.cos(phi);
-    }
-    return pos;
-  }, []);
-
-  useFrame(({ clock }) => {
-    if (pointsRef.current) {
-      pointsRef.current.rotation.y = clock.getElapsedTime() * 0.003;
-    }
-  });
-
-  return (
-    <Points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
-      </bufferGeometry>
-      <PointMaterial size={0.04} color="#FFFFFF" transparent opacity={0.7} sizeAttenuation />
-    </Points>
-  );
-}
-
-// ── Scene ────────────────────────────────────────────────────
-function Scene({ scrollRef }) {
-  return (
-    <>
-      <ambientLight intensity={0.6} />
-      <pointLight position={[0, 5, 3]} color="#FFB300" intensity={1.5} distance={20} />
-      <pointLight position={[-5, 5, 2]} color="#00E5FF" intensity={1.2} distance={20} />
-
-      {/* TEST: Big red sphere to verify canvas is rendering */}
-      <mesh position={[0, 2, 0]}>
-        <sphereGeometry args={[1.5, 32, 32]} />
-        <meshBasicMaterial color="#FF0000" />
-      </mesh>
-
-      <StarField />
-      <AuroraParticles />
-      <SimpleTruck scrollRef={scrollRef} />
-      <AuroraRibbon color="#00E5FF" phase={0} amplitude={0.8} scrollRef={scrollRef} />
-      <AuroraRibbon color="#7B61FF" phase={2} amplitude={1.2} scrollRef={scrollRef} />
-      <AuroraRibbon color="#00FF94" phase={4} amplitude={0.6} scrollRef={scrollRef} />
-    </>
-  );
-}
-
-// ── Main Component ───────────────────────────────────────────
 export default function TruckAuroraBackground() {
+  const canvasRef = useRef(null);
   const { scrollYProgress } = useScroll();
   const scrollRef = useRef(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useAnimationFrame(() => {
     scrollRef.current = scrollYProgress.get();
   });
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const animate = () => {
+      const w = canvas.width / dpr;
+      const h = canvas.height / dpr;
+      const progress = scrollRef.current;
+      const time = Date.now() / 1000;
+
+      // Clear canvas
+      ctx.fillStyle = 'rgba(5, 10, 20, 0.1)';
+      ctx.fillRect(0, 0, w, h);
+
+      // Draw stars
+      ctx.fillStyle = '#FFFFFF';
+      for (let i = 0; i < 100; i++) {
+        const x = (i * 73 + time * 10) % w;
+        const y = (i * 41) % h;
+        const size = (i % 3) * 0.5 + 0.5;
+        ctx.fillRect(x, y, size, size);
+      }
+
+      // Truck position
+      const truckX = -100 + progress * (w + 200);
+      const truckY = h * 0.3;
+
+      // Draw aurora ribbons
+      for (let ribbon = 0; ribbon < 3; ribbon++) {
+        const colors = ['#00E5FF', '#7B61FF', '#00FF94'];
+        ctx.strokeStyle = colors[ribbon];
+        ctx.globalAlpha = 0.4;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+
+        for (let i = 0; i < 50; i++) {
+          const x = truckX - (i / 50) * (progress * w);
+          const y = truckY + Math.sin(i * 0.1 + ribbon + time) * 20;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+
+      ctx.globalAlpha = 1;
+
+      // Draw truck - SIMPLE AND BIG
+      ctx.save();
+      ctx.translate(truckX, truckY);
+
+      // Body (saffron)
+      ctx.fillStyle = '#FFB300';
+      ctx.fillRect(0, 0, 80, 40);
+
+      // Cabin (cobalt)
+      ctx.fillStyle = '#1A2B8C';
+      ctx.fillRect(60, -15, 30, 50);
+
+      // Roof (emerald)
+      ctx.fillStyle = '#007A4C';
+      ctx.fillRect(55, -20, 40, 8);
+
+      // Wheels
+      ctx.fillStyle = '#333333';
+      ctx.beginPath();
+      ctx.arc(15, 40, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(65, 40, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Wheel hubs
+      ctx.fillStyle = '#FFB300';
+      ctx.beginPath();
+      ctx.arc(15, 40, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(65, 40, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Headlights
+      ctx.fillStyle = '#00E5FF';
+      ctx.globalAlpha = 0.8;
+      ctx.beginPath();
+      ctx.arc(80, 8, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(80, 32, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      // Decorations
+      ctx.fillStyle = '#007A4C';
+      ctx.fillRect(25, 12, 10, 10);
+      ctx.fillRect(45, 12, 10, 10);
+
+      ctx.restore();
+
+      // Draw particles
+      for (let i = 0; i < 50; i++) {
+        const x = truckX + 40 + Math.sin(i + time) * 30;
+        const y = truckY - 20 + (i / 50) * 60 + Math.cos(i + time * 2) * 20;
+        const colors = ['#FFB300', '#00E5FF', '#7B61FF'];
+        ctx.fillStyle = colors[i % 3];
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+    return () => window.removeEventListener('resize', resizeCanvas);
+  }, []);
+
   return (
-    <Canvas
+    <canvas
+      ref={canvasRef}
       style={{
         position: 'fixed',
         inset: 0,
-        pointerEvents: 'none',
+        width: '100%',
+        height: '100%',
         zIndex: 0,
+        pointerEvents: 'none',
+        background: 'linear-gradient(180deg, #050A14 0%, #0D1626 100%)',
       }}
-      camera={{ position: [0, 2, 8], fov: 75, near: 0.1, far: 1000 }}
-      gl={{
-        antialias: false,
-        alpha: true,
-        powerPreference: 'high-performance',
-      }}
-      dpr={[1, 1.5]}
-      frameloop="always"
-    >
-      <Suspense fallback={null}>
-        <Scene scrollRef={scrollRef} />
-      </Suspense>
-    </Canvas>
+    />
   );
 }
