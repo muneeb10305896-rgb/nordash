@@ -90,29 +90,32 @@ export default function ApplicationModal({ isOpen, onClose, position }) {
           />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
             style={{
               position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              margin: 'auto',
+              padding: '20px',
+            }}
+          >
+            <div style={{
               background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 16,
               padding: '40px',
               maxWidth: 500,
-              width: '90%',
+              width: '100%',
               maxHeight: '90vh',
               overflow: 'auto',
-              zIndex: 1000,
               boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-              margin: 0,
-              willChange: 'transform',
-            }}
-          >
+            }}>
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
               <div>
@@ -338,6 +341,7 @@ export default function ApplicationModal({ isOpen, onClose, position }) {
                 We'll review your application and get back to you soon.
               </p>
             </form>
+            </div>
           </motion.div>
         </>
       )}
