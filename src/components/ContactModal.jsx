@@ -71,24 +71,22 @@ export default function ContactModal({ isOpen, onClose, type = 'book-call' }) {
 
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+            exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
             style={{
               position: 'fixed',
-              top: '50%',
-              left: '50%',
-              right: 'auto',
-              bottom: 'auto',
-              transform: 'translate(-50%, -50%)',
+              inset: 0,
+              margin: 'auto',
+              width: '90%',
+              maxWidth: 500,
+              maxHeight: '90vh',
+              height: 'fit-content',
               background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 16,
               padding: '40px',
-              maxWidth: 500,
-              width: '90%',
-              maxHeight: '90vh',
               overflow: 'auto',
               zIndex: 1001,
               boxShadow: '0 20px 60px rgba(0,0,0,0.5)',

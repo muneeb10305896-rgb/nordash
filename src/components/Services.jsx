@@ -209,11 +209,12 @@ export default function Services() {
         {/* Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+          gridTemplateColumns: 'repeat(4, 1fr)',
           gap: 0,
           background: 'transparent',
           border: 'none',
-        }}>
+        }}
+        className="responsive-grid">
           {services.map((s, i) => (
             <div key={s.id} style={{ background: '#08101F' }}>
               <Card3D service={s} index={i} />
@@ -221,6 +222,24 @@ export default function Services() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          .responsive-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .responsive-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .responsive-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
