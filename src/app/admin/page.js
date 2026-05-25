@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
   const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,10 +14,11 @@ export default function AdminDashboard() {
   const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
+    const token = searchParams.get('token');
     if (token) {
       verifyLogin(token);
     }
-  }, [token]);
+  }, [searchParams]);
 
   const verifyLogin = async (loginToken) => {
     try {
