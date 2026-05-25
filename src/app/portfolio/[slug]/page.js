@@ -8,7 +8,7 @@ const caseStudies = {
     client: "Oktopus Group",
     category: "Digital Marketing",
     duration: "2 years 7 months",
-    image: "https://via.placeholder.com/1200x600?text=Oktopus+Group+Social+Media+Strategy",
+    image: "https://i.ibb.co/C3FFgNyD/oktopus-360-media-logo.jpg",
     challenge: "Oktopus Group needed a comprehensive social media strategy to manage multiple client accounts and campaigns across LinkedIn, Facebook, Twitter, Instagram, and YouTube with inconsistent performance metrics.",
     solution: "We developed and implemented a data-driven social media marketing framework that included daily channel management, strategic planning, ad optimization, and performance tracking across all major platforms.",
     results: [
@@ -36,7 +36,7 @@ const caseStudies = {
     client: "Hovertise",
     category: "Digital Marketing",
     duration: "8 months",
-    image: "https://via.placeholder.com/1200x600?text=Hovertise+Partnership+Strategy",
+    image: "https://i.ibb.co/23cRR1Vw/boxeyi-com-logo.jpg",
     challenge: "Hovertise needed to expand its local agency partnerships and establish clear positioning and marketing strategies to compete in the competitive advertising market.",
     solution: "We developed a comprehensive partnership framework, identified and onboarded high-potential local agencies, created positioning strategy, and established marketing initiatives that aligned all partners around common objectives.",
     results: [
@@ -64,7 +64,7 @@ const caseStudies = {
     client: "University of Eastern Finland",
     category: "Digital Marketing",
     duration: "2 months (Apr-May 2025)",
-    image: "https://via.placeholder.com/1200x600?text=UEF+International+Content",
+    image: "https://i.ibb.co/bMt5R67x/university-of-eastern-finland-logo.jpg",
     challenge: "University of Eastern Finland needed to increase international student awareness of its programs and learning opportunities through engaging English-language social media content on TikTok and Instagram.",
     solution: "We designed and produced high-quality, culturally resonant English-language social media content specifically optimized for TikTok and Instagram, including short-form videos, Stories, and reels that showcased university life and academic opportunities.",
     results: [
@@ -92,7 +92,7 @@ const caseStudies = {
     client: "FoneZone.Ae",
     category: "Digital Marketing",
     duration: "4 months",
-    image: "https://via.placeholder.com/1200x600?text=FoneZone+TikTok+Campaign",
+    image: "https://i.ibb.co/x8XWp2wR/1630642503926.jpg",
     challenge: "FoneZone.Ae needed to reach younger, trend-conscious consumers in the UAE with limited TikTok advertising experience and needed expert campaign management to maximize ROI on their advertising budget.",
     solution: "We planned, executed, and continuously optimized TikTok advertising campaigns using strategic audience targeting, compelling creative content, A/B testing, and real-time performance analysis to maximize return on ad spend.",
     results: [
