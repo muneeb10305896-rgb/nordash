@@ -1,0 +1,157 @@
+"use client";
+import { motion } from 'framer-motion';
+
+const footerLinks = {
+  Services: ['Video Editing', 'Thumbnail Design', 'Social Media', 'Software Dev', 'Brand Strategy', 'UI/UX Design'],
+  Company: ['About Us', 'Our Process', 'Case Studies', 'Careers', 'Blog'],
+  Connect: ['hello@nordash.agency', 'Instagram', 'LinkedIn', 'Twitter / X', 'Behance'],
+};
+
+const socials = [
+  {
+    label: 'Instagram',
+    href: '#',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="2" width="14" height="14" rx="4" stroke="currentColor" strokeWidth="1.4"/>
+        <circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.4"/>
+        <circle cx="13.5" cy="4.5" r="0.75" fill="currentColor"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'LinkedIn',
+    href: '#',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+        <path d="M6 8v5M6 6v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+        <path d="M9 13V9.5a2.5 2.5 0 015 0V13M9 9v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'Twitter',
+    href: '#',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M3 3l12 12M3 15L15 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+        <path d="M3 3h5l7 12h-5L3 3z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'Behance',
+    href: '#',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M2 5h6a3 3 0 010 6H2V5zM2 11h7a3 3 0 010 6H2v-6z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+        <path d="M12 7h5M11 11.5c0-2 1-3.5 3-3.5s3 1.5 3 3.5H11z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+        <path d="M11 11.5c0 2 1 3.5 3 3.5 1.5 0 2.5-.8 3-2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+];
+
+export default function Footer() {
+  return (
+    <footer style={{ background: 'var(--deep)', borderTop: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
+      {/* Truck art top bar */}
+      <div style={{ height: 3, background: 'linear-gradient(90deg, var(--truck-red), var(--truck-saffron), var(--aurora-cyan), var(--aurora-purple), var(--truck-emerald))' }} />
+
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '72px 24px 0' }}>
+        {/* Top section */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 48, marginBottom: 64, alignItems: 'start' }}
+          className="footer-top">
+          {/* Brand */}
+          <div style={{ maxWidth: 380 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+              <div style={{ width: 32, height: 32, background: 'linear-gradient(135deg, #00E5FF, #7B61FF)', transform: 'rotate(45deg)', borderRadius: 4 }} />
+              <span className="font-syne" style={{ fontSize: 20, fontWeight: 800, letterSpacing: '0.12em', background: 'linear-gradient(135deg, #00E5FF, #7B61FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                NORDASH
+              </span>
+            </div>
+            <p className="font-dm" style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.8, fontWeight: 300, marginBottom: 28 }}>
+              Full-spectrum digital agency. We blend Nordic precision with Asian creative energy to build brands, systems, and stories that outlast the algorithm.
+            </p>
+            <div style={{ display: 'flex', gap: 10 }}>
+              {socials.map(s => (
+                <a key={s.label} href={s.href} aria-label={s.label}
+                  style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', textDecoration: 'none', transition: 'all 0.3s' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--aurora-cyan)'; e.currentTarget.style.color = 'var(--aurora-cyan)'; e.currentTarget.style.background = 'rgba(0,229,255,0.06)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; }}
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Links */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 48 }} className="footer-links">
+            {Object.entries(footerLinks).map(([cat, items]) => (
+              <div key={cat}>
+                <div className="font-syne" style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--aurora-cyan)', marginBottom: 20 }}>{cat}</div>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {items.map(item => (
+                    <li key={item}>
+                      <a href="#" className="font-dm" style={{ fontSize: 13, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s', display: 'block' }}
+                        onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
+                        onMouseLeave={e => e.target.style.color = 'var(--text-faint)'}
+                      >{item}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Newsletter strip */}
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '28px 32px', marginBottom: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
+          <div>
+            <div className="font-syne" style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>Stay in the loop</div>
+            <p className="font-dm" style={{ fontSize: 13, color: 'var(--text-muted)' }}>Monthly insights on brand, content, and digital growth.</p>
+          </div>
+          <div style={{ display: 'flex', gap: 0, flexShrink: 0 }}>
+            <input type="email" placeholder="your@email.com" className="font-dm"
+              style={{ padding: '12px 20px', background: 'var(--midnight)', border: '1px solid var(--border)', borderRight: 'none', color: 'var(--text-primary)', fontSize: 13, outline: 'none', minWidth: 220 }} />
+            <button className="btn-primary" style={{ padding: '12px 24px', fontSize: 11, borderRadius: 0 }}>
+              <span>Subscribe</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom bar */}
+        <div style={{ borderTop: '1px solid var(--border)', padding: '24px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <p className="font-dm" style={{ fontSize: 12, color: 'var(--text-faint)' }}>
+            © {new Date().getFullYear()} NORDASH Agency. All rights reserved.
+          </p>
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+            <div className="truck-diamond" style={{ width: 5, height: 5 }} />
+            <span className="font-dm" style={{ fontSize: 12, color: 'var(--text-faint)' }}>Nordic Precision. Asian Energy.</span>
+            <div className="truck-diamond-cyan" style={{ width: 5, height: 5 }} />
+          </div>
+          <div style={{ display: 'flex', gap: 20 }}>
+            {['Privacy', 'Terms', 'Cookies'].map(l => (
+              <a key={l} href="#" className="font-dm" style={{ fontSize: 12, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s' }}
+                onMouseEnter={e => e.target.style.color = 'var(--text-muted)'}
+                onMouseLeave={e => e.target.style.color = 'var(--text-faint)'}
+              >{l}</a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .footer-top { grid-template-columns: 1fr !important; }
+          .footer-links { grid-template-columns: repeat(2, 1fr) !important; gap: 32px !important; }
+        }
+        @media (max-width: 560px) {
+          .footer-links { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+    </footer>
+  );
+}
