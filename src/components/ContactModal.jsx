@@ -274,6 +274,8 @@ export default function ContactModal({ isOpen, onClose, type = 'book-call' }) {
                     <option value="Software Development">Software Development</option>
                     <option value="Brand Strategy">Brand Strategy</option>
                     <option value="UI/UX Design">UI/UX Design</option>
+                    <option value="SEO & Content Strategy">SEO & Content Strategy</option>
+                    <option value="Mobile App Development">Mobile App Development</option>
                   </select>
                 </div>
               )}
