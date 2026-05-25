@@ -1,15 +1,31 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [applications, setApplications] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    // Check if user is already authenticated
+    if (typeof window !== 'undefined') {
+      const adminEmail = localStorage.getItem('admin_email');
+      if (adminEmail) {
+        setAuthenticated(true);
+        setEmail(adminEmail);
+        fetchApplications();
+      } else {
+        setLoading(false);
+      }
+    }
+  }, []);
 
   const handleAuthenticate = async (e) => {
     e.preventDefault();
@@ -20,7 +36,7 @@ export default function AdminDashboard() {
       return;
     }
 
-    loading ? null : setLoading(true);
+    setLoading(true);
 
     try {
       const response = await fetch('/api/admin/login', {
@@ -32,8 +48,10 @@ export default function AdminDashboard() {
       const data = await response.json();
 
       if (response.ok) {
+        // Save session to localStorage
+        localStorage.setItem('admin_email', email);
         setAuthenticated(true);
-        fetchApplications();
+        await fetchApplications();
       } else {
         setLoginError(data.error || 'Invalid email or password');
       }
@@ -44,13 +62,23 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('admin_email');
+    setAuthenticated(false);
+    setEmail('');
+    setPassword('');
+    setApplications([]);
+    setLoginError('');
+  };
+
   const fetchApplications = async () => {
-    setLoading(true);
     try {
       const response = await fetch('/api/admin/applications');
       if (response.ok) {
         const data = await response.json();
         setApplications(data.applications || []);
+      } else {
+        console.error('Failed to fetch applications');
       }
     } catch (error) {
       console.error('Failed to fetch applications:', error);
@@ -185,13 +213,22 @@ export default function AdminDashboard() {
               {applications.length} application{applications.length !== 1 ? 's' : ''} received
             </p>
           </div>
-          <button
-            onClick={() => window.location.href = '/'}
-            className="btn-ghost"
-            style={{ padding: '10px 20px', fontSize: 12 }}
-          >
-            Back to Site
-          </button>
+          <div style={{ display: 'flex', gap: 12 }}>
+            <button
+              onClick={() => window.location.href = '/'}
+              className="btn-ghost"
+              style={{ padding: '10px 20px', fontSize: 12 }}
+            >
+              Back to Site
+            </button>
+            <button
+              onClick={handleLogout}
+              className="btn-ghost"
+              style={{ padding: '10px 20px', fontSize: 12 }}
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Applications Table */}

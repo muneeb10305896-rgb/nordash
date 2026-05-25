@@ -17,7 +17,22 @@ export default function ApplicationModal({ isOpen, onClose, position }) {
   const handleFileChange = (e) => {
     const { name, files: fileList } = e.target;
     if (fileList[0]) {
-      setFiles(prev => ({ ...prev, [name]: fileList[0] }));
+      const file = fileList[0];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (file.size > maxSize) {
+        setStatus({ type: 'error', message: 'File size must be less than 5MB' });
+        return;
+      }
+
+      const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!validTypes.includes(file.type)) {
+        setStatus({ type: 'error', message: 'Please upload a PDF or Word document' });
+        return;
+      }
+
+      setFiles(prev => ({ ...prev, [name]: file }));
+      setStatus(null);
     }
   };
 
@@ -295,6 +310,7 @@ export default function ApplicationModal({ isOpen, onClose, position }) {
                     fontSize: 13,
                   }}
                 />
+                <p className="font-dm" style={{ fontSize: 10, color: 'var(--text-faint)', margin: '4px 0 0 0' }}>Max 5MB • PDF or Word</p>
                 {files.cv && <p className="font-dm" style={{ fontSize: 11, color: '#00FF94', margin: '4px 0 0 0' }}>✓ {files.cv.name}</p>}
               </div>
 
