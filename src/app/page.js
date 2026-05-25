@@ -7,8 +7,6 @@ import Services from '@/components/Services';
 import Process from '@/components/Process';
 import About from '@/components/About';
 import Portfolio from '@/components/Portfolio';
-import Team from '@/components/Team';
-import Careers from '@/components/Careers';
 import CTA from '@/components/CTA';
 import Footer from '@/components/Footer';
 import ContactModal from '@/components/ContactModal';
@@ -26,8 +24,6 @@ export default function Home() {
         <Process />
         <About />
         <Portfolio />
-        <Team />
-        <Careers />
         <CTA modalType={modalType} setModalType={setModalType} />
       </main>
       <Footer />
