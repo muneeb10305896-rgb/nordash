@@ -5,7 +5,7 @@ import MagneticButton from './MagneticButton';
 
 const links = ['Services', 'Process', 'Work', 'About', 'Careers'];
 
-export default function Navbar() {
+export default function Navbar({ onStartProject }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -55,7 +55,7 @@ export default function Navbar() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <MagneticButton strength={0.32} className="hidden-mobile">
-            <button className="btn-primary" style={{ padding: '10px 24px', fontSize: 11 }}>
+            <button className="btn-primary" style={{ padding: '10px 24px', fontSize: 11 }} onClick={onStartProject}>
               <span>Start Project</span>
             </button>
           </MagneticButton>
@@ -97,7 +97,7 @@ export default function Navbar() {
                   {l}
                 </motion.a>
               ))}
-              <button className="btn-primary" style={{ marginTop: 8 }}><span>Start Project</span></button>
+              <button className="btn-primary" style={{ marginTop: 8 }} onClick={() => { setOpen(false); onStartProject(); }}><span>Start Project</span></button>
             </div>
           </motion.div>
         )}

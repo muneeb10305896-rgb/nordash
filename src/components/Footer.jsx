@@ -53,27 +53,6 @@ const socials = [
       </svg>
     ),
   },
-  {
-    label: 'Twitter',
-    href: '#',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M3 3l12 12M3 15L15 3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-        <path d="M3 3h5l7 12h-5L3 3z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
-      </svg>
-    ),
-  },
-  {
-    label: 'Behance',
-    href: '#',
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <path d="M2 5h6a3 3 0 010 6H2V5zM2 11h7a3 3 0 010 6H2v-6z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
-        <path d="M12 7h5M11 11.5c0-2 1-3.5 3-3.5s3 1.5 3 3.5H11z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-        <path d="M11 11.5c0 2 1 3.5 3 3.5 1.5 0 2.5-.8 3-2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-      </svg>
-    ),
-  },
 ];
 
 export default function Footer() {
@@ -221,11 +200,15 @@ export default function Footer() {
             <div className="truck-diamond-cyan" style={{ width: 5, height: 5 }} />
           </div>
           <div style={{ display: 'flex', gap: 20 }}>
-            {['Privacy', 'Terms', 'Cookies'].map(l => (
-              <a key={l} href="#" className="font-dm" style={{ fontSize: 12, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s' }}
+            {[
+              { label: 'Privacy', href: '/privacy' },
+              { label: 'Terms', href: '/terms' },
+              { label: 'Cookies', href: '/cookies' },
+            ].map(l => (
+              <a key={l.label} href={l.href} className="font-dm" style={{ fontSize: 12, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s' }}
                 onMouseEnter={e => e.target.style.color = 'var(--text-muted)'}
                 onMouseLeave={e => e.target.style.color = 'var(--text-faint)'}
-              >{l}</a>
+              >{l.label}</a>
             ))}
           </div>
         </div>

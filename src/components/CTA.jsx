@@ -1,13 +1,11 @@
 "use client";
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import ContactModal from './ContactModal';
 
-export default function CTA() {
+export default function CTA({ modalType, setModalType }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: false, margin: '-100px' });
   const [hovered, setHovered] = useState(false);
-  const [modalType, setModalType] = useState(null);
 
   return (
     <section id="work" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>
@@ -94,12 +92,6 @@ export default function CTA() {
             <span>Request a Quote Online</span>
           </motion.button>
         </motion.div>
-
-        <ContactModal
-          isOpen={modalType !== null}
-          onClose={() => setModalType(null)}
-          type={modalType || 'book-call'}
-        />
 
         {/* Trust row */}
         <motion.div

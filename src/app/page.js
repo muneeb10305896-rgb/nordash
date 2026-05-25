@@ -1,3 +1,5 @@
+'use client';
+import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Stats from '@/components/Stats';
@@ -7,11 +9,14 @@ import About from '@/components/About';
 import Careers from '@/components/Careers';
 import CTA from '@/components/CTA';
 import Footer from '@/components/Footer';
+import ContactModal from '@/components/ContactModal';
 
 export default function Home() {
+  const [modalType, setModalType] = useState(null);
+
   return (
     <>
-      <Navbar />
+      <Navbar onStartProject={() => setModalType('book-call')} />
       <main>
         <Hero />
         <Stats />
@@ -19,9 +24,14 @@ export default function Home() {
         <Process />
         <About />
         <Careers />
-        <CTA />
+        <CTA modalType={modalType} setModalType={setModalType} />
       </main>
       <Footer />
+      <ContactModal
+        isOpen={modalType !== null}
+        onClose={() => setModalType(null)}
+        type={modalType}
+      />
     </>
   );
 }
