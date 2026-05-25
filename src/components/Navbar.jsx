@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import MagneticButton from './MagneticButton';
 
 const links = ['Services', 'Process', 'Work', 'About'];
 
@@ -53,9 +54,11 @@ export default function Navbar() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <button className="btn-primary hidden-mobile" style={{ padding: '10px 24px', fontSize: 11 }}>
-            <span>Start Project</span>
-          </button>
+          <MagneticButton strength={0.32} className="hidden-mobile">
+            <button className="btn-primary" style={{ padding: '10px 24px', fontSize: 11 }}>
+              <span>Start Project</span>
+            </button>
+          </MagneticButton>
 
           {/* Hamburger */}
           <button

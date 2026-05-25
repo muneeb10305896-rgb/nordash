@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://nordash.vercel.app
+
+# Sitemaps
+Sitemap: https://nordash.vercel.app/sitemap.xml

@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/react';
 import { Syne, DM_Sans } from 'next/font/google';
 import './globals.css';
+import SmoothScroll from '@/components/SmoothScroll';
 
 const syne = Syne({
   subsets: ['latin'],
@@ -70,7 +71,9 @@ export default function RootLayout({ children }) {
         <meta name="google-site-verification" content="G0tFP3VO5M1yw4IrNxt7F7QQsiOv4UsigAotNN5h8Jw" />
       </head>
       <body className={dmSans.className}>
-        {children}
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
         <Analytics />
       </body>
     </html>
