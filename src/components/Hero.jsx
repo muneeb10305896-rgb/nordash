@@ -25,8 +25,9 @@ const marqueeItems = [
 
 export default function Hero() {
   const ref = useRef(null);
+  const isLowEnd = typeof window !== 'undefined' && window.innerWidth < 768;
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const contentY       = useTransform(scrollYProgress, [0, 1],    ['0%',  '18%']);
+  const contentY       = useTransform(scrollYProgress, [0, 1],    ['0%',  isLowEnd ? '0%' : '18%']);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.75], [1,     0   ]);
 
   return (
@@ -43,7 +44,7 @@ export default function Hero() {
       <div className="aurora-orb aurora-orb-4" />
 
       {/* ── Three.js gem scene (WebGL, GPU) ── */}
-      <HeroScene />
+      {!isLowEnd && <HeroScene />}
 
       {/* ── Truck-art diamond grid ── */}
       <div className="truck-pattern-dense" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }} />
@@ -63,10 +64,12 @@ export default function Hero() {
       {[
         { t: '28%', l: '4%',  size: 12, color: '#00E5FF', glow: 'rgba(0,229,255,0.4)',  dur: '5s',   delay: '0s'   },
         { t: '55%', l: '7%',  size: 7,  color: '#7B61FF', glow: 'rgba(123,97,255,0.5)', dur: '7.2s', delay: '1.5s' },
-        { t: '20%', l: '16%', size: 8,  color: '#FFB300', glow: 'rgba(255,179,0,0.5)',  dur: '8.5s', delay: '3.1s' },
-        { t: '40%', r: '4%',  size: 10, color: '#00FF94', glow: 'rgba(0,255,148,0.4)',  dur: '6.3s', delay: '0.6s' },
-        { t: '65%', r: '8%',  size: 6,  color: '#FF4081', glow: 'rgba(255,64,129,0.5)', dur: '9.1s', delay: '2.2s' },
-        { t: '15%', l: '46%', size: 5,  color: '#00E5FF', glow: 'rgba(0,229,255,0.4)',  dur: '11s',  delay: '4.5s' },
+        ...(isLowEnd ? [] : [
+          { t: '20%', l: '16%', size: 8,  color: '#FFB300', glow: 'rgba(255,179,0,0.5)',  dur: '8.5s', delay: '3.1s' },
+          { t: '40%', r: '4%',  size: 10, color: '#00FF94', glow: 'rgba(0,255,148,0.4)',  dur: '6.3s', delay: '0.6s' },
+          { t: '65%', r: '8%',  size: 6,  color: '#FF4081', glow: 'rgba(255,64,129,0.5)', dur: '9.1s', delay: '2.2s' },
+          { t: '15%', l: '46%', size: 5,  color: '#00E5FF', glow: 'rgba(0,229,255,0.4)',  dur: '11s',  delay: '4.5s' },
+        ]),
       ].map((d, i) => (
         <div key={i} style={{ position: 'absolute', top: d.t, left: d.l, right: d.r, zIndex: 2, pointerEvents: 'none' }}>
           <div style={{

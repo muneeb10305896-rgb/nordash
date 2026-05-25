@@ -425,3 +425,44 @@ h1, h2, h3, h4 {
   background: rgba(0, 229, 255, 0.2);
   color: var(--aurora-cyan);
 }
+
+/* ─── PERFORMANCE OPTIMIZATION (low-end devices) ───────────── */
+@media (max-width: 768px) {
+  /* Reduce blur effects on mobile */
+  .glass { backdrop-filter: blur(10px); }
+  .glass-bright { backdrop-filter: blur(10px); }
+
+  /* Disable smooth scroll on mobile */
+  html { scroll-behavior: auto; }
+
+  /* Reduce animation durations */
+  @keyframes auroraFloat1 { 0%,100% { transform: translate3d(0,0,0); opacity: 0.30; } 50% { transform: translate3d(20px,-15px,0); opacity: 0.35; } }
+  @keyframes auroraFloat2 { 0%,100% { transform: translate3d(0,0,0); opacity: 0.22; } 50% { transform: translate3d(-15px,20px,0); opacity: 0.27; } }
+  @keyframes auroraFloat3 { 0%,100% { transform: translate3d(0,0,0); opacity: 0.10; } }
+  @keyframes auroraFloat4 { 0%,100% { transform: translate3d(0,0,0); opacity: 0.12; } }
+
+  .aurora-orb-1 { animation: auroraFloat1 12s ease-in-out infinite; }
+  .aurora-orb-2 { animation: auroraFloat2 14s ease-in-out infinite 4s; }
+  .aurora-orb-3 { animation: auroraFloat3 10s ease-in-out infinite 8s; }
+  .aurora-orb-4 { animation: auroraFloat4 11s ease-in-out infinite 2s; }
+
+  /* Slower animations for better performance */
+  .animate-float { animation-duration: 8s; }
+  .animate-float-reverse { animation-duration: 10s; }
+  .animate-aurora { animation-duration: 16s; }
+  .animate-spin-slow { animation-duration: 30s; }
+
+  /* Reduce box-shadow on mobile */
+  .btn-primary:hover {
+    box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2);
+  }
+
+  .card-base:hover {
+    box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+  }
+
+  /* Reduce opacity changes for less re-paints */
+  .glow-cyan, .glow-purple, .glow-gold {
+    box-shadow: 0 0 15px rgba(0, 229, 255, 0.1);
+  }
+}

@@ -46,6 +46,7 @@ export default function Careers() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: false, margin: '-100px' });
   const [selectedPosition, setSelectedPosition] = useState(null);
+  const isLowEnd = typeof window !== 'undefined' && window.innerWidth < 768;
 
   return (
     <section id="careers" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>
@@ -110,7 +111,7 @@ export default function Careers() {
               key={position.id}
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
+              transition={{ duration: isLowEnd ? 0.3 : 0.7, delay: isLowEnd ? 0 : i * 0.1, ease: [0.23, 1, 0.32, 1] }}
               className="glass"
               style={{
                 padding: '32px',
