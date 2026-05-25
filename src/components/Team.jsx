@@ -15,14 +15,30 @@ export default function Team() {
       const response = await fetch('/api/team');
       if (response.ok) {
         const data = await response.json();
-        setMembers(data.members || []);
+        setMembers(data.members && data.members.length > 0 ? data.members : getDefaultMembers());
       }
     } catch (error) {
       console.error('Failed to fetch team:', error);
+      setMembers(getDefaultMembers());
     } finally {
       setLoading(false);
     }
   };
+
+  const getDefaultMembers = () => [
+    {
+      _id: 'muneeb-ahmed-butt',
+      name: 'Muneeb Ahmed Butt',
+      position: 'Founder & Digital Strategist',
+      bio: 'IT student at University of Eastern Finland, blending Nordic precision with Asian energy to create digital solutions that convert.',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      expertise: ['Video Editing', 'UI/UX Design', 'Web Development', 'Brand Strategy', 'Digital Marketing'],
+      social: {
+        linkedin: 'https://www.linkedin.com/in/muneeb-ahmed-butt/',
+        github: 'https://github.com/muneeb10305896-rgb',
+      }
+    }
+  ];
 
   return (
     <section id="team" style={{ background: 'var(--surface)', padding: '120px 24px', position: 'relative' }}>
