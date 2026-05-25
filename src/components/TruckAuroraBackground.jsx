@@ -165,12 +165,23 @@ function BackgroundStars() {
   );
 }
 
+// Test - Bright visible cube
+function TestCube() {
+  return (
+    <mesh position={[0, 2, 0]}>
+      <boxGeometry args={[3, 3, 3]} />
+      <meshStandardMaterial color="#FF0000" emissive="#FF0000" emissiveIntensity={1} />
+    </mesh>
+  );
+}
+
 // Main scene
 function Scene({ scrollRef, isMobile }) {
   return (
     <>
       <ambientLight intensity={0.4} />
       <BackgroundStars />
+      <TestCube />
       <Truck scrollRef={scrollRef} />
       <AuroraRibbon color="#00E5FF" phase={0} amplitude={0.6} scrollRef={scrollRef} />
       <AuroraRibbon color="#7B61FF" phase={1.2} amplitude={1} scrollRef={scrollRef} />
