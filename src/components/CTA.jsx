@@ -1,11 +1,13 @@
 "use client";
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import ContactModal from './ContactModal';
 
 export default function CTA() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: false, margin: '-100px' });
   const [hovered, setHovered] = useState(false);
+  const [modalType, setModalType] = useState(null);
 
   return (
     <section id="work" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>
@@ -70,6 +72,7 @@ export default function CTA() {
             className="btn-primary"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
+            onClick={() => setModalType('book-call')}
             style={{ padding: '16px 40px', fontSize: 13 }}
           >
             <span>Book a Free Call</span>
@@ -77,20 +80,26 @@ export default function CTA() {
               <path d="M3.5 9h11M10 4l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </motion.button>
-          <motion.a
-            href="mailto:hello@nordash.agency"
+          <motion.button
             className="btn-ghost"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
+            onClick={() => setModalType('quote')}
             style={{ padding: '16px 40px', fontSize: 13, textDecoration: 'none' }}
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M1 5l7 5 7-5" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+              <path d="M2 3h12v10H2V3zm1 7h10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M8 3v7M8 10l-2 2h4l-2-2z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>hello@nordash.agency</span>
-          </motion.a>
+            <span>Request a Quote Online</span>
+          </motion.button>
         </motion.div>
+
+        <ContactModal
+          isOpen={modalType !== null}
+          onClose={() => setModalType(null)}
+          type={modalType || 'book-call'}
+        />
 
         {/* Trust row */}
         <motion.div

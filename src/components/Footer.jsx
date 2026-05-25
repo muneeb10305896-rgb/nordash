@@ -1,4 +1,5 @@
 "use client";
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const footerLinks = {
@@ -10,7 +11,7 @@ const footerLinks = {
 const socials = [
   {
     label: 'Instagram',
-    href: '#',
+    href: 'https://www.instagram.com/muneeb.ahmed.butt.fi/',
     icon: (
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <rect x="2" y="2" width="14" height="14" rx="4" stroke="currentColor" strokeWidth="1.4"/>
@@ -21,7 +22,7 @@ const socials = [
   },
   {
     label: 'LinkedIn',
-    href: '#',
+    href: 'https://www.linkedin.com/in/farheen-e-sehar-8b0868177/',
     icon: (
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4"/>
@@ -54,6 +55,36 @@ const socials = [
 ];
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [subscribeStatus, setSubscribeStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (response.ok) {
+        setSubscribeStatus({ type: 'success', message: 'Subscribed! Check your email.' });
+        setEmail('');
+        setTimeout(() => setSubscribeStatus(null), 3000);
+      } else {
+        setSubscribeStatus({ type: 'error', message: 'Failed to subscribe. Try again.' });
+      }
+    } catch (error) {
+      setSubscribeStatus({ type: 'error', message: 'Something went wrong.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <footer style={{ background: 'var(--deep)', borderTop: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
       {/* Truck art top bar */}
@@ -113,12 +144,47 @@ export default function Footer() {
             <div className="font-syne" style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>Stay in the loop</div>
             <p className="font-dm" style={{ fontSize: 13, color: 'var(--text-muted)' }}>Monthly insights on brand, content, and digital growth.</p>
           </div>
-          <div style={{ display: 'flex', gap: 0, flexShrink: 0 }}>
-            <input type="email" placeholder="your@email.com" className="font-dm"
-              style={{ padding: '12px 20px', background: 'var(--midnight)', border: '1px solid var(--border)', borderRight: 'none', color: 'var(--text-primary)', fontSize: 13, outline: 'none', minWidth: 220 }} />
-            <button className="btn-primary" style={{ padding: '12px 24px', fontSize: 11, borderRadius: 0 }}>
-              <span>Subscribe</span>
-            </button>
+          <div style={{ display: 'flex', gap: 0, flexShrink: 0, flexDirection: 'column' }}>
+            {subscribeStatus && (
+              <motion.p
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{
+                  fontSize: 11,
+                  color: subscribeStatus.type === 'success' ? '#00FF94' : '#FF6B6B',
+                  marginBottom: 8,
+                }}
+              >
+                {subscribeStatus.message}
+              </motion.p>
+            )}
+            <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: 0 }}>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="font-dm"
+                style={{
+                  padding: '12px 20px',
+                  background: 'var(--midnight)',
+                  border: '1px solid var(--border)',
+                  borderRight: 'none',
+                  color: 'var(--text-primary)',
+                  fontSize: 13,
+                  outline: 'none',
+                  minWidth: 220,
+                }}
+              />
+              <button
+                type="submit"
+                disabled={loading || !email}
+                className="btn-primary"
+                style={{ padding: '12px 24px', fontSize: 11, borderRadius: 0, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}
+              >
+                <span>{loading ? 'Subscribing...' : 'Subscribe'}</span>
+              </button>
+            </form>
           </div>
         </div>
 
