@@ -1,12 +1,12 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { useScroll } from 'framer-motion';
 
 export default function TruckAuroraBackground() {
   const canvasRef = useRef(null);
+  const animationIdRef = useRef(null);
   const { scrollYProgress } = useScroll();
-  const [animationId, setAnimationId] = useState(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -181,16 +181,15 @@ export default function TruckAuroraBackground() {
       ctx.shadowBlur = 0;
 
       // Continue animation
-      const id = requestAnimationFrame(animate);
-      setAnimationId(id);
+      animationIdRef.current = requestAnimationFrame(animate);
     };
 
     animate();
 
     return () => {
       window.removeEventListener('resize', setCanvasSize);
-      if (animationId) {
-        cancelAnimationFrame(animationId);
+      if (animationIdRef.current) {
+        cancelAnimationFrame(animationIdRef.current);
       }
     };
   }, [scrollYProgress]);
