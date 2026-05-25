@@ -1,4 +1,5 @@
 'use client';
+import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
@@ -117,7 +118,8 @@ const caseStudies = {
   }
 };
 
-export default function CaseStudy({ params }) {
+export default function CaseStudy() {
+  const params = useParams();
   const study = caseStudies[params.slug];
 
   if (!study) {
