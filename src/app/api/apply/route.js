@@ -196,7 +196,8 @@ export async function POST(request) {
 
     // Save application to dashboard
     try {
-      await fetch(new URL('/api/admin/applications', request.url), {
+      console.log('[Apply] Saving to admin applications endpoint...');
+      const saveResponse = await fetch(new URL('/api/admin/applications', request.url), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -208,8 +209,16 @@ export async function POST(request) {
           positionId,
         }),
       });
+
+      if (!saveResponse.ok) {
+        const errorData = await saveResponse.json();
+        console.error('[Apply] Failed to save to admin dashboard:', errorData);
+      } else {
+        const savedData = await saveResponse.json();
+        console.log('[Apply] ✓ Application saved to database:', savedData);
+      }
     } catch (error) {
-      console.error('Error saving application to dashboard:', error);
+      console.error('[Apply] Error calling admin applications endpoint:', error);
     }
 
     return Response.json({
