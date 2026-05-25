@@ -44,23 +44,57 @@ export default function AdminDashboard() {
     }
   };
 
-  return (
-    <div style={{ minHeight: '100vh', background: 'var(--midnight)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-      <div style={{ maxWidth: 400, width: '100%' }}>
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: '40px', textAlign: 'center' }}>
-          <h1 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 16 }}>
-            Coming Soon
-          </h1>
-          <p className="font-dm" style={{ fontSize: 14, color: 'var(--text-muted)', margin: 0, lineHeight: 1.6 }}>
-            The admin dashboard is being set up. Job applications are being sent directly to your email.
-          </p>
-          <a href="/" className="btn-primary" style={{ marginTop: 24, padding: '12px 24px', fontSize: 13, textDecoration: 'none', display: 'inline-block' }}>
-            Back to Site
-          </a>
+  if (!authenticated) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--midnight)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+        <div style={{ maxWidth: 400, width: '100%' }}>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: '40px' }}>
+            <h1 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 24, textAlign: 'center' }}>
+              NORDASH
+              <br />
+              <span style={{ fontSize: 16, color: '#FFB300' }}>Admin Access</span>
+            </h1>
+
+            <form onSubmit={handleAuthenticate} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>
+                  Admin Token
+                </label>
+                <input
+                  type="password"
+                  value={inputToken}
+                  onChange={(e) => setInputToken(e.target.value)}
+                  placeholder="Enter admin token"
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'var(--deep)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    color: 'var(--text-primary)',
+                    fontSize: 13,
+                    outline: 'none',
+                  }}
+                  autoFocus
+                />
+              </div>
+              <button
+                type="submit"
+                className="btn-primary"
+                style={{ padding: '12px 24px', fontSize: 13 }}
+              >
+                Access Dashboard
+              </button>
+            </form>
+
+            <p className="font-dm" style={{ fontSize: 11, color: 'var(--text-faint)', textAlign: 'center', marginTop: 20 }}>
+              Contact Muneeb for the admin token
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--midnight)', padding: '40px 20px' }}>
