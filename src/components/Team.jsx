@@ -87,63 +87,67 @@ export default function Team() {
                   background: 'var(--midnight)',
                   border: '1px solid var(--border)',
                   borderRadius: 12,
-                  overflow: 'hidden',
+                  padding: 24,
                   textAlign: 'center',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}
                 whileHover={{ y: -8 }}
               >
                 {member.image && (
                   <div style={{
-                    width: '100%',
-                    height: 280,
+                    width: 140,
+                    height: 140,
+                    borderRadius: '50%',
                     background: 'var(--deep)',
                     backgroundImage: `url(${member.image})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
+                    marginBottom: 16,
+                    border: '2px solid var(--truck-saffron)',
                   }} />
                 )}
-                <div style={{ padding: 24 }}>
-                  <h3 className="font-syne" style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 4px 0' }}>
-                    {member.name}
-                  </h3>
-                  <p className="font-dm" style={{ fontSize: 13, color: 'var(--truck-saffron)', margin: '0 0 12px 0', fontWeight: 500 }}>
-                    {member.position}
+                <h3 className="font-syne" style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 4px 0' }}>
+                  {member.name}
+                </h3>
+                <p className="font-dm" style={{ fontSize: 12, color: 'var(--truck-saffron)', margin: '0 0 12px 0', fontWeight: 500 }}>
+                  {member.position}
+                </p>
+                {member.bio && (
+                  <p className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', margin: '0 0 12px 0', lineHeight: 1.5 }}>
+                    {member.bio}
                   </p>
-                  {member.bio && (
-                    <p className="font-dm" style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 16px 0', lineHeight: 1.5 }}>
-                      {member.bio}
-                    </p>
-                  )}
-                  {member.expertise && (
-                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 16 }}>
-                      {member.expertise.slice(0, 3).map(exp => (
-                        <span key={exp} className="font-dm" style={{ fontSize: 10, background: 'rgba(255,179,0,0.1)', color: 'var(--truck-saffron)', padding: '4px 8px', borderRadius: 4 }}>
-                          {exp}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  {member.social && (
-                    <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
-                      {member.social.linkedin && (
-                        <a href={member.social.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', textDecoration: 'none', transition: 'color 0.3s' }}
-                          onMouseEnter={e => e.currentTarget.style.color = 'var(--aurora-cyan)'}
-                          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
-                        >
-                          LinkedIn
-                        </a>
-                      )}
-                      {member.social.twitter && (
-                        <a href={member.social.twitter} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)', textDecoration: 'none', transition: 'color 0.3s' }}
-                          onMouseEnter={e => e.currentTarget.style.color = 'var(--aurora-cyan)'}
-                          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
-                        >
-                          Twitter
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </div>
+                )}
+                {member.expertise && (
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 12 }}>
+                    {member.expertise.slice(0, 3).map(exp => (
+                      <span key={exp} className="font-dm" style={{ fontSize: 9, background: 'rgba(255,179,0,0.1)', color: 'var(--truck-saffron)', padding: '3px 6px', borderRadius: 3 }}>
+                        {exp}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {member.social && (
+                  <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 'auto' }}>
+                    {member.social.linkedin && (
+                      <a href={member.social.linkedin} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none', transition: 'color 0.3s' }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'var(--aurora-cyan)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                      >
+                        LinkedIn
+                      </a>
+                    )}
+                    {member.social.twitter && (
+                      <a href={member.social.twitter} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none', transition: 'color 0.3s' }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'var(--aurora-cyan)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                      >
+                        Twitter
+                      </a>
+                    )}
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
