@@ -16,6 +16,8 @@ export default function Team() {
       if (response.ok) {
         const data = await response.json();
         setMembers(data.members && data.members.length > 0 ? data.members : getDefaultMembers());
+      } else {
+        setMembers(getDefaultMembers());
       }
     } catch (error) {
       console.error('Failed to fetch team:', error);
