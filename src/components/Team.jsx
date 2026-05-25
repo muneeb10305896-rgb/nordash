@@ -33,7 +33,7 @@ export default function Team() {
       name: 'Muneeb Ahmed Butt',
       position: 'Founder & Digital Strategist',
       bio: 'IT student at University of Eastern Finland, blending Nordic precision with Asian energy to create digital solutions that convert.',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
+      image: 'https://i.ibb.co/xK3ZSPbR/33816-enhanced.jpg',
       expertise: ['Video Editing', 'UI/UX Design', 'Web Development', 'Brand Strategy', 'Digital Marketing'],
       social: {
         linkedin: 'https://www.linkedin.com/in/muneeb-ahmed-butt/',
