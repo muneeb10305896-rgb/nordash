@@ -2,285 +2,102 @@
 
 import { useRef, useEffect, useState, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Points, PointMaterial } from '@react-three/drei';
+import { Points, PointMaterial } from '@react-three/drei';
 import { useScroll, useAnimationFrame } from 'framer-motion';
 import * as THREE from 'three';
 
-// ── Truck Model ──────────────────────────────────────────────
-function TruckModel({ scrollRef, isMobile }) {
-  const bodyRef = useRef();
-  const wheelsRef = useRef([]);
-  const exhaustRef = useRef();
+// ── Simple Truck Model ───────────────────────────────────────
+function SimpleTruck({ scrollRef }) {
+  const groupRef = useRef();
 
   useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
+    if (!groupRef.current) return;
+
     const progress = scrollRef.current;
-    const truckX = -14 + progress * 28;
+    const time = clock.getElapsedTime();
 
-    if (bodyRef.current) {
-      bodyRef.current.position.x = truckX;
-      // Pulsing glow
-      bodyRef.current.material.emissiveIntensity = 0.4 + Math.sin(t * 1.5) * 0.2;
-    }
+    // Truck moves across screen based on scroll
+    groupRef.current.position.x = -8 + progress * 16;
 
-    // Rotate wheels
-    wheelsRef.current.forEach(wheel => {
-      wheel.rotation.x += 0.08;
-    });
-
-    if (exhaustRef.current) {
-      exhaustRef.current.position.x = truckX;
-    }
+    // Slight vertical bob
+    groupRef.current.position.y = 3 + Math.sin(time * 0.5) * 0.2;
   });
 
   return (
-    <group>
-      {/* Body */}
-      <mesh ref={bodyRef} position={[-14, 2, 0]}>
-        <boxGeometry args={[4, 0.8, 1.5]} />
-        <meshStandardMaterial color="#FFB300" emissive="#FFB300" emissiveIntensity={0.4} />
+    <group ref={groupRef} position={[-8, 3, 0]}>
+      {/* Truck body - LARGE and bright */}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[3, 1.2, 1.2]} />
+        <meshBasicMaterial color="#FFB300" />
       </mesh>
 
       {/* Cabin */}
-      <mesh position={[-12.2, 2.3, 0]}>
-        <boxGeometry args={[1.5, 1.2, 1.5]} />
-        <meshStandardMaterial color="#1A2B8C" emissive="#1A2B8C" emissiveIntensity={0.2} />
+      <mesh position={[1.8, 0.3, 0]}>
+        <boxGeometry args={[1, 1, 1.2]} />
+        <meshBasicMaterial color="#1A2B8C" />
       </mesh>
 
-      {/* Roof bar */}
-      <mesh position={[-12, 3.1, 0]}>
-        <boxGeometry args={[1.4, 0.15, 1.5]} />
-        <meshStandardMaterial color="#007A4C" emissive="#007A4C" emissiveIntensity={0.3} />
+      {/* Roof */}
+      <mesh position={[1.5, 1.2, 0]}>
+        <boxGeometry args={[1.5, 0.3, 1.2]} />
+        <meshBasicMaterial color="#007A4C" />
       </mesh>
 
-      {/* Wheels - back left */}
-      <mesh
-        ref={el => (wheelsRef.current[0] = el)}
-        position={[-15.2, 0.8, -0.7]}
-        rotation={[Math.PI / 2, 0, 0]}
-      >
-        <cylinderGeometry args={[0.4, 0.4, 0.3, 12]} />
-        <meshStandardMaterial color="#003D2B" emissive="#007A4C" emissiveIntensity={0.2} />
+      {/* Wheels */}
+      <mesh position={[-0.7, -0.8, -0.6]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 0.3, 16]} />
+        <meshBasicMaterial color="#222222" />
+      </mesh>
+      <mesh position={[-0.7, -0.8, 0.6]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 0.3, 16]} />
+        <meshBasicMaterial color="#222222" />
+      </mesh>
+      <mesh position={[1.2, -0.8, -0.6]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 0.3, 16]} />
+        <meshBasicMaterial color="#222222" />
+      </mesh>
+      <mesh position={[1.2, -0.8, 0.6]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.5, 0.5, 0.3, 16]} />
+        <meshBasicMaterial color="#222222" />
       </mesh>
 
-      {/* Wheels - back right */}
-      <mesh
-        ref={el => (wheelsRef.current[1] = el)}
-        position={[-15.2, 0.8, 0.7]}
-        rotation={[Math.PI / 2, 0, 0]}
-      >
-        <cylinderGeometry args={[0.4, 0.4, 0.3, 12]} />
-        <meshStandardMaterial color="#003D2B" emissive="#007A4C" emissiveIntensity={0.2} />
+      {/* Decorative elements */}
+      <mesh position={[-0.5, 0.8, 0.7]}>
+        <boxGeometry args={[0.3, 0.3, 0.3]} />
+        <meshBasicMaterial color="#007A4C" />
+      </mesh>
+      <mesh position={[0.5, 0.8, 0.7]}>
+        <boxGeometry args={[0.3, 0.3, 0.3]} />
+        <meshBasicMaterial color="#FFB300" />
       </mesh>
 
-      {/* Wheels - front left */}
-      <mesh
-        ref={el => (wheelsRef.current[2] = el)}
-        position={[-11, 0.8, -0.7]}
-        rotation={[Math.PI / 2, 0, 0]}
-      >
-        <cylinderGeometry args={[0.4, 0.4, 0.3, 12]} />
-        <meshStandardMaterial color="#003D2B" emissive="#007A4C" emissiveIntensity={0.2} />
-      </mesh>
-
-      {/* Wheels - front right */}
-      <mesh
-        ref={el => (wheelsRef.current[3] = el)}
-        position={[-11, 0.8, 0.7]}
-        rotation={[Math.PI / 2, 0, 0]}
-      >
-        <cylinderGeometry args={[0.4, 0.4, 0.3, 12]} />
-        <meshStandardMaterial color="#003D2B" emissive="#007A4C" emissiveIntensity={0.2} />
-      </mesh>
-
-      {/* Decorative diamonds */}
-      <mesh position={[-14.5, 2.2, 0.8]}>
-        <octahedronGeometry args={[0.15]} />
-        <meshStandardMaterial color="#FFB300" emissive="#FFB300" emissiveIntensity={0.5} />
-      </mesh>
-      <mesh position={[-14.5, 2.2, -0.8]}>
-        <octahedronGeometry args={[0.15]} />
-        <meshStandardMaterial color="#007A4C" emissive="#007A4C" emissiveIntensity={0.4} />
-      </mesh>
-      <mesh position={[-11.5, 2.2, 0.8]}>
-        <octahedronGeometry args={[0.15]} />
-        <meshStandardMaterial color="#007A4C" emissive="#007A4C" emissiveIntensity={0.4} />
-      </mesh>
-      <mesh position={[-11.5, 2.2, -0.8]}>
-        <octahedronGeometry args={[0.15]} />
-        <meshStandardMaterial color="#FFB300" emissive="#FFB300" emissiveIntensity={0.5} />
-      </mesh>
-
-      {/* Exhaust stack */}
-      <mesh ref={exhaustRef} position={[-12, 3.6, 0]}>
-        <cylinderGeometry args={[0.08, 0.08, 1.2, 8]} />
-        <meshStandardMaterial color="#555555" />
+      {/* Exhaust */}
+      <mesh position={[1.5, 1.8, 0]}>
+        <cylinderGeometry args={[0.15, 0.15, 1, 8]} />
+        <meshBasicMaterial color="#666666" />
       </mesh>
 
       {/* Headlights */}
-      <pointLight position={[-13, 2.5, 0.8]} color="#00E5FF" intensity={2} distance={8} />
-      <pointLight position={[-13, 2.5, -0.8]} color="#00E5FF" intensity={2} distance={8} />
+      <pointLight position={[2.5, 0.3, -0.6]} color="#00E5FF" intensity={1.5} distance={5} />
+      <pointLight position={[2.5, 0.3, 0.6]} color="#00E5FF" intensity={1.5} distance={5} />
     </group>
   );
 }
 
-// ── Aurora Ribbon ────────────────────────────────────────────
-function AuroraRibbon({ color, phase, amplitude, offset, scrollRef }) {
-  const geosRef = useRef([]);
-  const POINTS = 60;
-
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
-    const progress = scrollRef.current;
-    const truckX = -14 + progress * 28;
-
-    // Update three ribbon layers
-    for (let layer = 0; layer < 3; layer++) {
-      if (!geosRef.current[layer]) return;
-
-      const positions = geosRef.current[layer].attributes.position.array;
-      const offsetZ = (layer - 1) * 0.2;
-
-      for (let i = 0; i < POINTS; i++) {
-        const px = truckX - (i / POINTS) * (progress * 28 + 5);
-        const py = 2 + Math.sin(i * 0.15 + phase + t * 0.3) * amplitude;
-        const pz = Math.cos(i * 0.1 + phase + t * 0.2) * 0.5 + offset + offsetZ;
-
-        positions[i * 3] = px;
-        positions[i * 3 + 1] = py;
-        positions[i * 3 + 2] = pz;
-      }
-
-      geosRef.current[layer].attributes.position.needsUpdate = true;
-    }
-  });
-
-  return (
-    <group>
-      {Array.from({ length: 3 }).map((_, i) => (
-        <line key={i}>
-          <bufferGeometry ref={el => (geosRef.current[i] = el)}>
-            <bufferAttribute
-              attach="attributes-position"
-              count={POINTS}
-              array={new Float32Array(POINTS * 3)}
-              itemSize={3}
-            />
-          </bufferGeometry>
-          <lineBasicMaterial
-            color={color}
-            transparent
-            opacity={0.5 - i * 0.12}
-            linewidth={2}
-          />
-        </line>
-      ))}
-    </group>
-  );
-}
-
-// ── Exhaust Particles ────────────────────────────────────────
-function ExhaustParticles({ scrollRef, isMobile }) {
+// ── Aurora Particles ─────────────────────────────────────────
+function AuroraParticles() {
   const pointsRef = useRef();
-  const particlesRef = useRef([]);
-  const maxParticles = isMobile ? 40 : 80;
-  const posArrayRef = useRef(new Float32Array(maxParticles * 3));
-  const colArrayRef = useRef(new Float32Array(maxParticles * 3));
-
-  // Init particles once
-  useEffect(() => {
-    for (let i = 0; i < maxParticles; i++) {
-      particlesRef.current[i] = {
-        x: 0,
-        y: 0,
-        z: 0,
-        vx: (Math.random() - 0.5) * 0.04,
-        vy: Math.random() * 0.03 + 0.015,
-        vz: (Math.random() - 0.5) * 0.02,
-        age: 0,
-        lifespan: 120,
-      };
-    }
-  }, [maxParticles]);
-
-  useFrame(({ clock }) => {
-    const progress = scrollRef.current;
-    const truckX = -14 + progress * 28;
-    const exhaustY = 3.6;
-    const exhaustZ = 0;
-    const particleColors = [
-      new THREE.Color('#FFB300'),
-      new THREE.Color('#00E5FF'),
-      new THREE.Color('#7B61FF'),
-    ];
-
-    const positions = posArrayRef.current;
-    const colors = colArrayRef.current;
-
-    particlesRef.current.forEach((p, i) => {
-      p.age++;
-      if (p.age > p.lifespan) {
-        p.x = truckX;
-        p.y = exhaustY;
-        p.z = exhaustZ;
-        p.age = 0;
-      } else {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.z += p.vz;
-      }
-
-      positions[i * 3] = p.x;
-      positions[i * 3 + 1] = p.y;
-      positions[i * 3 + 2] = p.z;
-
-      const c = particleColors[i % 3];
-      colors[i * 3] = c.r;
-      colors[i * 3 + 1] = c.g;
-      colors[i * 3 + 2] = c.b;
-    });
-
-    if (pointsRef.current?.geometry.attributes.position) {
-      pointsRef.current.geometry.attributes.position.needsUpdate = true;
-      pointsRef.current.geometry.attributes.color.needsUpdate = true;
-    }
-  });
-
-  return (
-    <Points ref={pointsRef}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          count={maxParticles}
-          array={posArrayRef.current}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-color"
-          count={maxParticles}
-          array={colArrayRef.current}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <PointMaterial size={0.06} vertexColors transparent />
-    </Points>
-  );
-}
-
-// ── Aurora Ambient Particles ─────────────────────────────────
-function AuroraParticles({ isMobile }) {
-  const pointsRef = useRef();
-  const count = isMobile ? 150 : 300;
+  const count = 200;
 
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 40;
-      pos[i * 3 + 1] = Math.random() * 8 + 0.5;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 8;
+      pos[i * 3] = (Math.random() - 0.5) * 20;
+      pos[i * 3 + 1] = Math.random() * 5 + 0.5;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 5;
     }
     return pos;
-  }, [count]);
+  }, []);
 
   const colors = useMemo(() => {
     const col = new Float32Array(count * 3);
@@ -288,7 +105,6 @@ function AuroraParticles({ isMobile }) {
       new THREE.Color('#00E5FF'),
       new THREE.Color('#7B61FF'),
       new THREE.Color('#00FF94'),
-      new THREE.Color('#FFB300'),
     ];
     for (let i = 0; i < count; i++) {
       const c = colorChoices[i % colorChoices.length];
@@ -297,7 +113,7 @@ function AuroraParticles({ isMobile }) {
       col[i * 3 + 2] = c.b;
     }
     return col;
-  }, [count]);
+  }, []);
 
   useFrame(({ clock }) => {
     if (pointsRef.current) {
@@ -311,20 +127,72 @@ function AuroraParticles({ isMobile }) {
         <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
         <bufferAttribute attach="attributes-color" count={count} array={colors} itemSize={3} />
       </bufferGeometry>
-      <PointMaterial size={0.06} vertexColors transparent opacity={0.6} sizeAttenuation />
+      <PointMaterial size={0.08} vertexColors transparent opacity={0.8} sizeAttenuation />
     </Points>
   );
 }
 
-// ── Starfield ────────────────────────────────────────────────
+// ── Simple Aurora Ribbon ─────────────────────────────────────
+function AuroraRibbon({ color, phase, amplitude, scrollRef }) {
+  const linesRef = useRef([]);
+  const POINTS = 50;
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime();
+    const progress = scrollRef.current;
+    const truckX = -8 + progress * 16;
+
+    for (let layer = 0; layer < 2; layer++) {
+      if (!linesRef.current[layer]) return;
+
+      const positions = new Float32Array(POINTS * 3);
+      const offsetZ = (layer - 0.5) * 0.3;
+
+      for (let i = 0; i < POINTS; i++) {
+        const x = truckX - (i / POINTS) * (progress * 16 + 3);
+        const y = 3 + Math.sin(i * 0.2 + phase + t * 0.4) * amplitude;
+        const z = Math.cos(i * 0.1 + phase + t * 0.3) * 1 + offsetZ;
+
+        positions[i * 3] = x;
+        positions[i * 3 + 1] = y;
+        positions[i * 3 + 2] = z;
+      }
+
+      if (linesRef.current[layer].geometry.attributes.position) {
+        linesRef.current[layer].geometry.attributes.position.array = positions;
+        linesRef.current[layer].geometry.attributes.position.needsUpdate = true;
+      }
+    }
+  });
+
+  return (
+    <group>
+      {Array.from({ length: 2 }).map((_, i) => (
+        <line key={i} ref={el => (linesRef.current[i] = el)}>
+          <bufferGeometry>
+            <bufferAttribute
+              attach="attributes-position"
+              count={POINTS}
+              array={new Float32Array(POINTS * 3)}
+              itemSize={3}
+            />
+          </bufferGeometry>
+          <lineBasicMaterial color={color} transparent opacity={0.7 - i * 0.2} linewidth={3} />
+        </line>
+      ))}
+    </group>
+  );
+}
+
+// ── Star Field ───────────────────────────────────────────────
 function StarField() {
   const pointsRef = useRef();
-  const count = 200;
+  const count = 150;
 
   const positions = useMemo(() => {
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      const r = 25 + Math.random() * 15;
+      const r = 20;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
@@ -336,7 +204,7 @@ function StarField() {
 
   useFrame(({ clock }) => {
     if (pointsRef.current) {
-      pointsRef.current.rotation.y = clock.getElapsedTime() * 0.005;
+      pointsRef.current.rotation.y = clock.getElapsedTime() * 0.003;
     }
   });
 
@@ -345,32 +213,25 @@ function StarField() {
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
       </bufferGeometry>
-      <PointMaterial size={0.03} color="#FFFFFF" transparent opacity={0.6} sizeAttenuation />
+      <PointMaterial size={0.04} color="#FFFFFF" transparent opacity={0.7} sizeAttenuation />
     </Points>
   );
 }
 
 // ── Scene ────────────────────────────────────────────────────
-function Scene({ scrollRef, isMobile }) {
+function Scene({ scrollRef }) {
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.4} />
-      <pointLight position={[0, 3, 5]} color="#FFB300" intensity={1.5} distance={30} />
-      <pointLight position={[-5, 4, 2]} color="#00E5FF" intensity={1.2} distance={25} />
+      <ambientLight intensity={0.6} />
+      <pointLight position={[0, 5, 3]} color="#FFB300" intensity={1.5} distance={20} />
+      <pointLight position={[-5, 5, 2]} color="#00E5FF" intensity={1.2} distance={20} />
 
-      {/* Main elements */}
       <StarField />
-      <AuroraParticles isMobile={isMobile} />
-      <TruckModel scrollRef={scrollRef} isMobile={isMobile} />
-
-      {/* Aurora ribbons */}
-      <AuroraRibbon color="#00E5FF" phase={0} amplitude={0.6} offset={-0.5} scrollRef={scrollRef} />
-      <AuroraRibbon color="#7B61FF" phase={1.2} amplitude={1.0} offset={0} scrollRef={scrollRef} />
-      {!isMobile && <AuroraRibbon color="#00FF94" phase={2.4} amplitude={0.5} offset={0.5} scrollRef={scrollRef} />}
-
-      {/* Exhaust particles */}
-      {!isMobile && <ExhaustParticles scrollRef={scrollRef} isMobile={isMobile} />}
+      <AuroraParticles />
+      <SimpleTruck scrollRef={scrollRef} />
+      <AuroraRibbon color="#00E5FF" phase={0} amplitude={0.8} scrollRef={scrollRef} />
+      <AuroraRibbon color="#7B61FF" phase={2} amplitude={1.2} scrollRef={scrollRef} />
+      <AuroraRibbon color="#00FF94" phase={4} amplitude={0.6} scrollRef={scrollRef} />
     </>
   );
 }
@@ -379,14 +240,6 @@ function Scene({ scrollRef, isMobile }) {
 export default function TruckAuroraBackground() {
   const { scrollYProgress } = useScroll();
   const scrollRef = useRef(0);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useAnimationFrame(() => {
     scrollRef.current = scrollYProgress.get();
@@ -400,7 +253,7 @@ export default function TruckAuroraBackground() {
         pointerEvents: 'none',
         zIndex: 0,
       }}
-      camera={{ position: [0, 0, 12], fov: 60 }}
+      camera={{ position: [0, 2, 8], fov: 75, near: 0.1, far: 1000 }}
       gl={{
         antialias: false,
         alpha: true,
@@ -410,7 +263,7 @@ export default function TruckAuroraBackground() {
       frameloop="always"
     >
       <Suspense fallback={null}>
-        <Scene scrollRef={scrollRef} isMobile={isMobile} />
+        <Scene scrollRef={scrollRef} />
       </Suspense>
     </Canvas>
   );
