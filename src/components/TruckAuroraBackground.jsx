@@ -1,166 +1,212 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { useScroll, useAnimationFrame } from 'framer-motion';
+import { useScroll } from 'framer-motion';
 
 export default function TruckAuroraBackground() {
   const canvasRef = useRef(null);
   const { scrollYProgress } = useScroll();
-  const scrollRef = useRef(0);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useAnimationFrame(() => {
-    scrollRef.current = scrollYProgress.get();
-  });
+  const [animationId, setAnimationId] = useState(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    const dpr = window.devicePixelRatio || 1;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
 
-    const resizeCanvas = () => {
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      ctx.scale(dpr, dpr);
+    // Set canvas size
+    const setCanvasSize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
 
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    setCanvasSize();
+    window.addEventListener('resize', setCanvasSize);
+
+    let animationTime = 0;
 
     const animate = () => {
-      const w = canvas.width / dpr;
-      const h = canvas.height / dpr;
-      const progress = scrollRef.current;
-      const time = Date.now() / 1000;
+      const w = canvas.width;
+      const h = canvas.height;
+      animationTime += 0.016; // ~60fps
 
-      // Clear canvas
-      ctx.fillStyle = 'rgba(5, 10, 20, 0.1)';
+      // Get scroll progress
+      const scrollProgress = scrollYProgress.get ? scrollYProgress.get() : 0;
+
+      // ========== BACKGROUND ==========
+      const gradient = ctx.createLinearGradient(0, 0, 0, h);
+      gradient.addColorStop(0, '#050A14');
+      gradient.addColorStop(0.5, '#0D1626');
+      gradient.addColorStop(1, '#050A14');
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, w, h);
 
-      // Draw stars
+      // ========== STARFIELD ==========
       ctx.fillStyle = '#FFFFFF';
-      for (let i = 0; i < 100; i++) {
-        const x = (i * 73 + time * 10) % w;
-        const y = (i * 41) % h;
-        const size = (i % 3) * 0.5 + 0.5;
+      ctx.globalAlpha = 0.7;
+      for (let i = 0; i < 150; i++) {
+        const x = (i * 79 + animationTime * 5) % w;
+        const y = (i * 41 + Math.sin(i) * 100) % h;
+        const size = 0.5 + (i % 3) * 0.5;
         ctx.fillRect(x, y, size, size);
       }
-
-      // Truck position
-      const truckX = -100 + progress * (w + 200);
-      const truckY = h * 0.3;
-
-      // Draw aurora ribbons
-      for (let ribbon = 0; ribbon < 3; ribbon++) {
-        const colors = ['#00E5FF', '#7B61FF', '#00FF94'];
-        ctx.strokeStyle = colors[ribbon];
-        ctx.globalAlpha = 0.4;
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-
-        for (let i = 0; i < 50; i++) {
-          const x = truckX - (i / 50) * (progress * w);
-          const y = truckY + Math.sin(i * 0.1 + ribbon + time) * 20;
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
-
       ctx.globalAlpha = 1;
 
-      // Draw truck - SIMPLE AND BIG
+      // ========== TRUCK POSITION ==========
+      const truckX = 50 + scrollProgress * (w - 100);
+      const truckY = h * 0.35;
+
+      // ========== AURORA RIBBONS ==========
+      const ribbonColors = ['#00E5FF', '#7B61FF', '#00FF94'];
+      ribbonColors.forEach((color, idx) => {
+        ctx.strokeStyle = color;
+        ctx.globalAlpha = 0.5;
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+
+        const amplitude = 30 + idx * 20;
+        const phase = idx * 2;
+
+        for (let i = 0; i < 100; i++) {
+          const x = truckX - (i / 100) * (scrollProgress * w + 200);
+          const y = truckY + Math.sin(i * 0.1 + phase + animationTime * 0.5) * amplitude;
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+
+      // ========== TRUCK BODY ==========
       ctx.save();
       ctx.translate(truckX, truckY);
 
-      // Body (saffron)
+      // Truck shadow
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillRect(-30, 50, 100, 15);
+
+      // Main body (SAFFRON)
       ctx.fillStyle = '#FFB300';
-      ctx.fillRect(0, 0, 80, 40);
+      ctx.shadowColor = '#FFB300';
+      ctx.shadowBlur = 30;
+      ctx.fillRect(-20, 0, 100, 50);
 
-      // Cabin (cobalt)
+      // Cabin (COBALT)
       ctx.fillStyle = '#1A2B8C';
-      ctx.fillRect(60, -15, 30, 50);
+      ctx.shadowColor = '#1A2B8C';
+      ctx.shadowBlur = 15;
+      ctx.fillRect(50, -25, 40, 70);
 
-      // Roof (emerald)
+      // Roof (EMERALD)
       ctx.fillStyle = '#007A4C';
-      ctx.fillRect(55, -20, 40, 8);
+      ctx.shadowColor = '#007A4C';
+      ctx.shadowBlur = 20;
+      ctx.fillRect(45, -35, 50, 12);
 
       // Wheels
-      ctx.fillStyle = '#333333';
+      ctx.fillStyle = '#222222';
+      ctx.shadowColor = '#000000';
+      ctx.shadowBlur = 10;
       ctx.beginPath();
-      ctx.arc(15, 40, 12, 0, Math.PI * 2);
+      ctx.arc(0, 50, 18, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(65, 40, 12, 0, Math.PI * 2);
+      ctx.arc(70, 50, 18, 0, Math.PI * 2);
       ctx.fill();
 
-      // Wheel hubs
+      // Wheel hubs (YELLOW)
       ctx.fillStyle = '#FFB300';
+      ctx.shadowColor = '#FFB300';
+      ctx.shadowBlur = 15;
       ctx.beginPath();
-      ctx.arc(15, 40, 6, 0, Math.PI * 2);
+      ctx.arc(0, 50, 8, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(65, 40, 6, 0, Math.PI * 2);
+      ctx.arc(70, 50, 8, 0, Math.PI * 2);
       ctx.fill();
 
-      // Headlights
+      // Headlights (CYAN GLOW)
       ctx.fillStyle = '#00E5FF';
-      ctx.globalAlpha = 0.8;
+      ctx.shadowColor = '#00E5FF';
+      ctx.shadowBlur = 40;
+      ctx.globalAlpha = 0.9;
       ctx.beginPath();
-      ctx.arc(80, 8, 8, 0, Math.PI * 2);
+      ctx.arc(95, 10, 12, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(80, 32, 8, 0, Math.PI * 2);
+      ctx.arc(95, 35, 12, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = 1;
 
-      // Decorations
+      // Decorative diamond (EMERALD)
       ctx.fillStyle = '#007A4C';
-      ctx.fillRect(25, 12, 10, 10);
-      ctx.fillRect(45, 12, 10, 10);
+      ctx.shadowColor = '#007A4C';
+      ctx.shadowBlur = 15;
+      ctx.fillRect(20, 15, 15, 15);
+      ctx.fillRect(50, 15, 15, 15);
+
+      // Exhaust stack
+      ctx.fillStyle = '#666666';
+      ctx.shadowColor = '#000000';
+      ctx.shadowBlur = 10;
+      ctx.fillRect(65, -50, 12, 25);
 
       ctx.restore();
 
-      // Draw particles
-      for (let i = 0; i < 50; i++) {
-        const x = truckX + 40 + Math.sin(i + time) * 30;
-        const y = truckY - 20 + (i / 50) * 60 + Math.cos(i + time * 2) * 20;
+      // ========== EXHAUST PARTICLES ==========
+      ctx.globalAlpha = 0.6;
+      for (let i = 0; i < 80; i++) {
+        const baseX = truckX + 50;
+        const baseY = truckY - 40;
+        const angle = (i / 80) * Math.PI * 2;
+        const distance = 30 + Math.sin(animationTime * 2 + i) * 20;
+        const x = baseX + Math.cos(angle) * distance;
+        const y = baseY + Math.sin(angle) * distance;
+
         const colors = ['#FFB300', '#00E5FF', '#7B61FF'];
         ctx.fillStyle = colors[i % 3];
-        ctx.globalAlpha = 0.6;
+        ctx.shadowColor = colors[i % 3];
+        ctx.shadowBlur = 20;
+
         ctx.beginPath();
-        ctx.arc(x, y, 2, 0, Math.PI * 2);
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.globalAlpha = 1;
 
-      requestAnimationFrame(animate);
+      ctx.globalAlpha = 1;
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+
+      // Continue animation
+      const id = requestAnimationFrame(animate);
+      setAnimationId(id);
     };
 
     animate();
-    return () => window.removeEventListener('resize', resizeCanvas);
-  }, []);
+
+    return () => {
+      window.removeEventListener('resize', setCanvasSize);
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  }, [scrollYProgress]);
 
   return (
     <canvas
       ref={canvasRef}
       style={{
         position: 'fixed',
-        inset: 0,
+        top: 0,
+        left: 0,
         width: '100%',
         height: '100%',
         zIndex: 0,
         pointerEvents: 'none',
-        background: 'linear-gradient(180deg, #050A14 0%, #0D1626 100%)',
+        display: 'block',
       }}
     />
   );
