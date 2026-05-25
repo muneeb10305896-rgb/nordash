@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import { Syne, DM_Sans } from 'next/font/google';
 import './globals.css';
 
@@ -69,6 +70,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={dmSans.className}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
