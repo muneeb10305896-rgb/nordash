@@ -1,36 +1,15 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
-  const searchParams = useSearchParams();
   const [authenticated, setAuthenticated] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
-
-  useEffect(() => {
-    const token = searchParams.get('token');
-    if (token) {
-      verifyLogin(token);
-    }
-  }, [searchParams]);
-
-  const verifyLogin = async (loginToken) => {
-    try {
-      const response = await fetch(`/api/admin/verify-login?token=${loginToken}`);
-      if (response.ok) {
-        setAuthenticated(true);
-        fetchApplications();
-      }
-    } catch (error) {
-      console.error('Login verification failed');
-    }
-  };
 
   const handleAuthenticate = async (e) => {
     e.preventDefault();
