@@ -25,6 +25,7 @@ export default function TruckAuroraBackground() {
     window.addEventListener('resize', setCanvasSize);
 
     let animationTime = 0;
+    let debugLoggedOnce = false;
 
     const animate = () => {
       const w = canvas.width;
@@ -33,6 +34,12 @@ export default function TruckAuroraBackground() {
 
       // Get scroll progress
       const scrollProgress = scrollYProgress.get ? scrollYProgress.get() : 0;
+
+      // Debug: log once to verify scroll tracking
+      if (!debugLoggedOnce) {
+        console.log('Canvas initialized:', { w, h, scrollProgress });
+        debugLoggedOnce = true;
+      }
 
       // ========== BACKGROUND ==========
       const gradient = ctx.createLinearGradient(0, 0, 0, h);
@@ -56,6 +63,12 @@ export default function TruckAuroraBackground() {
       // ========== TRUCK POSITION ==========
       const truckX = 50 + scrollProgress * (w - 100);
       const truckY = h * 0.35;
+
+      // Debug: draw position indicator
+      ctx.fillStyle = '#00FF00';
+      ctx.globalAlpha = 0.7;
+      ctx.fillRect(truckX - 30, truckY - 30, 60, 60);
+      ctx.globalAlpha = 1;
 
       // ========== AURORA RIBBONS ==========
       const ribbonColors = ['#00E5FF', '#7B61FF', '#00FF94'];
@@ -81,6 +94,12 @@ export default function TruckAuroraBackground() {
       ctx.globalAlpha = 1;
 
       // ========== TRUCK BODY - SIMPLE & BIG ==========
+      // Debug test rectangle - should be bright red and visible
+      ctx.fillStyle = '#FF0000';
+      ctx.globalAlpha = 0.9;
+      ctx.fillRect(100, 100, 80, 50);
+      ctx.globalAlpha = 1;
+
       // Main body (SAFFRON - BRIGHT YELLOW)
       ctx.fillStyle = '#FFB300';
       ctx.fillRect(truckX - 50, truckY - 30, 120, 60);
