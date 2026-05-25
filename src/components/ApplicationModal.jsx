@@ -109,6 +109,8 @@ export default function ApplicationModal({ isOpen, onClose, position }) {
               overflow: 'auto',
               zIndex: 1000,
               boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+              margin: 0,
+              willChange: 'transform',
             }}
           >
             {/* Header */}
