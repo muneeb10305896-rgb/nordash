@@ -80,81 +80,44 @@ export default function TruckAuroraBackground() {
       });
       ctx.globalAlpha = 1;
 
-      // ========== TRUCK BODY ==========
-      ctx.save();
-      ctx.translate(truckX, truckY);
-
-      // Truck shadow
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-      ctx.fillRect(-30, 50, 100, 15);
-
-      // Main body (SAFFRON)
+      // ========== TRUCK BODY - SIMPLE & BIG ==========
+      // Main body (SAFFRON - BRIGHT YELLOW)
       ctx.fillStyle = '#FFB300';
-      ctx.shadowColor = '#FFB300';
-      ctx.shadowBlur = 30;
-      ctx.fillRect(-20, 0, 100, 50);
+      ctx.fillRect(truckX - 50, truckY - 30, 120, 60);
 
       // Cabin (COBALT)
       ctx.fillStyle = '#1A2B8C';
-      ctx.shadowColor = '#1A2B8C';
-      ctx.shadowBlur = 15;
-      ctx.fillRect(50, -25, 40, 70);
+      ctx.fillRect(truckX + 50, truckY - 50, 50, 80);
 
       // Roof (EMERALD)
       ctx.fillStyle = '#007A4C';
-      ctx.shadowColor = '#007A4C';
-      ctx.shadowBlur = 20;
-      ctx.fillRect(45, -35, 50, 12);
+      ctx.fillRect(truckX + 40, truckY - 65, 70, 20);
 
       // Wheels
       ctx.fillStyle = '#222222';
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 10;
       ctx.beginPath();
-      ctx.arc(0, 50, 18, 0, Math.PI * 2);
+      ctx.arc(truckX - 20, truckY + 30, 20, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(70, 50, 18, 0, Math.PI * 2);
+      ctx.arc(truckX + 80, truckY + 30, 20, 0, Math.PI * 2);
       ctx.fill();
 
-      // Wheel hubs (YELLOW)
+      // Wheel hubs
       ctx.fillStyle = '#FFB300';
-      ctx.shadowColor = '#FFB300';
-      ctx.shadowBlur = 15;
       ctx.beginPath();
-      ctx.arc(0, 50, 8, 0, Math.PI * 2);
+      ctx.arc(truckX - 20, truckY + 30, 10, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(70, 50, 8, 0, Math.PI * 2);
+      ctx.arc(truckX + 80, truckY + 30, 10, 0, Math.PI * 2);
       ctx.fill();
 
-      // Headlights (CYAN GLOW)
+      // Headlights
       ctx.fillStyle = '#00E5FF';
-      ctx.shadowColor = '#00E5FF';
-      ctx.shadowBlur = 40;
-      ctx.globalAlpha = 0.9;
+      ctx.globalAlpha = 0.8;
       ctx.beginPath();
-      ctx.arc(95, 10, 12, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(95, 35, 12, 0, Math.PI * 2);
+      ctx.arc(truckX + 100, truckY - 10, 15, 0, Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = 1;
-
-      // Decorative diamond (EMERALD)
-      ctx.fillStyle = '#007A4C';
-      ctx.shadowColor = '#007A4C';
-      ctx.shadowBlur = 15;
-      ctx.fillRect(20, 15, 15, 15);
-      ctx.fillRect(50, 15, 15, 15);
-
-      // Exhaust stack
-      ctx.fillStyle = '#666666';
-      ctx.shadowColor = '#000000';
-      ctx.shadowBlur = 10;
-      ctx.fillRect(65, -50, 12, 25);
-
-      ctx.restore();
 
       // ========== EXHAUST PARTICLES ==========
       ctx.globalAlpha = 0.6;
