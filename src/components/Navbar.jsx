@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import MagneticButton from './MagneticButton';
 
-const links = ['Services', 'Process', 'Work', 'About', 'Careers'];
+const links = ['Services', 'Process', 'Work', 'About'];
 
 export default function Navbar({ onStartProject }) {
   const [scrolled, setScrolled] = useState(false);
