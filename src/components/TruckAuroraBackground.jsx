@@ -1,203 +1,221 @@
 'use client';
-
-import { useRef, useEffect } from 'react';
+import { useRef, useMemo, Suspense, useEffect } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { PointMaterial, Points } from '@react-three/drei';
+import * as THREE from 'three';
 import { useScroll } from 'framer-motion';
 
+// Truck model
+function Truck({ scrollRef }) {
+  const bodyRef = useRef();
+  const cabinRef = useRef();
+  const roofRef = useRef();
+  const wheel1Ref = useRef();
+  const wheel2Ref = useRef();
+
+  useFrame(() => {
+    const progress = scrollRef.current;
+    const truckX = -14 + progress * 28;
+
+    if (bodyRef.current) bodyRef.current.position.x = truckX;
+    if (cabinRef.current) cabinRef.current.position.x = truckX;
+    if (roofRef.current) roofRef.current.position.x = truckX;
+    if (wheel1Ref.current) {
+      wheel1Ref.current.position.x = truckX - 2;
+      wheel1Ref.current.rotation.z += 0.05;
+    }
+    if (wheel2Ref.current) {
+      wheel2Ref.current.position.x = truckX + 3;
+      wheel2Ref.current.rotation.z += 0.05;
+    }
+  });
+
+  return (
+    <group>
+      {/* Body - Saffron */}
+      <mesh ref={bodyRef} position={[0, 1.5, 0]}>
+        <boxGeometry args={[4, 0.8, 1.5]} />
+        <meshStandardMaterial color="#FFB300" emissive="#FFB300" emissiveIntensity={0.3} />
+      </mesh>
+
+      {/* Cabin - Cobalt */}
+      <mesh ref={cabinRef} position={[0, 2.2, 0]}>
+        <boxGeometry args={[1.5, 1.2, 1.5]} />
+        <meshStandardMaterial color="#1A2B8C" emissive="#1A2B8C" emissiveIntensity={0.2} />
+      </mesh>
+
+      {/* Roof - Emerald */}
+      <mesh ref={roofRef} position={[0, 2.9, 0]}>
+        <boxGeometry args={[1.4, 0.15, 1.5]} />
+        <meshStandardMaterial color="#007A4C" emissive="#007A4C" emissiveIntensity={0.25} />
+      </mesh>
+
+      {/* Wheels */}
+      <mesh ref={wheel1Ref} position={[-2, 0.8, 0]}>
+        <cylinderGeometry args={[0.4, 0.4, 0.3, 16]} rotation={[Math.PI / 2, 0, 0]} />
+        <meshStandardMaterial color="#1A1A1A" />
+      </mesh>
+
+      <mesh ref={wheel2Ref} position={[3, 0.8, 0]}>
+        <cylinderGeometry args={[0.4, 0.4, 0.3, 16]} rotation={[Math.PI / 2, 0, 0]} />
+        <meshStandardMaterial color="#1A1A1A" />
+      </mesh>
+
+      {/* Headlight */}
+      <pointLight position={[2.2, 1.8, 0.8]} color="#00E5FF" intensity={1.5} distance={5} />
+    </group>
+  );
+}
+
+// Aurora Ribbon
+function AuroraRibbon({ color, phase, amplitude, scrollRef }) {
+  const lineRef = useRef();
+
+  useFrame(({ clock }) => {
+    if (!lineRef.current) return;
+
+    const t = clock.getElapsedTime();
+    const progress = scrollRef.current;
+    const truckX = -14 + progress * 28;
+
+    const points = [];
+    const count = 80;
+
+    for (let i = 0; i < count; i++) {
+      const x = truckX - (i / count) * 15;
+      const y = 2 + Math.sin(i * 0.15 + phase + t * 0.3) * amplitude;
+      const z = Math.cos(i * 0.1 + phase + t * 0.2) * 0.5;
+      points.push(new THREE.Vector3(x, y, z));
+    }
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    lineRef.current.geometry.dispose();
+    lineRef.current.geometry = geometry;
+  });
+
+  return (
+    <lineSegments ref={lineRef}>
+      <bufferGeometry />
+      <lineBasicMaterial color={color} transparent opacity={0.6} linewidth={3} />
+    </lineSegments>
+  );
+}
+
+// Exhaust Particles
+function ExhaustParticles({ scrollRef }) {
+  const pointsRef = useRef();
+  const particlesRef = useRef(new Float32Array(300 * 3));
+
+  useFrame(({ clock }) => {
+    if (!pointsRef.current) return;
+
+    const progress = scrollRef.current;
+    const truckX = -14 + progress * 28;
+    const baseY = 2;
+    const baseZ = 0;
+
+    const positions = pointsRef.current;
+    const t = clock.getElapsedTime();
+
+    for (let i = 0; i < 100; i++) {
+      const angle = (i / 100) * Math.PI * 2;
+      const distance = 1.5 + Math.sin(t * 2 + i) * 1;
+
+      positions[i * 3]     = truckX + Math.cos(angle) * distance;
+      positions[i * 3 + 1] = baseY + Math.sin(angle) * distance;
+      positions[i * 3 + 2] = baseZ + Math.cos(angle * 0.5) * 0.3;
+    }
+
+    pointsRef.current.needsUpdate = true;
+  });
+
+  return (
+    <Points ref={pointsRef} positions={particlesRef.current}>
+      <PointMaterial sizeAttenuation color="#FFB300" size={0.08} />
+    </Points>
+  );
+}
+
+// Background stars
+function BackgroundStars() {
+  const pointsRef = useRef();
+  const starPositions = useMemo(() => {
+    const positions = new Float32Array(200 * 3);
+    for (let i = 0; i < 200; i++) {
+      const r = 20 + Math.random() * 30;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = r * Math.cos(phi);
+    }
+    return positions;
+  }, []);
+
+  useFrame(({ clock }) => {
+    if (pointsRef.current) {
+      pointsRef.current.rotation.y = clock.getElapsedTime() * 0.002;
+    }
+  });
+
+  return (
+    <Points ref={pointsRef} positions={starPositions}>
+      <PointMaterial size={0.05} color="#FFFFFF" opacity={0.5} />
+    </Points>
+  );
+}
+
+// Main scene
+function Scene({ scrollRef, isMobile }) {
+  return (
+    <>
+      <ambientLight intensity={0.4} />
+      <BackgroundStars />
+      <Truck scrollRef={scrollRef} />
+      <AuroraRibbon color="#00E5FF" phase={0} amplitude={0.6} scrollRef={scrollRef} />
+      <AuroraRibbon color="#7B61FF" phase={1.2} amplitude={1} scrollRef={scrollRef} />
+      <AuroraRibbon color="#00FF94" phase={2.4} amplitude={0.5} scrollRef={scrollRef} />
+      {!isMobile && <ExhaustParticles scrollRef={scrollRef} />}
+    </>
+  );
+}
+
 export default function TruckAuroraBackground() {
-  const canvasRef = useRef(null);
-  const animationIdRef = useRef(null);
   const { scrollYProgress } = useScroll();
+  const scrollRef = useRef(0);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    console.log('Canvas ref:', canvas);
-    if (!canvas) {
-      console.error('Canvas element not found in DOM!');
-      return;
-    }
+    let animationFrameId;
 
-    const ctx = canvas.getContext('2d', { alpha: true });
-    console.log('Canvas context:', ctx);
-    if (!ctx) {
-      console.error('Failed to get canvas context!');
-      return;
-    }
-
-    // Set canvas size
-    const setCanvasSize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    const updateScroll = () => {
+      if (scrollYProgress.get) {
+        scrollRef.current = scrollYProgress.get();
+      }
+      animationFrameId = requestAnimationFrame(updateScroll);
     };
 
-    setCanvasSize();
-    console.log('Canvas size set to:', canvas.width, 'x', canvas.height);
-    window.addEventListener('resize', setCanvasSize);
+    updateScroll();
 
-    let animationTime = 0;
-    let debugLoggedOnce = false;
-
-    const animate = () => {
-      const w = canvas.width;
-      const h = canvas.height;
-      animationTime += 0.016; // ~60fps
-
-      // Get scroll progress
-      const scrollProgress = scrollYProgress.get ? scrollYProgress.get() : 0;
-
-      // Debug: log once to verify scroll tracking
-      if (!debugLoggedOnce) {
-        console.log('Canvas initialized:', { w, h, scrollProgress });
-        debugLoggedOnce = true;
-      }
-
-      // ========== BACKGROUND ==========
-      const gradient = ctx.createLinearGradient(0, 0, 0, h);
-      gradient.addColorStop(0, '#050A14');
-      gradient.addColorStop(0.5, '#0D1626');
-      gradient.addColorStop(1, '#050A14');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, w, h);
-
-      // ========== STARFIELD ==========
-      ctx.fillStyle = '#FFFFFF';
-      ctx.globalAlpha = 0.7;
-      for (let i = 0; i < 150; i++) {
-        const x = (i * 79 + animationTime * 5) % w;
-        const y = (i * 41 + Math.sin(i) * 100) % h;
-        const size = 0.5 + (i % 3) * 0.5;
-        ctx.fillRect(x, y, size, size);
-      }
-      ctx.globalAlpha = 1;
-
-      // ========== TRUCK POSITION ==========
-      const truckX = 50 + scrollProgress * (w - 100);
-      const truckY = h * 0.35;
-
-      // Debug: draw position indicator
-      ctx.fillStyle = '#00FF00';
-      ctx.globalAlpha = 0.7;
-      ctx.fillRect(truckX - 30, truckY - 30, 60, 60);
-      ctx.globalAlpha = 1;
-
-      // ========== AURORA RIBBONS ==========
-      const ribbonColors = ['#00E5FF', '#7B61FF', '#00FF94'];
-      ribbonColors.forEach((color, idx) => {
-        ctx.strokeStyle = color;
-        ctx.globalAlpha = 0.5;
-        ctx.lineWidth = 8;
-        ctx.beginPath();
-
-        const amplitude = 30 + idx * 20;
-        const phase = idx * 2;
-
-        for (let i = 0; i < 100; i++) {
-          const x = truckX - (i / 100) * (scrollProgress * w + 200);
-          const y = truckY + Math.sin(i * 0.1 + phase + animationTime * 0.5) * amplitude;
-          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.stroke();
-      });
-      ctx.globalAlpha = 1;
-
-      // ========== TRUCK BODY - SIMPLE & BIG ==========
-      // Debug test rectangle - should be bright red and visible
-      ctx.fillStyle = '#FF0000';
-      ctx.globalAlpha = 0.9;
-      ctx.fillRect(100, 100, 80, 50);
-      ctx.globalAlpha = 1;
-
-      // Main body (SAFFRON - BRIGHT YELLOW)
-      ctx.fillStyle = '#FFB300';
-      ctx.fillRect(truckX - 50, truckY - 30, 120, 60);
-
-      // Cabin (COBALT)
-      ctx.fillStyle = '#1A2B8C';
-      ctx.fillRect(truckX + 50, truckY - 50, 50, 80);
-
-      // Roof (EMERALD)
-      ctx.fillStyle = '#007A4C';
-      ctx.fillRect(truckX + 40, truckY - 65, 70, 20);
-
-      // Wheels
-      ctx.fillStyle = '#222222';
-      ctx.beginPath();
-      ctx.arc(truckX - 20, truckY + 30, 20, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(truckX + 80, truckY + 30, 20, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Wheel hubs
-      ctx.fillStyle = '#FFB300';
-      ctx.beginPath();
-      ctx.arc(truckX - 20, truckY + 30, 10, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(truckX + 80, truckY + 30, 10, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Headlights
-      ctx.fillStyle = '#00E5FF';
-      ctx.globalAlpha = 0.8;
-      ctx.beginPath();
-      ctx.arc(truckX + 100, truckY - 10, 15, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
-      // ========== EXHAUST PARTICLES ==========
-      ctx.globalAlpha = 0.6;
-      for (let i = 0; i < 80; i++) {
-        const baseX = truckX + 50;
-        const baseY = truckY - 40;
-        const angle = (i / 80) * Math.PI * 2;
-        const distance = 30 + Math.sin(animationTime * 2 + i) * 20;
-        const x = baseX + Math.cos(angle) * distance;
-        const y = baseY + Math.sin(angle) * distance;
-
-        const colors = ['#FFB300', '#00E5FF', '#7B61FF'];
-        ctx.fillStyle = colors[i % 3];
-        ctx.shadowColor = colors[i % 3];
-        ctx.shadowBlur = 20;
-
-        ctx.beginPath();
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      ctx.globalAlpha = 1;
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-
-      // Continue animation
-      animationIdRef.current = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', setCanvasSize);
-      if (animationIdRef.current) {
-        cancelAnimationFrame(animationIdRef.current);
-      }
-    };
+    return () => cancelAnimationFrame(animationFrameId);
   }, [scrollYProgress]);
 
   return (
-    <canvas
-      ref={canvasRef}
+    <Canvas
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: 0,
+        inset: 0,
         pointerEvents: 'none',
-        display: 'block',
+        zIndex: 0,
       }}
-    />
+      camera={{ position: [0, 0, 10], fov: 60 }}
+      gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
+      dpr={[1, 1.5]}
+      frameloop="always"
+    >
+      <Suspense fallback={null}>
+        <Scene scrollRef={scrollRef} isMobile={isMobile} />
+      </Suspense>
+    </Canvas>
   );
 }
