@@ -4,10 +4,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 export default function ResetPassword() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const token = searchParams.get('token');
-
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,10 +13,12 @@ export default function ResetPassword() {
   const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
-    verifyToken();
-  }, [token]);
+    const searchParams = useSearchParams();
+    const token = searchParams.get('token');
+    verifyToken(token);
+  }, []);
 
-  const verifyToken = async () => {
+  const verifyToken = async (token) => {
     if (!token) {
       setStatus({ type: 'error', message: 'No reset token provided' });
       setVerifying(false);
