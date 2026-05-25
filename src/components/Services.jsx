@@ -210,9 +210,9 @@ export default function Services() {
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
-          gap: 1,
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.05)',
+          gap: 0,
+          background: 'transparent',
+          border: 'none',
         }}>
           {services.map((s, i) => (
             <div key={s.id} style={{ background: '#08101F' }}>
