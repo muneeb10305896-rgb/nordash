@@ -126,22 +126,23 @@ function TruckModel({ scrollRef, isMobile }) {
 
 // ── Aurora Ribbon ────────────────────────────────────────────
 function AuroraRibbon({ color, phase, amplitude, offset, scrollRef }) {
-  const linesRef = useRef([]);
-  const POINTS = 80;
-  const RIBBON_WIDTH = 3;
+  const geosRef = useRef([]);
+  const POINTS = 60;
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
     const progress = scrollRef.current;
     const truckX = -14 + progress * 28;
 
-    // Create multiple lines for width effect
-    for (let line = 0; line < RIBBON_WIDTH; line++) {
-      const positions = new Float32Array(POINTS * 3);
-      const offsetZ = (line - RIBBON_WIDTH / 2 + 0.5) * 0.15;
+    // Update three ribbon layers
+    for (let layer = 0; layer < 3; layer++) {
+      if (!geosRef.current[layer]) return;
+
+      const positions = geosRef.current[layer].attributes.position.array;
+      const offsetZ = (layer - 1) * 0.2;
 
       for (let i = 0; i < POINTS; i++) {
-        const px = truckX - (i / POINTS) * progress * 28;
+        const px = truckX - (i / POINTS) * (progress * 28 + 5);
         const py = 2 + Math.sin(i * 0.15 + phase + t * 0.3) * amplitude;
         const pz = Math.cos(i * 0.1 + phase + t * 0.2) * 0.5 + offset + offsetZ;
 
@@ -150,18 +151,15 @@ function AuroraRibbon({ color, phase, amplitude, offset, scrollRef }) {
         positions[i * 3 + 2] = pz;
       }
 
-      if (linesRef.current[line]) {
-        linesRef.current[line].geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        linesRef.current[line].geometry.attributes.position.needsUpdate = true;
-      }
+      geosRef.current[layer].attributes.position.needsUpdate = true;
     }
   });
 
   return (
     <group>
-      {Array.from({ length: RIBBON_WIDTH }).map((_, i) => (
-        <line key={i} ref={el => (linesRef.current[i] = el)}>
-          <bufferGeometry>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <line key={i}>
+          <bufferGeometry ref={el => (geosRef.current[i] = el)}>
             <bufferAttribute
               attach="attributes-position"
               count={POINTS}
@@ -172,7 +170,7 @@ function AuroraRibbon({ color, phase, amplitude, offset, scrollRef }) {
           <lineBasicMaterial
             color={color}
             transparent
-            opacity={0.6 - i * 0.15}
+            opacity={0.5 - i * 0.12}
             linewidth={2}
           />
         </line>
@@ -185,20 +183,23 @@ function AuroraRibbon({ color, phase, amplitude, offset, scrollRef }) {
 function ExhaustParticles({ scrollRef, isMobile }) {
   const pointsRef = useRef();
   const particlesRef = useRef([]);
-  const maxParticles = isMobile ? 40 : 100;
+  const maxParticles = isMobile ? 40 : 80;
+  const posArrayRef = useRef(new Float32Array(maxParticles * 3));
+  const colArrayRef = useRef(new Float32Array(maxParticles * 3));
 
-  useMemo(() => {
+  // Init particles once
+  useEffect(() => {
     for (let i = 0; i < maxParticles; i++) {
-      particlesRef.current.push({
+      particlesRef.current[i] = {
         x: 0,
         y: 0,
         z: 0,
-        vx: (Math.random() - 0.5) * 0.05,
-        vy: Math.random() * 0.03 + 0.02,
+        vx: (Math.random() - 0.5) * 0.04,
+        vy: Math.random() * 0.03 + 0.015,
         vz: (Math.random() - 0.5) * 0.02,
-        age: Math.random() * maxParticles,
-        lifespan: maxParticles * 2,
-      });
+        age: 0,
+        lifespan: 120,
+      };
     }
   }, [maxParticles]);
 
@@ -207,8 +208,16 @@ function ExhaustParticles({ scrollRef, isMobile }) {
     const truckX = -14 + progress * 28;
     const exhaustY = 3.6;
     const exhaustZ = 0;
+    const particleColors = [
+      new THREE.Color('#FFB300'),
+      new THREE.Color('#00E5FF'),
+      new THREE.Color('#7B61FF'),
+    ];
 
-    particlesRef.current.forEach(p => {
+    const positions = posArrayRef.current;
+    const colors = colArrayRef.current;
+
+    particlesRef.current.forEach((p, i) => {
       p.age++;
       if (p.age > p.lifespan) {
         p.x = truckX;
@@ -220,27 +229,20 @@ function ExhaustParticles({ scrollRef, isMobile }) {
         p.y += p.vy;
         p.z += p.vz;
       }
+
+      positions[i * 3] = p.x;
+      positions[i * 3 + 1] = p.y;
+      positions[i * 3 + 2] = p.z;
+
+      const c = particleColors[i % 3];
+      colors[i * 3] = c.r;
+      colors[i * 3 + 1] = c.g;
+      colors[i * 3 + 2] = c.b;
     });
 
-    if (pointsRef.current) {
-      const positions = new Float32Array(maxParticles * 3);
-      const colors = new Float32Array(maxParticles * 3);
-      const particleColors = ['#FFB300', '#00E5FF', '#7B61FF'];
-
-      particlesRef.current.forEach((p, i) => {
-        positions[i * 3] = p.x;
-        positions[i * 3 + 1] = p.y;
-        positions[i * 3 + 2] = p.z;
-
-        const colorIdx = i % particleColors.length;
-        const color = new THREE.Color(particleColors[colorIdx]);
-        colors[i * 3] = color.r;
-        colors[i * 3 + 1] = color.g;
-        colors[i * 3 + 2] = color.b;
-      });
-
-      pointsRef.current.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      pointsRef.current.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    if (pointsRef.current?.geometry.attributes.position) {
+      pointsRef.current.geometry.attributes.position.needsUpdate = true;
+      pointsRef.current.geometry.attributes.color.needsUpdate = true;
     }
   });
 
@@ -250,17 +252,17 @@ function ExhaustParticles({ scrollRef, isMobile }) {
         <bufferAttribute
           attach="attributes-position"
           count={maxParticles}
-          array={new Float32Array(maxParticles * 3)}
+          array={posArrayRef.current}
           itemSize={3}
         />
         <bufferAttribute
           attach="attributes-color"
           count={maxParticles}
-          array={new Float32Array(maxParticles * 3)}
+          array={colArrayRef.current}
           itemSize={3}
         />
       </bufferGeometry>
-      <PointMaterial size={0.08} vertexColors transparent />
+      <PointMaterial size={0.06} vertexColors transparent />
     </Points>
   );
 }
