@@ -67,6 +67,7 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/favicon.ico" />
         <meta name="theme-color" content="#050A14" />
+        <meta name="google-site-verification" content="d327c9614d9d1dda" />
       </head>
       <body className={dmSans.className}>
         {children}
