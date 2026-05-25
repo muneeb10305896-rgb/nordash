@@ -1,11 +1,12 @@
-import { readFile, writeFile } from 'fs/promises';
+import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
+import { dirname } from 'path';
 
 const getStoragePath = () => {
   if (process.env.NODE_ENV === 'production') {
     return '/tmp/applications.json';
   }
-  return join(process.cwd(), '.applications.json');
+  return join(process.cwd(), '.data', 'applications.json');
 };
 
 const getApplicationsList = async () => {
@@ -14,6 +15,7 @@ const getApplicationsList = async () => {
     const data = await readFile(path, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
+    // File doesn't exist yet, return empty array
     return [];
   }
 };
@@ -21,11 +23,21 @@ const getApplicationsList = async () => {
 const saveApplicationsList = async (list) => {
   try {
     const path = getStoragePath();
+    const dir = dirname(path);
+
+    // Ensure directory exists
+    try {
+      await mkdir(dir, { recursive: true });
+    } catch (err) {
+      // Directory might already exist
+    }
+
     // Keep only last 100 applications
     const filtered = list.slice(0, 100);
-    await writeFile(path, JSON.stringify(filtered, null, 2));
+    await writeFile(path, JSON.stringify(filtered, null, 2), 'utf-8');
   } catch (error) {
     console.error('Error saving to file:', error);
+    throw error;
   }
 };
 
