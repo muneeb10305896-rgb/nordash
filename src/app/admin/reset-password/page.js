@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 
 export default function ResetPassword() {
   const router = useRouter();
+  const [token, setToken] = useState(null);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,8 +16,9 @@ export default function ResetPassword() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      const token = params.get('token');
-      verifyToken(token);
+      const tokenFromUrl = params.get('token');
+      setToken(tokenFromUrl);
+      verifyToken(tokenFromUrl);
     }
   }, []);
 
