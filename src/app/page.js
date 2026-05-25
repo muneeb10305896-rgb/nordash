@@ -11,12 +11,14 @@ import Team from '@/components/Team';
 import CTA from '@/components/CTA';
 import Footer from '@/components/Footer';
 import ContactModal from '@/components/ContactModal';
+import PakistaniTruckScroll from '@/components/PakistaniTruckScroll';
 
 export default function Home() {
   const [modalType, setModalType] = useState(null);
 
   return (
     <>
+      <PakistaniTruckScroll />
       <Navbar onStartProject={() => setModalType('book-call')} />
       <main>
         <Hero />
