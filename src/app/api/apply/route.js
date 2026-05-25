@@ -153,10 +153,10 @@ export async function POST(request) {
       </div>
     `;
 
-    // Send to admin (Farheen)
+    // Send to admin (Muneeb)
     await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: 'farheen@nordash.agency',
+      to: 'muneeb10305896@gmail.com',
       subject: `📋 New Application: ${name} - ${position}`,
       html: adminEmailHtml,
       attachments: attachments,
