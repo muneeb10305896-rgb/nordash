@@ -9,15 +9,21 @@ export async function POST(request) {
     const formData = await request.formData();
     const position = formData.get('position');
     const positionId = formData.get('positionId');
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const phone = formData.get('phone');
-    const linkedin = formData.get('linkedin');
+    const name = formData.get('name')?.trim();
+    const email = formData.get('email')?.trim().toLowerCase();
+    const phone = formData.get('phone')?.trim();
+    const linkedin = formData.get('linkedin')?.trim();
     const cvFile = formData.get('cv');
     const coverLetterFile = formData.get('coverLetter');
 
     if (!name || !email || !phone || !cvFile) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return Response.json({ error: 'Invalid email address' }, { status: 400 });
     }
 
     // Convert files to base64 for email attachments
@@ -169,6 +175,7 @@ export async function POST(request) {
 
     // Send confirmation to applicant
     try {
+      console.log(`[Apply] Sending confirmation email to: ${email}`);
       const confirmationResult = await resend.emails.send({
         from: 'onboarding@resend.dev',
         to: email,
@@ -177,11 +184,13 @@ export async function POST(request) {
       });
 
       if (confirmationResult.error) {
-        console.error('Confirmation email error:', confirmationResult.error);
-        // Don't throw - continue anyway, applicant will still see success
+        console.error('[Apply] Confirmation email error:', confirmationResult.error);
+        // Log but continue - admin email was sent successfully
+      } else {
+        console.log(`[Apply] Confirmation email sent successfully to ${email}`);
       }
     } catch (error) {
-      console.error('Failed to send confirmation email:', error);
+      console.error('[Apply] Failed to send confirmation email to', email, ':', error);
       // Still continue since admin email was sent
     }
 
