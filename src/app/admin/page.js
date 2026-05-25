@@ -1,31 +1,67 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function AdminDashboard() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const [authenticated, setAuthenticated] = useState(false);
-  const [inputToken, setInputToken] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const correctToken = process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'nordash2025';
+  const [loginError, setLoginError] = useState('');
 
   useEffect(() => {
-    if (token === correctToken) {
-      setAuthenticated(true);
-      fetchApplications();
+    if (token) {
+      verifyLogin(token);
     }
   }, [token]);
 
-  const handleAuthenticate = (e) => {
+  const verifyLogin = async (loginToken) => {
+    try {
+      const response = await fetch(`/api/admin/verify-login?token=${loginToken}`);
+      if (response.ok) {
+        setAuthenticated(true);
+        fetchApplications();
+      }
+    } catch (error) {
+      console.error('Login verification failed');
+    }
+  };
+
+  const handleAuthenticate = async (e) => {
     e.preventDefault();
-    if (inputToken === correctToken) {
-      setAuthenticated(true);
-      fetchApplications();
-    } else {
-      alert('Invalid token');
+    setLoginError('');
+
+    if (!email || !password) {
+      setLoginError('Please fill all fields');
+      return;
+    }
+
+    loading ? null : setLoading(true);
+
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAuthenticated(true);
+        fetchApplications();
+      } else {
+        setLoginError(data.error || 'Invalid email or password');
+      }
+    } catch (error) {
+      setLoginError('Login failed. Try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,24 +83,48 @@ export default function AdminDashboard() {
   if (!authenticated) {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--midnight)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-        <div style={{ maxWidth: 400, width: '100%' }}>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          style={{ maxWidth: 400, width: '100%' }}
+        >
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: '40px' }}>
-            <h1 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 24, textAlign: 'center' }}>
+            <h1 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8, textAlign: 'center' }}>
               NORDASH
-              <br />
-              <span style={{ fontSize: 16, color: '#FFB300' }}>Admin Access</span>
             </h1>
+            <p className="font-dm" style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', margin: '0 0 24px 0' }}>
+              Admin Access
+            </p>
+
+            {loginError && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{
+                  padding: 12,
+                  marginBottom: 20,
+                  borderRadius: 8,
+                  background: 'rgba(215, 43, 43, 0.1)',
+                  border: '1px solid rgba(215, 43, 43, 0.3)',
+                  color: '#FF6B6B',
+                  fontSize: 12,
+                }}
+              >
+                {loginError}
+              </motion.div>
+            )}
 
             <form onSubmit={handleAuthenticate} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <label className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>
-                  Admin Token
+                  Admin Email
                 </label>
                 <input
-                  type="password"
-                  value={inputToken}
-                  onChange={(e) => setInputToken(e.target.value)}
-                  placeholder="Enter admin token"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="your@email.com"
                   style={{
                     width: '100%',
                     padding: '12px 14px',
@@ -74,24 +134,61 @@ export default function AdminDashboard() {
                     color: 'var(--text-primary)',
                     fontSize: 13,
                     outline: 'none',
+                    transition: 'border-color 0.3s',
                   }}
+                  onFocus={e => e.target.style.borderColor = '#FFB300'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'}
                   autoFocus
                 />
               </div>
+
+              <div>
+                <label className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 6 }}>
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  style={{
+                    width: '100%',
+                    padding: '12px 14px',
+                    background: 'var(--deep)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    color: 'var(--text-primary)',
+                    fontSize: 13,
+                    outline: 'none',
+                    transition: 'border-color 0.3s',
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#FFB300'}
+                  onBlur={e => e.target.style.borderColor = 'var(--border)'}
+                />
+              </div>
+
               <button
                 type="submit"
+                disabled={loading}
                 className="btn-primary"
-                style={{ padding: '12px 24px', fontSize: 13 }}
+                style={{
+                  padding: '12px 24px',
+                  fontSize: 13,
+                  opacity: loading ? 0.7 : 1,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                }}
               >
-                Access Dashboard
+                {loading ? 'Logging in...' : 'Login'}
               </button>
             </form>
 
             <p className="font-dm" style={{ fontSize: 11, color: 'var(--text-faint)', textAlign: 'center', marginTop: 20 }}>
-              Contact Muneeb for the admin token
+              <Link href="/admin/forgot-password" style={{ color: '#FFB300', textDecoration: 'none' }}>
+                Forgot your password?
+              </Link>
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
