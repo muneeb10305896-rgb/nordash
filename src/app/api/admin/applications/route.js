@@ -1,21 +1,9 @@
-// In-memory storage for applications (per Lambda instance)
-// Note: This is ephemeral - applications are kept in memory during the function's lifetime
-// For persistent storage, consider using a database like MongoDB, PostgreSQL, or Vercel KV
-let applicationsList = [];
-let isInitialized = false;
-
-// Initialize applications list
-function initializeApplications() {
-  if (!isInitialized) {
-    console.log('[Applications] Initializing in-memory store');
-    applicationsList = [];
-    isInitialized = true;
-  }
-}
+import dbConnect from '@/lib/mongodb';
+import Application from '@/models/Application';
 
 export async function POST(request) {
   try {
-    initializeApplications();
+    await dbConnect();
 
     const data = await request.json();
 
@@ -26,26 +14,18 @@ export async function POST(request) {
       );
     }
 
-    const application = {
-      id: Date.now(),
+    const application = await Application.create({
       name: data.name,
       email: data.email,
       phone: data.phone,
       linkedin: data.linkedin || '',
       position: data.position,
       positionId: data.positionId,
-      date: new Date().toISOString(),
-    };
+      cvFileName: data.cvFileName,
+      coverLetterFileName: data.coverLetterFileName,
+    });
 
-    // Add to beginning of list
-    applicationsList.unshift(application);
-
-    // Keep only last 100 applications
-    if (applicationsList.length > 100) {
-      applicationsList = applicationsList.slice(0, 100);
-    }
-
-    console.log(`[Applications] Saved application #${application.id} from ${data.name}`);
+    console.log(`[Applications] Saved application from ${data.name}`);
 
     return Response.json({ success: true, application }, { status: 200 });
   } catch (error) {
@@ -59,9 +39,10 @@ export async function POST(request) {
 
 export async function GET(request) {
   try {
-    initializeApplications();
-    console.log(`[Applications] Fetching list (${applicationsList.length} applications)`);
-    return Response.json({ applications: applicationsList }, { status: 200 });
+    await dbConnect();
+    const applications = await Application.find().sort({ createdAt: -1 });
+    console.log(`[Applications] Fetching list (${applications.length} applications)`);
+    return Response.json({ applications }, { status: 200 });
   } catch (error) {
     console.error('[Applications] Error fetching applications:', error);
     return Response.json(

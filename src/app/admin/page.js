@@ -301,7 +301,7 @@ export default function AdminDashboard() {
                       <a href={`tel:${app.phone}`} style={{ color: '#00E5FF', textDecoration: 'none' }}>{app.phone}</a>
                     </td>
                     <td className="font-dm" style={{ padding: '16px 20px', fontSize: 13, color: 'var(--text-faint)' }}>
-                      {new Date(app.date).toLocaleDateString()}
+                      {new Date(app.createdAt).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
