@@ -36,7 +36,7 @@ export default function Team() {
       image: 'https://i.ibb.co/xK3ZSPbR/33816-enhanced.jpg',
       expertise: ['Video Editing', 'UI/UX Design', 'Web Development', 'Brand Strategy', 'Digital Marketing'],
       social: {
-        linkedin: 'https://www.linkedin.com/in/muneeb-ahmed-butt/',
+        linkedin: 'https://www.linkedin.com/in/muneeb-ahmed-butt-4a384438a/',
         github: 'https://github.com/muneeb10305896-rgb',
       }
     }
