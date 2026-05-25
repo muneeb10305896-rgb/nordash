@@ -154,21 +154,36 @@ export async function POST(request) {
     `;
 
     // Send to admin (Muneeb)
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: 'muneeb10305896@gmail.com',
-      subject: `📋 New Application: ${name} - ${position}`,
-      html: adminEmailHtml,
-      attachments: attachments,
-    });
+    try {
+      await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: 'muneeb10305896@gmail.com',
+        subject: `📋 New Application: ${name} - ${position}`,
+        html: adminEmailHtml,
+        attachments: attachments,
+      });
+    } catch (error) {
+      console.error('Failed to send admin email:', error);
+      throw new Error('Failed to send notification email');
+    }
 
     // Send confirmation to applicant
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: email,
-      subject: `Application Received - ${position} at NORDASH`,
-      html: applicantEmailHtml,
-    });
+    try {
+      const confirmationResult = await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: email,
+        subject: `Application Received - ${position} at NORDASH`,
+        html: applicantEmailHtml,
+      });
+
+      if (confirmationResult.error) {
+        console.error('Confirmation email error:', confirmationResult.error);
+        // Don't throw - continue anyway, applicant will still see success
+      }
+    } catch (error) {
+      console.error('Failed to send confirmation email:', error);
+      // Still continue since admin email was sent
+    }
 
     // Save application to dashboard
     try {
@@ -190,8 +205,9 @@ export async function POST(request) {
 
     return Response.json({
       success: true,
-      message: 'Application submitted successfully'
-    });
+      message: 'Application submitted successfully. Check your email for confirmation.',
+      applicationId: Date.now(),
+    }, { status: 200 });
 
   } catch (error) {
     console.error('Application error:', error);

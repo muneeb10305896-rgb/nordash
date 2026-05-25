@@ -1,78 +1,72 @@
-import { readFile, writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { dirname } from 'path';
+// In-memory storage for applications (per Lambda instance)
+// Note: This is ephemeral - applications are kept in memory during the function's lifetime
+// For persistent storage, consider using a database like MongoDB, PostgreSQL, or Vercel KV
+let applicationsList = [];
+let isInitialized = false;
 
-const getStoragePath = () => {
-  if (process.env.NODE_ENV === 'production') {
-    return '/tmp/applications.json';
+// Initialize applications list
+function initializeApplications() {
+  if (!isInitialized) {
+    console.log('[Applications] Initializing in-memory store');
+    applicationsList = [];
+    isInitialized = true;
   }
-  return join(process.cwd(), '.data', 'applications.json');
-};
-
-const getApplicationsList = async () => {
-  try {
-    const path = getStoragePath();
-    const data = await readFile(path, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    // File doesn't exist yet, return empty array
-    return [];
-  }
-};
-
-const saveApplicationsList = async (list) => {
-  try {
-    const path = getStoragePath();
-    const dir = dirname(path);
-
-    // Ensure directory exists
-    try {
-      await mkdir(dir, { recursive: true });
-    } catch (err) {
-      // Directory might already exist
-    }
-
-    // Keep only last 100 applications
-    const filtered = list.slice(0, 100);
-    await writeFile(path, JSON.stringify(filtered, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Error saving to file:', error);
-    throw error;
-  }
-};
+}
 
 export async function POST(request) {
   try {
+    initializeApplications();
+
     const data = await request.json();
+
+    if (!data.name || !data.email || !data.phone || !data.position) {
+      return Response.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
 
     const application = {
       id: Date.now(),
       name: data.name,
       email: data.email,
       phone: data.phone,
-      linkedin: data.linkedin,
+      linkedin: data.linkedin || '',
       position: data.position,
       positionId: data.positionId,
       date: new Date().toISOString(),
     };
 
-    const applicationsList = await getApplicationsList();
+    // Add to beginning of list
     applicationsList.unshift(application);
-    await saveApplicationsList(applicationsList);
 
-    return Response.json({ success: true, application });
+    // Keep only last 100 applications
+    if (applicationsList.length > 100) {
+      applicationsList = applicationsList.slice(0, 100);
+    }
+
+    console.log(`[Applications] Saved application #${application.id} from ${data.name}`);
+
+    return Response.json({ success: true, application }, { status: 200 });
   } catch (error) {
-    console.error('Error saving application:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('[Applications] Error saving application:', error);
+    return Response.json(
+      { error: 'Failed to save application' },
+      { status: 500 }
+    );
   }
 }
 
 export async function GET(request) {
   try {
-    const applicationsList = await getApplicationsList();
-    return Response.json({ applications: applicationsList });
+    initializeApplications();
+    console.log(`[Applications] Fetching list (${applicationsList.length} applications)`);
+    return Response.json({ applications: applicationsList }, { status: 200 });
   } catch (error) {
-    console.error('Error fetching applications:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('[Applications] Error fetching applications:', error);
+    return Response.json(
+      { error: 'Failed to fetch applications' },
+      { status: 500 }
+    );
   }
 }

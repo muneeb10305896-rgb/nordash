@@ -21,6 +21,13 @@ export default function AdminDashboard() {
         setAuthenticated(true);
         setEmail(adminEmail);
         fetchApplications();
+
+        // Auto-refresh applications every 10 seconds
+        const interval = setInterval(() => {
+          fetchApplications();
+        }, 10000);
+
+        return () => clearInterval(interval);
       } else {
         setLoading(false);
       }
@@ -214,6 +221,14 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div style={{ display: 'flex', gap: 12 }}>
+            <button
+              onClick={() => fetchApplications()}
+              className="btn-ghost"
+              style={{ padding: '10px 20px', fontSize: 12 }}
+              title="Refresh applications list"
+            >
+              ↻ Refresh
+            </button>
             <button
               onClick={() => window.location.href = '/'}
               className="btn-ghost"
