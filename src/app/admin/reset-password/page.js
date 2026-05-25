@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 export default function ResetPassword() {
@@ -13,9 +13,11 @@ export default function ResetPassword() {
   const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
-    const searchParams = useSearchParams();
-    const token = searchParams.get('token');
-    verifyToken(token);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('token');
+      verifyToken(token);
+    }
   }, []);
 
   const verifyToken = async (token) => {
