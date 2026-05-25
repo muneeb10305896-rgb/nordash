@@ -39,6 +39,18 @@ const services = [
     icon: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="2" y="2" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.6"/><rect x="17" y="2" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.6"/><rect x="2" y="17" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.6"/><circle cx="22.5" cy="22.5" r="5.5" stroke="currentColor" strokeWidth="1.6"/><path d="M22.5 20v5M20 22.5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
     accent: '#FF4081', tag: 'Design',
   },
+  {
+    id: '07', title: 'SEO & Content Strategy',
+    desc: 'Search optimization, keyword research, content calendars and growth systems that drive organic traffic and rankings.',
+    icon: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.6"/><path d="M18.5 18.5l7.07 7.07" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M9 12h6M12 9v6M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
+    accent: '#00D084', tag: 'Growth',
+  },
+  {
+    id: '08', title: 'Mobile App Development',
+    desc: 'Native and cross-platform apps for iOS and Android. Fast, beautiful, and built to convert users into loyal customers.',
+    icon: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="5" y="2" width="20" height="26" rx="2.5" stroke="currentColor" strokeWidth="1.6"/><circle cx="15" cy="25" r="1.5" fill="currentColor"/><line x1="8" y1="5" x2="22" y2="5" stroke="currentColor" strokeWidth="1.6"/><path d="M10 10l3 4 5-8 2 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+    accent: '#E65100', tag: 'Technology',
+  },
 ];
 
 function Card3D({ service, index }) {
