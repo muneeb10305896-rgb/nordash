@@ -90,6 +90,7 @@ export default function ContactModal({ isOpen, onClose, type = 'book-call' }) {
               overflow: 'auto',
               zIndex: 1000,
               boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+              willChange: 'transform',
             }}
           >
             {/* Header */}

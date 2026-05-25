@@ -10,7 +10,7 @@ const footerLinks = {
 
 const socials = [
   {
-    label: 'Instagram',
+    label: 'Instagram - Muneeb',
     href: 'https://www.instagram.com/muneeb.ahmed.butt.fi/',
     icon: (
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -21,7 +21,29 @@ const socials = [
     ),
   },
   {
-    label: 'LinkedIn',
+    label: 'Instagram - Farheen',
+    href: 'https://www.instagram.com/farheen_butt/',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="2" width="14" height="14" rx="4" stroke="currentColor" strokeWidth="1.4"/>
+        <circle cx="9" cy="9" r="3" stroke="currentColor" strokeWidth="1.4"/>
+        <circle cx="13.5" cy="4.5" r="0.75" fill="currentColor"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'LinkedIn - Muneeb',
+    href: 'https://www.linkedin.com/in/muneeb-ahmed-butt-4a384438a/',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" strokeWidth="1.4"/>
+        <path d="M6 8v5M6 6v.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+        <path d="M9 13V9.5a2.5 2.5 0 015 0V13M9 9v4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'LinkedIn - Farheen',
     href: 'https://www.linkedin.com/in/farheen-e-sehar-8b0868177/',
     icon: (
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
