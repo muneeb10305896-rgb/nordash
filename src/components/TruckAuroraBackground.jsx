@@ -226,6 +226,12 @@ function Scene({ scrollRef }) {
       <pointLight position={[0, 5, 3]} color="#FFB300" intensity={1.5} distance={20} />
       <pointLight position={[-5, 5, 2]} color="#00E5FF" intensity={1.2} distance={20} />
 
+      {/* TEST: Big red sphere to verify canvas is rendering */}
+      <mesh position={[0, 2, 0]}>
+        <sphereGeometry args={[1.5, 32, 32]} />
+        <meshBasicMaterial color="#FF0000" />
+      </mesh>
+
       <StarField />
       <AuroraParticles />
       <SimpleTruck scrollRef={scrollRef} />
