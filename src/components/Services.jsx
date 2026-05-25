@@ -224,19 +224,22 @@ export default function Services() {
       </div>
 
       <style>{`
-        @media (max-width: 1024px) {
+        .responsive-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+        @media (max-width: 1200px) {
           .responsive-grid {
-            grid-template-columns: repeat(3, 1fr) !important;
+            grid-template-columns: repeat(4, 1fr);
           }
         }
-        @media (max-width: 768px) {
+        @media (max-width: 800px) {
           .responsive-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
+            grid-template-columns: repeat(2, 1fr);
           }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 500px) {
           .responsive-grid {
-            grid-template-columns: 1fr !important;
+            grid-template-columns: 1fr;
           }
         }
       `}</style>
