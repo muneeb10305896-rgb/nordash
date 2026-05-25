@@ -10,10 +10,18 @@ export default function TruckAuroraBackground() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    console.log('Canvas ref:', canvas);
+    if (!canvas) {
+      console.error('Canvas element not found in DOM!');
+      return;
+    }
 
     const ctx = canvas.getContext('2d', { alpha: true });
-    if (!ctx) return;
+    console.log('Canvas context:', ctx);
+    if (!ctx) {
+      console.error('Failed to get canvas context!');
+      return;
+    }
 
     // Set canvas size
     const setCanvasSize = () => {
@@ -22,6 +30,7 @@ export default function TruckAuroraBackground() {
     };
 
     setCanvasSize();
+    console.log('Canvas size set to:', canvas.width, 'x', canvas.height);
     window.addEventListener('resize', setCanvasSize);
 
     let animationTime = 0;
