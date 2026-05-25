@@ -66,8 +66,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
       <head>
-        <link rel="icon" href="/favicon.ico" />
-        <meta name="theme-color" content="#050A14" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
+        <meta name="theme-color" content="#0D1626" />
         <meta name="google-site-verification" content="G0tFP3VO5M1yw4IrNxt7F7QQsiOv4UsigAotNN5h8Jw" />
       </head>
       <body className={dmSans.className}>
