@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import TruckAuroraBackground from '@/components/TruckAuroraBackground';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Stats from '@/components/Stats';
@@ -19,7 +18,6 @@ export default function Home() {
 
   return (
     <>
-      <TruckAuroraBackground />
       <Navbar onStartProject={() => setModalType('book-call')} />
       <main>
         <Hero />
