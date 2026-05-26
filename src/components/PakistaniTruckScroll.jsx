@@ -7,34 +7,22 @@ import TruckParticles from './TruckParticles';
 export default function PakistaniTruckScroll() {
   const [isMobile, setIsMobile] = useState(false);
 
-  /* Raw 0-1 scroll progress from native scroll event.
-     Reads window.scrollY directly — fully compatible with Lenis
-     because Lenis still updates the real scroll position. */
   const rawProgress = useMotionValue(0);
 
-  /* Spring on top of Lenis smoothing = extra silky feel */
-  const progress = useSpring(rawProgress, {
-    stiffness: 55,
-    damping: 22,
-    mass: 0.6,
-  });
+  /* Spring smoothing on top of Lenis easing */
+  const progress = useSpring(rawProgress, { stiffness: 60, damping: 24, mass: 0.5 });
 
-  /* Pixel X position — recomputed on every progress change so it
-     reacts to window resize without remounting. */
+  /* Truck pixel X — computed reactively so it handles resize */
   const truckXPx = useMotionValue(0);
 
-  /* Slight vertical bob: highest at 50% scroll */
-  const truckY = useTransform(
-    progress,
-    [0, 0.25, 0.5, 0.75, 1],
-    [6, -2, -8, -2, 6]
-  );
+  /* Subtle vertical bob at midpoint */
+  const truckY = useTransform(progress, [0, 0.5, 1], [0, -10, 0]);
 
-  /* Aurora intensity: dim at edges, peak at 50% scroll */
+  /* Aurora intensity: dim → full → dim */
   const auroraOpacity = useTransform(
     progress,
     [0, 0.25, 0.5, 0.75, 1],
-    [0.22, 0.65, 1.0, 0.65, 0.22]
+    [0.25, 0.70, 1.0, 0.70, 0.25]
   );
 
   /* Mobile breakpoint */
@@ -45,28 +33,38 @@ export default function PakistaniTruckScroll() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  /* Native scroll → rawProgress (works with Lenis) */
+  /* PRIMARY: Lenis broadcasts its own scroll progress via custom event
+     (emitted from SmoothScroll.jsx on every Lenis RAF tick).
+     FALLBACK: native window scroll event for non-Lenis environments. */
   useEffect(() => {
-    const onScroll = () => {
+    const onLenis = (e) => rawProgress.set(e.detail.progress);
+    window.addEventListener('lenis:scroll', onLenis);
+
+    /* Fallback — fires if Lenis isn't active */
+    const onNative = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       if (max > 0) rawProgress.set(window.scrollY / max);
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onNative, { passive: true });
+    onNative();
+
+    return () => {
+      window.removeEventListener('lenis:scroll', onLenis);
+      window.removeEventListener('scroll', onNative);
+    };
   }, [rawProgress]);
 
-  /* progress → pixel X: truck travels from left viewport edge to right edge */
+  /* Map progress 0→1 to pixels: left viewport edge → right viewport edge */
   useEffect(() => {
-    const computeX = (p) => {
+    const calc = (p) => {
       const vw = window.innerWidth;
-      const truckW = vw < 768 ? 260 : 460;
-      const margin = vw < 768 ? 10 : 20;
-      const halfRange = (vw - truckW) / 2 - margin;
-      truckXPx.set(-halfRange + p * halfRange * 2);
+      const tw = vw < 768 ? 260 : 460;
+      const margin = vw < 768 ? 10 : 24;
+      const half = (vw - tw) / 2 - margin;
+      truckXPx.set(-half + p * half * 2);
     };
-    const unsub = progress.on('change', computeX);
-    computeX(progress.get());
+    const unsub = progress.on('change', calc);
+    calc(progress.get());
     return unsub;
   }, [progress, truckXPx]);
 
@@ -78,7 +76,10 @@ export default function PakistaniTruckScroll() {
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 0,
+        /* zIndex 2: above all opaque section backgrounds (z=auto),
+           below section text children (z=3+) and Navbar (z=50).
+           pointerEvents:none keeps every button and link clickable. */
+        zIndex: 2,
         pointerEvents: 'none',
         overflow: 'hidden',
       }}
@@ -86,28 +87,24 @@ export default function PakistaniTruckScroll() {
       {/* Twinkling starfield */}
       <div className="truck-scroll-stars" />
 
-      {/* Ambient aurora background orbs — brighten with scroll */}
+      {/* Ambient aurora orbs — intensity driven by scroll */}
       <motion.div
-        style={{
-          opacity: auroraOpacity,
-          position: 'absolute',
-          inset: 0,
-          pointerEvents: 'none',
-        }}
+        style={{ opacity: auroraOpacity, position: 'absolute', inset: 0, pointerEvents: 'none' }}
       >
         <div className="truck-aurora-orb truck-aurora-1" />
         <div className="truck-aurora-orb truck-aurora-2" />
         <div className="truck-aurora-orb truck-aurora-3" />
       </motion.div>
 
-      {/* Truck container — moves horizontally with scroll */}
+      {/* Truck — pinned to the bottom of the viewport (road position),
+          moves left → right as the user scrolls down the page */}
       <motion.div
         style={{
           position: 'absolute',
-          top: '57%',          /* slightly below centre = sits on visual "road" */
+          /* Road position: truck sits in the bottom strip of the screen */
+          bottom: isMobile ? '2%' : '4%',
           left: '50%',
           translateX: '-50%',
-          translateY: '-50%',
           x: truckXPx,
           y: truckY,
           width: truckW,
@@ -115,18 +112,12 @@ export default function PakistaniTruckScroll() {
           willChange: 'transform',
         }}
       >
-        {/* CSS-animated particles: aurora trail + exhaust smoke */}
-        <motion.div
-          style={{ opacity: auroraOpacity, position: 'absolute', inset: 0 }}
-        >
-          <TruckParticles
-            isMobile={isMobile}
-            truckW={truckW}
-            truckH={truckH}
-          />
+        {/* Aurora trail + exhaust particles */}
+        <motion.div style={{ opacity: auroraOpacity, position: 'absolute', inset: 0 }}>
+          <TruckParticles isMobile={isMobile} truckW={truckW} truckH={truckH} />
         </motion.div>
 
-        {/* The truck SVG — aurora halo baked into SVG via overflow:visible */}
+        {/* Truck SVG — aurora halo baked in via SVG overflow:visible */}
         <TruckArtwork isMobile={isMobile} />
       </motion.div>
     </div>
