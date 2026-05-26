@@ -1,128 +1,149 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useMemo } from 'react';
 
-export default function TruckParticles({ scrollProgress, isMobile }) {
-  const containerRef = useRef(null);
-  const particlesRef = useRef([]);
-  const [particles, setParticles] = useState([]);
+const AURORA_COLORS = ['#00E5FF', '#7B61FF', '#FFB300', '#00E5FF', '#7B61FF'];
+const EXHAUST_COLORS = ['#FFB300', '#FFD700', '#cccccc', '#FFB300'];
 
-  useEffect(() => {
-    const particleCount = isMobile ? 40 : 120;
-    const colors = ['#00E5FF', '#7B61FF', '#FFB300'];
+function sr(seed) {
+  const x = Math.sin(seed + 1) * 10000;
+  return x - Math.floor(x);
+}
 
-    // Initialize particles
-    const newParticles = Array.from({ length: particleCount }, (_, i) => ({
+export default function TruckParticles({ isMobile, truckW, truckH }) {
+  const auroraCount = isMobile ? 16 : 32;
+  const exhaustCount = isMobile ? 8 : 14;
+
+  const auroraParticles = useMemo(() =>
+    Array.from({ length: auroraCount }, (_, i) => ({
       id: i,
-      x: Math.random() * 60 - 30,
-      y: Math.random() * 40 - 20,
-      vx: (Math.random() - 0.5) * 0.5,
-      vy: (Math.random() - 0.5) * 1.5,
-      age: 0,
-      lifetime: 3000 + Math.random() * 2000,
-      color: colors[i % colors.length],
-      size: Math.random() * 3 + 1,
-      opacity: 1
-    }));
+      left:     -(sr(i*17+1) * 0.62 * truckW + 36),
+      top:      14 + sr(i*17+2) * (truckH - 28),
+      size:     3 + sr(i*17+3) * (isMobile ? 6 : 11),
+      color:    AURORA_COLORS[i % AURORA_COLORS.length],
+      duration: 2.6 + sr(i*17+4) * 3.4,
+      delay:    sr(i*17+5) * 4.8,
+      driftX:   -(22 + sr(i*17+6) * 65),
+      driftY:   -(10 + sr(i*17+7) * 55),
+      opacity:  0.38 + sr(i*17+8) * 0.52,
+    })),
+  [auroraCount, isMobile, truckW, truckH]);
 
-    particlesRef.current = newParticles;
-    setParticles(newParticles);
+  /* Exhaust pipe in SVG is at x≈340/520, y≈4/230 of viewBox.
+     In the truck div those map to ≈65% from left, ≈2% from top. */
+  const exLeft = 0.645 * truckW;
+  const exTop  = 0.020 * truckH;
 
-    // Animation loop
-    const animationInterval = setInterval(() => {
-      const updatedParticles = particlesRef.current.map((p) => {
-        const newAge = p.age + 16;
-        const progress = newAge / p.lifetime;
-
-        if (progress > 1) {
-          // Reset particle
-          return {
-            ...p,
-            x: Math.random() * 60 - 30,
-            y: Math.random() * 40 - 20,
-            age: 0,
-            opacity: 1
-          };
-        }
-
-        return {
-          ...p,
-          x: p.x + p.vx,
-          y: p.y + p.vy - 0.5, // Upward drift
-          age: newAge,
-          opacity: Math.max(0, 1 - progress * 1.5)
-        };
-      });
-
-      particlesRef.current = updatedParticles;
-      setParticles(updatedParticles);
-    }, 16);
-
-    return () => clearInterval(animationInterval);
-  }, [isMobile]);
+  const exhaustParticles = useMemo(() =>
+    Array.from({ length: exhaustCount }, (_, i) => ({
+      id: i,
+      left:     exLeft + (sr(i*23+1) - 0.5) * 16,
+      top:      exTop  - sr(i*23+2) * 10,
+      size:     4 + sr(i*23+3) * (isMobile ? 5 : 9),
+      color:    EXHAUST_COLORS[i % EXHAUST_COLORS.length],
+      duration: 1.6 + sr(i*23+4) * 2.4,
+      delay:    sr(i*23+5) * 3.0,
+      driftX:   (sr(i*23+6) - 0.5) * 22,
+      driftY:   -(26 + sr(i*23+7) * 40),
+      opacity:  0.48 + sr(i*23+8) * 0.42,
+    })),
+  [exhaustCount, isMobile, exLeft, exTop]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
+    <div style={{ position:'absolute', inset:0, pointerEvents:'none', overflow:'visible' }}>
+
+      {/* ── Broad aurora glow band behind truck ── */}
+      <div style={{
         position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none'
-      }}
-    >
-      {/* Aurora trail particles */}
-      {particles.map((particle) => (
+        right: '96%',
+        top: '8%',
+        width:  isMobile ? '130px' : '260px',
+        height: '84%',
+        background: 'linear-gradient(to right, transparent, rgba(123,97,255,0.20) 38%, rgba(0,229,255,0.28) 78%, rgba(0,229,255,0.16))',
+        filter: 'blur(20px)',
+        borderRadius: '50%',
+        transform: 'scaleY(1.5)',
+      }}/>
+      {/* Secondary saffron band */}
+      <div style={{
+        position: 'absolute',
+        right: '90%',
+        top: '28%',
+        width:  isMobile ? '72px' : '150px',
+        height: '44%',
+        background: 'linear-gradient(to right, transparent, rgba(255,179,0,0.16) 55%, rgba(255,179,0,0.08))',
+        filter: 'blur(14px)',
+        borderRadius: '50%',
+      }}/>
+
+      {/* ── Aurora drift particles ── */}
+      {auroraParticles.map(p => (
         <div
-          key={particle.id}
+          key={`a${p.id}`}
           style={{
-            position: 'absolute',
-            left: `calc(50% + ${particle.x}px)`,
-            top: `calc(50% + ${particle.y}px)`,
-            width: `${particle.size}px`,
-            height: `${particle.size}px`,
-            borderRadius: '50%',
-            backgroundColor: particle.color,
-            opacity: particle.opacity * 0.6,
-            boxShadow: `0 0 ${particle.size * 2}px ${particle.color}`,
-            filter: 'blur(0.5px)',
-            transform: 'translate(-50%, -50%)',
-            transition: 'none'
+            position:        'absolute',
+            left:            p.left,
+            top:             p.top,
+            width:           p.size,
+            height:          p.size,
+            borderRadius:    '50%',
+            backgroundColor: p.color,
+            boxShadow:       `0 0 ${p.size * 2.8}px ${p.color}`,
+            opacity:         0,
+            '--drift-x':     `${p.driftX}px`,
+            '--drift-y':     `${p.driftY}px`,
+            '--p-opacity':   p.opacity,
+            animationName:           'auroraParticleDrift',
+            animationDuration:       `${p.duration}s`,
+            animationDelay:          `${p.delay}s`,
+            animationTimingFunction: 'ease-out',
+            animationIterationCount: 'infinite',
           }}
         />
       ))}
 
-      {/* Exhaust particles - rise from pipe */}
-      {particles.slice(0, Math.floor(particles.length * 0.3)).map((particle, i) => {
-        const exhaustColors = ['#FFB300', '#FFD700', '#F5DEB3'];
-        return (
-          <div
-            key={`exhaust-${i}`}
-            style={{
-              position: 'absolute',
-              right: `${20 + Math.sin(i) * 10}px`,
-              bottom: `${40 - particle.age / 50}px`,
-              width: '4px',
-              height: '4px',
-              borderRadius: '50%',
-              backgroundColor: exhaustColors[i % exhaustColors.length],
-              opacity: particle.opacity * 0.5,
-              filter: 'blur(0.5px)',
-              animation: `particleRise ${particle.lifetime}ms ease-out forwards`
-            }}
-          />
-        );
-      })}
+      {/* ── Exhaust smoke particles ── */}
+      {exhaustParticles.map(p => (
+        <div
+          key={`e${p.id}`}
+          style={{
+            position:        'absolute',
+            left:            p.left,
+            top:             p.top,
+            width:           p.size,
+            height:          p.size,
+            borderRadius:    '50%',
+            backgroundColor: p.color,
+            boxShadow:       `0 0 ${p.size * 2}px ${p.color}`,
+            opacity:         0,
+            '--drift-x':     `${p.driftX}px`,
+            '--drift-y':     `${p.driftY}px`,
+            '--p-opacity':   p.opacity,
+            animationName:           'exhaustParticleRise',
+            animationDuration:       `${p.duration}s`,
+            animationDelay:          `${p.delay}s`,
+            animationTimingFunction: 'ease-out',
+            animationIterationCount: 'infinite',
+          }}
+        />
+      ))}
 
-      {/* Glow halo around truck */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: '-20px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(0,229,255,0.2), transparent)',
-          filter: 'blur(20px)',
-          pointerEvents: 'none'
-        }}
-      />
+      {/* ── Headlight beam cone (right side of truck) ── */}
+      <div style={{
+        position:        'absolute',
+        left:            '91%',
+        top:             '38%',
+        width:           isMobile ? '55px' : '105px',
+        height:          isMobile ? '36px' : '68px',
+        background:      'radial-gradient(ellipse at left center, rgba(0,229,255,0.20) 0%, transparent 80%)',
+        filter:          'blur(10px)',
+        transform:       'scaleX(2)',
+        transformOrigin: 'left center',
+        borderRadius:    '0 50% 50% 0',
+        animationName:           'headlightFlicker',
+        animationDuration:       '3s',
+        animationTimingFunction: 'ease-in-out',
+        animationIterationCount: 'infinite',
+      }}/>
     </div>
   );
 }

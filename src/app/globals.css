@@ -469,127 +469,146 @@ h1, h2, h3, h4 {
 
 /* ─── PAKISTANI TRUCK SCROLL ANIMATION ──────────────────────── */
 
-/* Truck wheel rotation */
-@keyframes wheelRotate {
-  0% { transform: rotateZ(0deg); }
-  100% { transform: rotateZ(360deg); }
+/* ── Wheel spin (applied inline via style.transformOrigin per wheel) ── */
+@keyframes wheelSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.truck-wheel-spin {
+  animation: wheelSpin 1.8s linear infinite;
 }
 
-/* Headlight glow pulse */
-@keyframes glowPulse {
-  0%, 100% {
-    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.6));
-  }
-  50% {
-    filter: drop-shadow(0 0 16px rgba(0, 229, 255, 0.9));
-  }
+/* ── Headlight glow pulse ── */
+@keyframes headlightPulse {
+  0%, 100% { opacity: 0.85; }
+  50%       { opacity: 1;    }
 }
-
-/* Truck body shimmer */
-@keyframes shimmer {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.95; }
-}
-
-/* Particle rise & fade */
-@keyframes particleRise {
-  0% {
-    transform: translateY(0) translateX(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-80px) translateX(-40px);
-    opacity: 0;
-  }
-}
-
-/* Aurora orb floating (truck background) */
-@keyframes auroraFloatTruck {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(40px, -30px);
-  }
-  50% {
-    transform: translate(0, -60px);
-  }
-  75% {
-    transform: translate(-40px, -30px);
-  }
-}
-
-/* Apply to truck elements */
-.truck-wheel {
-  animation: wheelRotate 2s linear infinite;
-}
-
 .truck-headlight {
-  animation: glowPulse 3s ease-in-out infinite;
+  animation: headlightPulse 2.4s ease-in-out infinite;
+}
+.truck-headlight-ring {
+  animation: headlightPulse 2.4s ease-in-out infinite reverse;
 }
 
-.truck-body {
-  animation: shimmer 4s ease-in-out infinite;
+/* ── Exhaust stack glow ── */
+@keyframes exhaustFlicker {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.7; }
+}
+.truck-exhaust-glow {
+  animation: exhaustFlicker 1.2s ease-in-out infinite;
 }
 
-.truck-particle {
-  animation: particleRise 3s ease-out forwards;
+/* ── Aurora particle drift (trail behind truck) ──
+   Uses CSS custom properties --drift-x, --drift-y, --p-opacity
+   set inline per-particle for variety without JS re-renders.     */
+@keyframes auroraParticleDrift {
+  0%   { transform: translate(0, 0);
+         opacity: 0; }
+  15%  { opacity: var(--p-opacity, 0.7); }
+  80%  { opacity: calc(var(--p-opacity, 0.7) * 0.4); }
+  100% { transform: translate(var(--drift-x, -40px), var(--drift-y, -30px));
+         opacity: 0; }
 }
 
-/* Aurora orbs in truck scroll background */
-.aurora-orb {
+/* ── Exhaust smoke rise ── */
+@keyframes exhaustParticleRise {
+  0%   { transform: translate(0, 0) scale(0.5);
+         opacity: 0; }
+  20%  { opacity: var(--p-opacity, 0.6); }
+  100% { transform: translate(var(--drift-x, 0px), var(--drift-y, -40px)) scale(1.8);
+         opacity: 0; }
+}
+
+/* ── Headlight beam flicker ── */
+@keyframes headlightFlicker {
+  0%, 100% { opacity: 0.7; }
+  40%       { opacity: 0.9; }
+  70%       { opacity: 0.6; }
+}
+
+/* ── Twinkling stars ── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; }
+  50%       { opacity: 0.55; }
+}
+
+/* ── Background aurora orb float (ambient background orbs) ── */
+@keyframes truckAuroraFloat1 {
+  0%, 100% { transform: translate(0, 0);       opacity: 0.18; }
+  33%       { transform: translate(55px,-45px); opacity: 0.30; }
+  66%       { transform: translate(20px,-18px); opacity: 0.15; }
+}
+@keyframes truckAuroraFloat2 {
+  0%, 100% { transform: translate(0, 0);        opacity: 0.14; }
+  33%       { transform: translate(-45px,52px);  opacity: 0.26; }
+  66%       { transform: translate(-16px,20px);  opacity: 0.10; }
+}
+@keyframes truckAuroraFloat3 {
+  0%, 100% { transform: translate(0, 0);       opacity: 0.10; }
+  50%       { transform: translate(30px,-25px); opacity: 0.20; }
+}
+
+/* ── Fixed-background aurora orbs (scoped to truck layer) ── */
+.truck-aurora-orb {
   position: absolute;
   pointer-events: none;
   border-radius: 50%;
-  filter: blur(80px);
+  will-change: transform, opacity;
+}
+.truck-aurora-1 {
+  top: -20%; left: -10%;
+  width: 70vw; height: 65vh;
+  background: radial-gradient(ellipse at 35% 45%,
+    rgba(0,229,255,0.70) 0%, rgba(0,71,255,0.35) 40%,
+    rgba(123,97,255,0.08) 70%, transparent 85%);
+  filter: blur(52px);
+  animation: truckAuroraFloat1 20s ease-in-out infinite;
+}
+.truck-aurora-2 {
+  top: 10%; right: -8%;
+  width: 55vw; height: 60vh;
+  background: radial-gradient(ellipse at 60% 40%,
+    rgba(123,97,255,0.80) 0%, rgba(0,71,255,0.40) 45%, transparent 80%);
+  filter: blur(60px);
+  animation: truckAuroraFloat2 24s ease-in-out infinite 5s;
+}
+.truck-aurora-3 {
+  bottom: 5%; left: 20%;
+  width: 45vw; height: 45vh;
+  background: radial-gradient(ellipse at center,
+    rgba(255,179,0,0.65) 0%, rgba(215,43,43,0.35) 50%, transparent 75%);
+  filter: blur(70px);
+  animation: truckAuroraFloat3 17s ease-in-out infinite 9s;
 }
 
-.aurora-orb-1 {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.1), transparent);
-  top: 20%;
-  left: 10%;
-  animation: auroraFloatTruck 20s ease-in-out infinite;
-}
-
-.aurora-orb-2 {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(123, 97, 255, 0.08), transparent);
-  bottom: 10%;
-  right: 5%;
-  animation: auroraFloatTruck 25s ease-in-out infinite reverse;
-}
-
-/* Truck scroll stars background */
+/* ── Starfield ── */
 .truck-scroll-stars {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(1px 1px at 20px 30px, white, transparent),
-    radial-gradient(1px 1px at 60px 70px, white, transparent),
-    radial-gradient(1px 1px at 50px 50px, white, transparent),
-    radial-gradient(1px 1px at 130px 80px, white, transparent),
-    radial-gradient(1px 1px at 90px 10px, white, transparent),
-    radial-gradient(1px 1px at 150px 40px, white, transparent);
+    radial-gradient(1px 1px at 8%   12%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 22%  78%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 37%  34%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 53%  61%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 68%  18%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 79%  82%, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 91%  44%, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 14%  55%, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 44%  88%, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 85%  6%,  rgba(255,255,255,0.9), transparent),
+    radial-gradient(1.5px 1.5px at 30% 25%, rgba(0,229,255,0.8), transparent),
+    radial-gradient(1.5px 1.5px at 70% 70%, rgba(123,97,255,0.7), transparent),
+    radial-gradient(1.5px 1.5px at 55% 40%, rgba(255,179,0,0.6),  transparent);
+  background-size: 400px 300px;
   background-repeat: repeat;
-  background-size: 200px 200px;
   opacity: 0.3;
-  animation: twinkle 5s ease-in-out infinite;
+  animation: twinkle 6s ease-in-out infinite;
+  pointer-events: none;
 }
 
-@keyframes twinkle {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
-}
-
-/* Door pattern animations */
-.truck-door-left, .truck-door-right {
-  transition: opacity 0.3s;
-}
-
-/* Diamond chain shimmer */
-.diamond-chain {
-  animation: diamondFloat 4s ease-in-out infinite;
-}
+/* ── Legacy class aliases (keep for any older references) ── */
+.truck-wheel    { animation: wheelSpin 1.8s linear infinite; }
+.truck-body     { /* shimmer removed — no-op */ }
+.truck-particle { animation: exhaustParticleRise 3s ease-out forwards; }
+.diamond-chain  { animation: diamondFloat 4s ease-in-out infinite; }
