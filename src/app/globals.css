@@ -10,39 +10,39 @@
 ──────────────────────────────────────────────────────────── */
 
 :root {
-  /* Nordic Aurora Palette */
-  --aurora-cyan:    #00E5FF;
-  --aurora-green:   #00FF94;
+  /* NORDASH Logo Inspired Aurora Palette */
+  --aurora-cyan:    #00D9E9;
+  --aurora-green:   #1FD9C1;
   --aurora-purple:  #7B61FF;
-  --aurora-blue:    #0047FF;
-  --aurora-teal:    #00B4D8;
+  --aurora-blue:    #2E7FBF;
+  --aurora-teal:    #1E90FF;
 
-  /* Pakistani Truck Art Palette */
-  --truck-red:      #D72B2B;
-  --truck-saffron:  #FFB300;
-  --truck-emerald:  #007A4C;
-  --truck-cobalt:   #1A2B8C;
-  --truck-rose:     #FF4081;
-  --truck-gold:     #FFD700;
-  --truck-orange:   #FF6B00;
+  /* NORDASH Logo Pakistani Truck Art Palette */
+  --truck-red:      #C41E3A;
+  --truck-saffron:  #FFD700;
+  --truck-emerald:  #2D5F3F;
+  --truck-cobalt:   #0D2E5F;
+  --truck-rose:     #FF6B35;
+  --truck-gold:     #FFC93C;
+  --truck-orange:   #FF8C42;
 
-  /* Base Dark */
+  /* Base Dark - Deeper from Logo */
   --deep:           #050A14;
-  --midnight:       #08101F;
-  --surface:        #0D1626;
-  --surface-2:      #111E33;
-  --border:         rgba(255, 255, 255, 0.07);
-  --border-bright:  rgba(0, 229, 255, 0.25);
+  --midnight:       #0D1F3C;
+  --surface:        #0F2847;
+  --surface-2:      #1A3A5C;
+  --border:         rgba(255, 217, 0, 0.08);
+  --border-bright:  rgba(0, 217, 233, 0.3);
 
   /* Text */
-  --text-primary:   #EDF2FF;
-  --text-muted:     rgba(237, 242, 255, 0.5);
-  --text-faint:     rgba(237, 242, 255, 0.25);
+  --text-primary:   #F5F7FA;
+  --text-muted:     rgba(245, 247, 250, 0.55);
+  --text-faint:     rgba(245, 247, 250, 0.28);
 
-  /* Gradients */
-  --grad-aurora:    linear-gradient(135deg, var(--aurora-cyan) 0%, var(--aurora-purple) 50%, var(--truck-saffron) 100%);
+  /* Gradients - NORDASH Logo Colors */
+  --grad-aurora:    linear-gradient(135deg, var(--aurora-cyan) 0%, var(--aurora-blue) 50%, var(--truck-saffron) 100%);
   --grad-truck:     linear-gradient(135deg, var(--truck-red) 0%, var(--truck-saffron) 50%, var(--truck-emerald) 100%);
-  --grad-hero:      linear-gradient(135deg, var(--aurora-cyan) 0%, var(--aurora-purple) 100%);
+  --grad-hero:      linear-gradient(135deg, var(--truck-saffron) 0%, var(--truck-gold) 100%);
 }
 
 /* ─── RESET & BASE ─────────────────────────────────────────── */

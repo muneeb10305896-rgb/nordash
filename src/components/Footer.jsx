@@ -98,8 +98,8 @@ export default function Footer() {
           {/* Brand */}
           <div style={{ maxWidth: 380 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-              <div style={{ width: 32, height: 32, background: 'linear-gradient(135deg, #00E5FF, #7B61FF)', transform: 'rotate(45deg)', borderRadius: 4 }} />
-              <span className="font-syne" style={{ fontSize: 20, fontWeight: 800, letterSpacing: '0.12em', background: 'linear-gradient(135deg, #00E5FF, #7B61FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <div style={{ width: 32, height: 32, background: 'linear-gradient(135deg, #FFD700, #00D9E9)', transform: 'rotate(45deg)', borderRadius: 4 }} />
+              <span className="font-syne" style={{ fontSize: 20, fontWeight: 800, letterSpacing: '0.12em', background: 'linear-gradient(135deg, #FFD700, #FFC93C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 NORDASH
               </span>
             </div>
