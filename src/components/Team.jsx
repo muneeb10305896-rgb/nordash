@@ -31,7 +31,7 @@ export default function Team() {
     {
       _id: 'muneeb-ahmed-butt',
       name: 'Muneeb Ahmed Butt',
-      position: 'Founder & Digital Strategist',
+      position: 'Full Stack Developer',
       bio: 'IT student at University of Eastern Finland, blending Nordic precision with Asian energy to create digital solutions that convert.',
       image: 'https://i.ibb.co/mr8TRzwZ/PROFILE.jpg',
       expertise: ['Video Editing', 'UI/UX Design', 'Web Development', 'Brand Strategy', 'Digital Marketing'],
@@ -43,7 +43,7 @@ export default function Team() {
     {
       _id: 'farheen-e-sehar',
       name: 'Farheen E Sehar',
-      position: 'Digital Media Marketer & Content Creator',
+      position: 'Marketing Manager',
       bio: 'Versatile marketing professional with rich experience in social media strategy, content creation, and digital campaign management across B2C and B2B sectors. Dedicated to driving brand growth and fostering strong audience connections through data-driven insights.',
       image: 'https://i.ibb.co/Z6hKMn6B/1762450046043.jpg',
       expertise: ['Social Media Marketing', 'Content Creation', 'Digital Marketing', 'Brand Strategy', 'Campaign Management'],
