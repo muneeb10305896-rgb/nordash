@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const footerLinks = {
   Services: ['Video Editing', 'Thumbnail Design', 'Social Media', 'Software Dev', 'Brand Strategy', 'UI/UX Design'],
@@ -97,8 +98,14 @@ export default function Footer() {
           className="footer-top">
           {/* Brand */}
           <div style={{ maxWidth: 380 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-              <div style={{ width: 32, height: 32, background: 'linear-gradient(135deg, #FFD700, #00D9E9)', transform: 'rotate(45deg)', borderRadius: 4 }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+              <Image
+                src="/nordash-logo.png"
+                alt="NORDASH Logo"
+                width={40}
+                height={40}
+                style={{ flexShrink: 0 }}
+              />
               <span className="font-syne" style={{ fontSize: 20, fontWeight: 800, letterSpacing: '0.12em', background: 'linear-gradient(135deg, #FFD700, #FFC93C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                 NORDASH
               </span>

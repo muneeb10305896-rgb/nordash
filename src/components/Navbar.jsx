@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import MagneticButton from './MagneticButton';
 
 const links = ['Services', 'Process', 'Work', 'About'];
@@ -30,36 +31,19 @@ export default function Navbar({ onStartProject }) {
     >
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {/* Logo */}
-        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" style={{ flexShrink: 0, filter: 'drop-shadow(0 0 8px rgba(255,217,0,0))', transition: 'filter 0.3s' }}
-            onMouseEnter={e => e.currentTarget.style.filter = 'drop-shadow(0 0 12px #FFD700)'}
-            onMouseLeave={e => e.currentTarget.style.filter = 'drop-shadow(0 0 8px rgba(255,217,0,0))'}
-          >
-            {/* Outer golden diamond - truck art frame */}
-            <path d="M18 2 L34 18 L18 34 L2 18 Z" fill="none" stroke="#FFD700" strokeWidth="2" strokeLinejoin="miter" />
-
-            {/* Inner deep blue diamond */}
-            <path d="M18 8 L28 18 L18 28 L8 18 Z" fill="#0D2E5F" stroke="#2D5F3F" strokeWidth="1" />
-
-            {/* Center emerald diamond */}
-            <path d="M18 13 L23 18 L18 23 L13 18 Z" fill="#2D5F3F" />
-
-            {/* Center golden accent dot */}
-            <circle cx="18" cy="18" r="2.5" fill="#FFD700" />
-
-            {/* Corner accent lines - truck art decoration */}
-            <line x1="18" y1="2" x2="18" y2="6" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="34" y1="18" x2="30" y2="18" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="18" y1="34" x2="18" y2="30" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" />
-            <line x1="2" y1="18" x2="6" y2="18" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" />
-
-            {/* Cyan corner accents - aurora touch */}
-            <circle cx="18" cy="4" r="1" fill="#00D9E9" opacity="0.8" />
-            <circle cx="32" cy="18" r="1" fill="#00D9E9" opacity="0.8" />
-            <circle cx="18" cy="32" r="1" fill="#00D9E9" opacity="0.8" />
-            <circle cx="4" cy="18" r="1" fill="#00D9E9" opacity="0.8" />
-          </svg>
-          <span className="font-syne" style={{ fontSize: 20, fontWeight: 800, letterSpacing: '0.12em', background: 'linear-gradient(135deg, #FFD700 0%, #FFC93C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', transition: 'filter 0.3s' }}
+          onMouseEnter={e => e.currentTarget.style.filter = 'drop-shadow(0 0 12px rgba(255,217,0,0.4))'}
+          onMouseLeave={e => e.currentTarget.style.filter = 'drop-shadow(0 0 0px rgba(255,217,0,0))'}
+        >
+          <Image
+            src="/nordash-logo.png"
+            alt="NORDASH Logo"
+            width={48}
+            height={48}
+            style={{ flexShrink: 0 }}
+            priority
+          />
+          <span className="font-syne" style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.12em', background: 'linear-gradient(135deg, #FFD700 0%, #FFC93C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
             NORDASH
           </span>
         </a>
