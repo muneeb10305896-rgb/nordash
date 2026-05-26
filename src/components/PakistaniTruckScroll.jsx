@@ -12,11 +12,9 @@ export default function PakistaniTruckScroll() {
   /* Spring smoothing on top of Lenis easing */
   const progress = useSpring(rawProgress, { stiffness: 60, damping: 24, mass: 0.5 });
 
-  /* Truck pixel X — computed reactively so it handles resize */
+  /* Truck X and Y pixel positions — computed reactively */
   const truckXPx = useMotionValue(0);
-
-  /* Subtle vertical bob at midpoint */
-  const truckY = useTransform(progress, [0, 0.5, 1], [0, -10, 0]);
+  const truckYPx = useMotionValue(0);
 
   /* Aurora intensity: dim → full → dim */
   const auroraOpacity = useTransform(
@@ -33,14 +31,12 @@ export default function PakistaniTruckScroll() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  /* PRIMARY: Lenis broadcasts its own scroll progress via custom event
-     (emitted from SmoothScroll.jsx on every Lenis RAF tick).
+  /* PRIMARY: Lenis broadcasts scroll progress via custom event.
      FALLBACK: native window scroll event for non-Lenis environments. */
   useEffect(() => {
     const onLenis = (e) => rawProgress.set(e.detail.progress);
     window.addEventListener('lenis:scroll', onLenis);
 
-    /* Fallback — fires if Lenis isn't active */
     const onNative = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       if (max > 0) rawProgress.set(window.scrollY / max);
@@ -54,32 +50,43 @@ export default function PakistaniTruckScroll() {
     };
   }, [rawProgress]);
 
-  /* Map progress 0→1 to pixels: left viewport edge → right viewport edge */
+  /* Diagonal path: starts top-right → ends bottom-left.
+     Truck is flipped (scaleX:-1) so it faces LEFT — driving in the direction it moves. */
   useEffect(() => {
     const calc = (p) => {
       const vw = window.innerWidth;
-      const tw = vw < 768 ? 260 : 460;
-      const margin = vw < 768 ? 10 : 24;
-      const half = (vw - tw) / 2 - margin;
-      truckXPx.set(-half + p * half * 2);
+      const vh = window.innerHeight;
+      const tw = vw < 768 ? 300 : 540;
+      const th = vw < 768 ? 168 : 300;
+      const marginX = vw < 768 ? 10 : 24;
+      const marginY = vw < 768 ? 20 : 40;
+
+      /* X: +halfX (right) at p=0 → -halfX (left) at p=1 */
+      const halfX = (vw - tw) / 2 - marginX;
+      truckXPx.set(halfX - p * halfX * 2);
+
+      /* Y: near top at p=0 → near bottom at p=1 */
+      const topStart = marginY;
+      const topEnd = vh - th - marginY;
+      truckYPx.set(topStart + p * (topEnd - topStart));
     };
+
     const unsub = progress.on('change', calc);
     calc(progress.get());
     return unsub;
-  }, [progress, truckXPx]);
+  }, [progress, truckXPx, truckYPx]);
 
-  const truckW = isMobile ? 260 : 460;
-  const truckH = isMobile ? 132 : 234;
+  const truckW = isMobile ? 300 : 540;
+  const truckH = isMobile ? 168 : 300;
 
   return (
     <div
       style={{
         position: 'fixed',
         inset: 0,
-        /* zIndex 2: above all opaque section backgrounds (z=auto),
-           below section text children (z=3+) and Navbar (z=50).
-           pointerEvents:none keeps every button and link clickable. */
-        zIndex: 2,
+        /* z=1: below <main> and <footer> (z=2) and Navbar (z=50).
+           pointerEvents:none keeps every button/link clickable. */
+        zIndex: 1,
         pointerEvents: 'none',
         overflow: 'hidden',
       }}
@@ -96,20 +103,20 @@ export default function PakistaniTruckScroll() {
         <div className="truck-aurora-orb truck-aurora-3" />
       </motion.div>
 
-      {/* Truck — pinned to the bottom of the viewport (road position),
-          moves left → right as the user scrolls down the page */}
+      {/* Truck — diagonal path: top-right → bottom-left.
+          scaleX:-1 flips truck to face LEFT so it drives in the direction it moves. */}
       <motion.div
         style={{
           position: 'absolute',
-          /* Road position: truck sits in the bottom strip of the screen */
-          bottom: isMobile ? '2%' : '4%',
+          top: truckYPx,
           left: '50%',
           translateX: '-50%',
           x: truckXPx,
-          y: truckY,
           width: truckW,
           height: truckH,
           willChange: 'transform',
+          /* Flip horizontally — truck now faces left (driving direction) */
+          scaleX: -1,
         }}
       >
         {/* Aurora trail + exhaust particles */}
@@ -117,7 +124,7 @@ export default function PakistaniTruckScroll() {
           <TruckParticles isMobile={isMobile} truckW={truckW} truckH={truckH} />
         </motion.div>
 
-        {/* Truck SVG — aurora halo baked in via SVG overflow:visible */}
+        {/* Truck SVG artwork */}
         <TruckArtwork isMobile={isMobile} />
       </motion.div>
     </div>
