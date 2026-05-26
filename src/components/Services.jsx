@@ -119,6 +119,10 @@ function Card3D({ service, index }) {
           border: '1px solid rgba(255,255,255,0.07)',
           transition: 'border-color 0.4s, box-shadow 0.4s',
           cursor: 'default',
+          height: '100%',
+          minHeight: '420px',
+          display: 'flex',
+          flexDirection: 'column',
         }}
         onMouseMove={onMove}
         onMouseEnter={onEnter}
@@ -153,12 +157,12 @@ function Card3D({ service, index }) {
         <h3 className="font-syne" style={{ fontSize: 20, fontWeight: 700, color: '#EDF2FF', marginBottom: 10, letterSpacing: '-0.01em', transform: 'translateZ(12px)' }}>
           {service.title}
         </h3>
-        <p className="font-dm" style={{ fontSize: 13.5, color: 'rgba(237,242,255,0.48)', lineHeight: 1.75, marginBottom: 28, fontWeight: 300 }}>
+        <p className="font-dm" style={{ fontSize: 13.5, color: 'rgba(237,242,255,0.48)', lineHeight: 1.75, marginBottom: 28, fontWeight: 300, flex: 1 }}>
           {service.desc}
         </p>
 
         {/* Footer */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
           <span className="font-syne" style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: service.accent }}>{service.tag}</span>
           <div style={{ width: 30, height: 30, borderRadius: '50%', border: `1px solid ${service.accent}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: service.accent }}>
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -210,13 +214,13 @@ export default function Services() {
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 0,
+          gap: 1,
           background: 'transparent',
           border: 'none',
         }}
         className="responsive-grid">
           {services.map((s, i) => (
-            <div key={s.id} style={{ background: '#08101F' }}>
+            <div key={s.id} style={{ background: '#08101F', height: '100%' }}>
               <Card3D service={s} index={i} />
             </div>
           ))}
