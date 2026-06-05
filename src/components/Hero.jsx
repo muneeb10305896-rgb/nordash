@@ -46,8 +46,13 @@ export default function Hero() {
       {/* ── Three.js gem scene (WebGL, GPU) ── */}
       {!isLowEnd && <HeroScene />}
 
-      {/* ── Truck-art diamond grid ── */}
-      <div className="truck-pattern-dense" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }} />
+      {/* ── Subtle diamond grid (reduced — 3D truck is the star) ── */}
+      <div className="truck-pattern-dense" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, opacity: 0.4 }} />
+
+      {/* ── Subtle gradient overlay for text readability above 3D scene ── */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2,
+        background: 'radial-gradient(ellipse at center, transparent 40%, rgba(5,10,20,0.55) 100%)',
+      }} />
 
       {/* ── Rotating geometric frames (CSS only) ── */}
       <div style={{ position: 'absolute', top: '7%', right: '5%', width: 220, height: 220, pointerEvents: 'none', zIndex: 1 }}>
