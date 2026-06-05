@@ -351,13 +351,26 @@ export default function AdminDashboard() {
                   {editing ? 'Edit' : 'Add'} {activeTab === 'Team' ? 'Member' : activeTab.slice(0, -1)}
                 </h2>
                 <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {Object.keys(formData).filter(k => k !== '_id' && k !== '__v' && k !== 'createdAt' && k !== 'updatedAt' && k !== 'results' && k !== 'images').map(key => {
+                  {Object.keys(formData).filter(k => k !== '_id' && k !== '__v' && k !== 'createdAt' && k !== 'updatedAt' && k !== 'results' && k !== 'images' && k !== 'social' && k !== 'pricing' && k !== 'deliverables' && k !== 'features' && k !== 'timeline').map(key => {
                     const isBool = typeof formData[key] === 'boolean';
                     const isTextArea = ['description', 'bio', 'quote', 'longDescription', 'message'].includes(key);
+                    const isImage = ['image', 'imageUrl'].includes(key);
+                    const isUrl = key === 'imageUrl';
                     const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+                    const imageUrl = isImage ? formData[key] : null;
                     return (
                       <div key={key}>
-                        <label className="font-syne" style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(237,242,255,0.35)', display: 'block', marginBottom: 6 }}>{label}</label>
+                        <label className="font-syne" style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(237,242,255,0.35)', display: 'block', marginBottom: 6 }}>{label === 'Image' && activeTab === 'Team' ? 'Profile Photo URL' : label === 'Image' ? 'Image URL' : label}{label === 'Image' || isUrl ? ' (paste image link)' : ''}</label>
+                        {isImage && imageUrl ? (
+                          <div style={{ marginBottom: 8 }}>
+                            <div style={{ width: '100%', height: 180, borderRadius: 10, background: `url(${imageUrl}) center/cover no-repeat`, border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(0,0,0,0.3)' }} />
+                            <span className="font-dm" style={{ fontSize: 10, color: 'rgba(237,242,255,0.25)', display: 'block', marginTop: 4 }}>Preview — update URL below to change</span>
+                          </div>
+                        ) : isImage && !imageUrl ? (
+                          <div style={{ width: '100%', height: 100, borderRadius: 10, background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 4 }}>
+                            <span className="font-dm" style={{ fontSize: 12, color: 'rgba(237,242,255,0.2)' }}>🖼️ Paste image URL below to preview</span>
+                          </div>
+                        ) : null}
                         {isBool ? (
                           <select value={String(formData[key])} onChange={e => setFormData({ ...formData, [key]: e.target.value === 'true' })}
                             style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none' }}>
@@ -382,10 +395,16 @@ export default function AdminDashboard() {
                             )}
                           </select>
                         ) : key === 'rating' ? (
-                          <input type="number" min="1" max="5" value={formData[key] || 5} onChange={e => setFormData({ ...formData, [key]: Number(e.target.value) })}
-                            style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none' }} />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <input type="number" min="1" max="5" value={formData[key] || 5} onChange={e => setFormData({ ...formData, [key]: Number(e.target.value) })}
+                              style={{ width: 70, padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none' }} />
+                            <span style={{ fontSize: 18 }}>
+                              {['','⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'][formData[key] || 5]}
+                            </span>
+                          </div>
                         ) : (
                           <input type="text" value={formData[key] || ''} onChange={e => setFormData({ ...formData, [key]: e.target.value })}
+                            placeholder={isImage ? 'https://i.ibb.co/...' : key === 'slug' ? 'auto-generated-slug' : ''}
                             style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none' }} />
                         )}
                       </div>
