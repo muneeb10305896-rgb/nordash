@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Syne, DM_Sans } from 'next/font/google';
 import './globals.css';
 import SmoothScroll from '@/components/SmoothScroll';
@@ -126,6 +127,7 @@ export default function RootLayout({ children }) {
         </SmoothScroll>
         <CookieBanner />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
