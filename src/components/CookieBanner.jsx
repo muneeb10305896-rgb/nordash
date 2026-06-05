@@ -43,7 +43,7 @@ export default function CookieBanner() {
             </p>
             <p className="font-dm" style={{ fontSize: 12, color: 'rgba(237,242,255,0.42)', margin: 0, lineHeight: 1.6 }}>
               Essential cookies for functionality and analytics.{' '}
-              <Link href="/privacy" style={{ color: 'var(--aurora-cyan)', textDecoration: 'none' }}>
+              <Link href="/cookies" style={{ color: 'var(--aurora-cyan)', textDecoration: 'none' }}>
                 Learn more
               </Link>
             </p>

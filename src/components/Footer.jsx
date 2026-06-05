@@ -226,6 +226,7 @@ export default function Footer() {
             {[
               { label: 'Privacy', href: '/privacy' },
               { label: 'Terms', href: '/terms' },
+              { label: 'Cookies', href: '/cookies' },
             ].map(l => (
               <a key={l.label} href={l.href} className="font-dm" style={{ fontSize: 12, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s' }}
                 onMouseEnter={e => e.target.style.color = 'var(--text-muted)'}
