@@ -24,7 +24,7 @@ export default function Hero() {
   const isLowEnd = typeof window !== 'undefined' && window.innerWidth < 768;
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const contentY       = useTransform(scrollYProgress, [0, 1],    ['0%',  isLowEnd ? '0%' : '18%']);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.75], [1,     0   ]);
+  const contentOpacity = useTransform(scrollYProgress, [0.80, 1], [1,     0   ]);
 
   return (
     <section ref={ref} style={{
