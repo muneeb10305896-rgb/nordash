@@ -28,9 +28,9 @@ export async function POST(request) {
     `;
 
     // Send confirmation email to subscriber
-    const subscriberEmail = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: email,
+    const { data: subData, error: subError } = await resend.emails.send({
+      from: 'NORDASH <onboarding@resend.dev>',
+      to: [email],
       subject: '✉️ Welcome to NORDASH Newsletter',
       html: `
         <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -52,21 +52,21 @@ export async function POST(request) {
     });
 
     // Send notification to admin
-    const adminEmail = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: 'muneeb10305896@gmail.com',
+    const { data: adminData, error: adminError } = await resend.emails.send({
+      from: 'NORDASH <onboarding@resend.dev>',
+      to: ['muneeb10305896@gmail.com'],
       subject: `✉️ New Newsletter Subscription - ${email}`,
       html: emailHtml,
     });
 
-    if (subscriberEmail.error || adminEmail.error) {
-      console.error('Email error:', subscriberEmail.error || adminEmail.error);
-      return Response.json({ error: 'Failed to subscribe' }, { status: 500 });
+    if (subError || adminError) {
+      console.error('Subscribe email error:', subError || adminError);
+      return Response.json({ error: 'Failed to subscribe. Please try again.' }, { status: 500 });
     }
 
-    return Response.json({ success: true, id: subscriberEmail.data.id });
+    return Response.json({ success: true, id: subData?.id });
   } catch (error) {
-    console.error('API error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Subscribe API error:', error);
+    return Response.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }

@@ -123,21 +123,22 @@ export async function POST(request) {
       </div>
     `;
 
-    const result = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: 'muneeb10305896@gmail.com',
+    const { data, error } = await resend.emails.send({
+      from: 'NORDASH <onboarding@resend.dev>',
+      to: ['muneeb10305896@gmail.com'],
+      replyTo: email,
       subject: `${isBookCall ? '📞 Book a Free Call' : '💼 Quote Request'} - ${name}`,
       html: emailHtml,
     });
 
-    if (result.error) {
-      console.error('Email error:', result.error);
-      return Response.json({ error: 'Failed to send email' }, { status: 500 });
+    if (error) {
+      console.error('Resend email error:', error);
+      return Response.json({ error: 'Failed to send email. Please try again or email us directly at hello@nordash.agency' }, { status: 500 });
     }
 
-    return Response.json({ success: true, id: result.data.id });
+    return Response.json({ success: true, id: data?.id });
   } catch (error) {
-    console.error('API error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Contact API error:', error);
+    return Response.json({ error: 'Something went wrong. Please email us at hello@nordash.agency' }, { status: 500 });
   }
 }

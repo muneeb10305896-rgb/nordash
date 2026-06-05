@@ -1,12 +1,8 @@
 "use client";
 import { useRef } from 'react';
-import dynamic from 'next/dynamic';
 import Marquee from 'react-fast-marquee';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import MagneticButton from './MagneticButton';
-
-// Three.js scene — SSR-safe dynamic import
-const HeroScene = dynamic(() => import('./HeroScene'), { ssr: false, loading: () => null });
 
 const marqueeItems = [
   { label: 'Video Editing',         accent: false },
@@ -43,10 +39,7 @@ export default function Hero() {
       <div className="aurora-orb aurora-orb-3" />
       <div className="aurora-orb aurora-orb-4" />
 
-      {/* ── Three.js gem scene (WebGL, GPU) ── */}
-      {!isLowEnd && <HeroScene />}
-
-      {/* ── Subtle diamond grid (reduced — 3D truck is the star) ── */}
+      {/* ── Subtle diamond grid ── */}
       <div className="truck-pattern-dense" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, opacity: 0.4 }} />
 
       {/* ── Subtle gradient overlay for text readability above 3D scene ── */}

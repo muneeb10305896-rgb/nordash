@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 const footerLinks = {
   Services: ['Video Editing', 'Thumbnail Design', 'Social Media', 'Software Dev', 'Brand Strategy', 'UI/UX Design'],
-  Company: ['About Us', 'Our Process', 'Case Studies', 'Careers', 'Blog'],
+  Company: ['About Us', 'Our Process', 'Case Studies', 'Blog', 'Contact'],
   Connect: ['hello@nordash.agency', 'Instagram', 'LinkedIn', 'Twitter / X', 'Behance'],
 };
 
