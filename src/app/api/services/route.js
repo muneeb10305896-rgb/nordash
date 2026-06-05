@@ -14,7 +14,7 @@ export async function GET(request) {
     return Response.json({ services }, { status: 200 });
   } catch (error) {
     console.error('Error fetching services:', error);
-    return Response.json({ error: 'Failed to fetch services' }, { status: 500 });
+    return Response.json({ services: [] }, { status: 200 });
   }
 }
 

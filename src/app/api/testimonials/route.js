@@ -14,7 +14,7 @@ export async function GET(request) {
     return Response.json({ testimonials }, { status: 200 });
   } catch (error) {
     console.error('Error fetching testimonials:', error);
-    return Response.json({ error: 'Failed to fetch testimonials' }, { status: 500 });
+    return Response.json({ testimonials: [] }, { status: 200 });
   }
 }
 
