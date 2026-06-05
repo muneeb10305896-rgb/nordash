@@ -9,11 +9,13 @@ gsap.registerPlugin(ScrollTrigger);
 export default function SmoothScroll({ children }) {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.0,
+      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(1 - t, 3)),
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.4,
+      touchMultiplier: 1.8,
+      syncTouch: true,
+      gestureOrientation: 'vertical',
     });
 
     // Wire Lenis into GSAP ticker AND broadcast scroll progress
