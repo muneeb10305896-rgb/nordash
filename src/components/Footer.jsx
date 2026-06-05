@@ -16,7 +16,7 @@ const footerLinks = {
     { label: 'About Us', href: '#about' },
     { label: 'Our Process', href: '#process' },
     { label: 'Case Studies', href: '#portfolio' },
-    { label: 'Contact', href: '#work' },
+    { label: 'Contact', href: '/contact' },
   ],
   Connect: [
     { label: 'hello@nordash.agency', href: 'mailto:hello@nordash.agency' },
