@@ -159,7 +159,11 @@ export default function Hero({ onStartProject }) {
           </MagneticButton>
 
           <MagneticButton strength={0.28}>
-            <button className="btn-ghost" style={{ padding: '16px 46px', fontSize: 12 }}>
+            <button
+              className="btn-ghost"
+              style={{ padding: '16px 46px', fontSize: 12 }}
+              onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
+            >
               <span>See Our Work</span>
             </button>
           </MagneticButton>

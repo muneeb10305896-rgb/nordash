@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import Skeleton, { SkeletonGrid } from '@/components/Skeleton';
 
 export default function Portfolio() {
@@ -89,6 +90,14 @@ export default function Portfolio() {
 
   const categories = ['all', 'web-development', 'mobile-app', 'digital-marketing', 'branding', 'software'];
 
+  const categoryGradient = {
+    'digital-marketing':  'linear-gradient(135deg, #0a1f3c 0%, #002244 50%, #001a33 100%)',
+    'web-development':    'linear-gradient(135deg, #0a1a2e 0%, #001233 50%, #0d1f3c 100%)',
+    'mobile-app':         'linear-gradient(135deg, #0d0a2e 0%, #1a0a3c 50%, #0a0d2e 100%)',
+    'branding':           'linear-gradient(135deg, #1a0a0a 0%, #2e0a00 50%, #1a0d00 100%)',
+    'software':           'linear-gradient(135deg, #0a1a0a 0%, #001a0d 50%, #0a1a10 100%)',
+  };
+
   const filteredProjects = selectedCategory === 'all'
     ? projects
     : projects.filter(p => p.category === selectedCategory);
@@ -175,16 +184,24 @@ export default function Portfolio() {
                 }}
                 whileHover={{ borderColor: 'var(--aurora-cyan)', y: -5 }}
               >
-                {project.imageUrl && (
-                  <div style={{
-                    width: '100%',
-                    height: 220,
-                    background: 'var(--deep)',
-                    backgroundImage: `url(${project.imageUrl})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                  }} />
-                )}
+                <div style={{
+                  width: '100%', height: 220, overflow: 'hidden', position: 'relative',
+                  background: categoryGradient[project.category] || 'linear-gradient(135deg, #0a1f3c, #001233)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {project.imageUrl ? (
+                    <Image
+                      src={project.imageUrl}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      style={{ objectFit: 'cover', objectPosition: 'center' }}
+                      onError={e => { e.currentTarget.style.display = 'none'; }}
+                    />
+                  ) : null}
+                  {/* Subtle overlay so category label is readable */}
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(13,31,60,0.7) 0%, transparent 60%)', pointerEvents: 'none' }} />
+                </div>
                 <div style={{ padding: 24 }}>
                   <p className="font-dm" style={{ fontSize: 11, color: 'var(--aurora-cyan)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 8px 0' }}>
                     {project.category.replace('-', ' ')}
