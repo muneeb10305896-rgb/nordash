@@ -5,7 +5,11 @@ import { motion, useInView } from 'framer-motion';
 function useCountUp(target, duration, active) {
   const [count, setCount] = useState(0);
   useEffect(() => {
-    if (!active) { setCount(0); return; }  // reset when leaves viewport
+    if (!active) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCount(0); // reset count when element leaves viewport (driven by useInView, not derivable in render)
+      return;
+    }
     let raf;
     let startTime = null;
     const step = (ts) => {

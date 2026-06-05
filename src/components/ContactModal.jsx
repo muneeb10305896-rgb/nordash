@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
+import { track } from '@vercel/analytics';
 
 const services = [
   'Video Editing', 'Thumbnail Design', 'Social Media Marketing',
@@ -56,6 +57,7 @@ export default function ContactModal({ isOpen, onClose, type = 'book-call' }) {
         setStatus({ type: 'error', message: data.error || 'Something went wrong' });
       } else {
         setStatus({ type: 'success', message: "Request sent! We'll be in touch within 24 hours." });
+        track('contact_form_submitted', { type });
         setFormData({ name: '', email: '', phone: '', country: '', service: '', message: '' });
         setTimeout(() => { onClose(); setTimeout(() => setStatus(null), 400); }, 2200);
       }
@@ -108,6 +110,7 @@ export default function ContactModal({ isOpen, onClose, type = 'book-call' }) {
             transition={{ duration: 0.42, ease: [0.23, 1, 0.32, 1] }}
             onClick={(e) => e.stopPropagation()}
             className="modal-scroll-area"
+            data-lenis-prevent
             style={{
               position: 'relative',
               width: '100%', maxWidth: 500, maxHeight: 'calc(100vh - 32px)',

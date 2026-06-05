@@ -31,7 +31,7 @@ export default function NotFound() {
         </h1>
 
         <p className="font-dm" style={{ fontSize: 16, color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 32 }}>
-          Oops! The page you're looking for has wandered off into the digital void. Let's get you back on track.
+          Oops! The page you&apos;re looking for has wandered off into the digital void. Let&apos;s get you back on track.
         </p>
 
         <motion.div

@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
@@ -10,24 +10,7 @@ export default function CRMDashboard() {
   const [loading, setLoading] = useState(true);
   const [editingStatus, setEditingStatus] = useState(null);
 
-  useEffect(() => {
-    const adminEmail = localStorage.getItem('admin_email');
-    if (!adminEmail) {
-      window.location.href = '/admin';
-      return;
-    }
-
-    fetchLeads();
-
-    // Auto-refresh every 15 seconds
-    const interval = setInterval(() => {
-      fetchLeads();
-    }, 15000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const fetchLeads = async () => {
+  const fetchLeads = useCallback(async () => {
     try {
       const response = await fetch(`/api/leads?status=${filter}`);
       if (response.ok) {
@@ -39,7 +22,26 @@ export default function CRMDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter]);
+
+  useEffect(() => {
+    const adminEmail = localStorage.getItem('admin_email');
+    if (!adminEmail) {
+      window.location.href = '/admin';
+      return;
+    }
+
+    // Initial load + auto-refresh; fetchLeads syncs from the API, not render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchLeads();
+
+    // Auto-refresh every 15 seconds
+    const interval = setInterval(() => {
+      fetchLeads();
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [fetchLeads]);
 
   const updateLeadStatus = async (leadId, newStatus) => {
     try {
@@ -121,7 +123,7 @@ export default function CRMDashboard() {
               {statuses.map(status => (
                 <button
                   key={status}
-                  onClick={() => { setFilter(status); fetchLeads(); }}
+                  onClick={() => setFilter(status)}
                   className="font-dm"
                   style={{
                     padding: '8px 16px',
@@ -210,6 +212,7 @@ export default function CRMDashboard() {
               style={{
                 background: 'var(--surface)', borderRadius: 12, padding: '40px', maxWidth: 600, width: '100%', maxHeight: '90vh', overflowY: 'auto'
               }}
+              data-lenis-prevent
               onClick={e => e.stopPropagation()}
             >
               <h2 className="font-syne" style={{ fontSize: 24, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 24px 0' }}>

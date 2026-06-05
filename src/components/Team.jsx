@@ -1,32 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { SkeletonGrid } from '@/components/Skeleton';
 
 export default function Team() {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchTeam();
-  }, []);
-
-  const fetchTeam = async () => {
-    try {
-      const response = await fetch('/api/team');
-      if (response.ok) {
-        const data = await response.json();
-        setMembers(data.members && data.members.length > 0 ? data.members : getDefaultMembers());
-      } else {
-        setMembers(getDefaultMembers());
-      }
-    } catch (error) {
-      console.error('Failed to fetch team:', error);
-      setMembers(getDefaultMembers());
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getDefaultMembers = () => [
     {
@@ -53,6 +32,29 @@ export default function Team() {
       }
     }
   ];
+
+  const fetchTeam = useCallback(async () => {
+    try {
+      const response = await fetch('/api/team');
+      if (response.ok) {
+        const data = await response.json();
+        setMembers(data.members && data.members.length > 0 ? data.members : getDefaultMembers());
+      } else {
+        setMembers(getDefaultMembers());
+      }
+    } catch (error) {
+      console.error('Failed to fetch team:', error);
+      setMembers(getDefaultMembers());
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Mount fetch from the API — external sync, not derived render state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchTeam();
+  }, [fetchTeam]);
 
   return (
     <section id="team" style={{ background: 'var(--surface)', padding: '120px 24px', position: 'relative' }}>

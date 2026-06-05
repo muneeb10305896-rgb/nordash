@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Skeleton, { SkeletonGrid } from '@/components/Skeleton';
@@ -9,11 +9,7 @@ export default function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const getDefaultProjects = () => [
+  const getDefaultProjects = useCallback(() => [
     {
       _id: '1',
       title: "Social Media Marketing Strategy & Campaign Management",
@@ -66,9 +62,9 @@ export default function Portfolio() {
       featured: true,
       status: "completed"
     }
-  ];
+  ], []);
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const response = await fetch('/api/projects?featured=true');
       if (response.ok) {
@@ -83,7 +79,13 @@ export default function Portfolio() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getDefaultProjects]);
+
+  useEffect(() => {
+    // Mount fetch from the API — external sync, not derived render state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchProjects();
+  }, [fetchProjects]);
 
   const categories = ['all', 'web-development', 'mobile-app', 'digital-marketing', 'branding', 'software'];
 

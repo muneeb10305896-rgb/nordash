@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { SkeletonGrid } from '@/components/Skeleton';
 
@@ -7,11 +7,7 @@ export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchTestimonials();
-  }, []);
-
-  const getDefaultTestimonials = () => [
+  const getDefaultTestimonials = useCallback(() => [
     {
       _id: '1',
       quote: 'NORDASH transformed our digital presence completely. The video content and social strategy they delivered exceeded every expectation.',
@@ -36,9 +32,9 @@ export default function Testimonials() {
       company: 'Independent',
       rating: 5,
     },
-  ];
+  ], []);
 
-  const fetchTestimonials = async () => {
+  const fetchTestimonials = useCallback(async () => {
     try {
       const response = await fetch('/api/testimonials');
       if (response.ok) {
@@ -52,7 +48,13 @@ export default function Testimonials() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getDefaultTestimonials]);
+
+  useEffect(() => {
+    // Mount fetch from the API — external sync, not derived render state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchTestimonials();
+  }, [fetchTestimonials]);
 
   return (
     <section id="testimonials" style={{ background: 'var(--deep)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>

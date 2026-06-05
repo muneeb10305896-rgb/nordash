@@ -87,7 +87,7 @@ export default function About({ onStartProject }) {
             lineHeight: 1.8,
             fontWeight: 300,
           }}>
-            We're a full-spectrum digital agency built on the belief that excellence comes from blending meticulous planning with unbridled creativity. Every project is a masterpiece in progress.
+            We&apos;re a full-spectrum digital agency built on the belief that excellence comes from blending meticulous planning with unbridled creativity. Every project is a masterpiece in progress.
           </p>
         </motion.div>
 
@@ -234,7 +234,7 @@ export default function About({ onStartProject }) {
             color: 'var(--text-primary)',
             marginBottom: 16,
           }}>
-            We Don't Just Build—We Collaborate
+            We Don&apos;t Just Build—We Collaborate
           </h3>
           <p className="font-dm" style={{
             fontSize: 14,
@@ -244,7 +244,7 @@ export default function About({ onStartProject }) {
             lineHeight: 1.8,
             fontWeight: 300,
           }}>
-            Your vision becomes our mission. Transparency at every stage. Regular updates, zero surprises. We're invested in your success before day one and long after launch.
+            Your vision becomes our mission. Transparency at every stage. Regular updates, zero surprises. We&apos;re invested in your success before day one and long after launch.
           </p>
         </motion.div>
 

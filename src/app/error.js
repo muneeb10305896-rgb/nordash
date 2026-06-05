@@ -36,7 +36,7 @@ export default function Error({ error, reset }) {
         </h1>
 
         <p className="font-dm" style={{ fontSize: 16, color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 32 }}>
-          We encountered an unexpected error. Our team has been notified and we're working to fix it.
+          We encountered an unexpected error. Our team has been notified and we&apos;re working to fix it.
         </p>
 
         <motion.div

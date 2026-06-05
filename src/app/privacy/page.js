@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
               <section style={{ marginBottom: 32 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>1. Introduction</h2>
                 <p>
-                  NORDASH ("we," "us," "our," or "Company") operates the nordash.agency website (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.
+                  NORDASH (&quot;we,&quot; &quot;us,&quot; &quot;our,&quot; or &quot;Company&quot;) operates the nordash.agency website (the &quot;Service&quot;). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.
                 </p>
               </section>
 
@@ -34,7 +34,7 @@ export default function PrivacyPolicy() {
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>2. Information Collection and Use</h2>
                 <p style={{ marginBottom: 12 }}>We collect several different types of information for various purposes to provide and improve our Service to you:</p>
                 <ul style={{ paddingLeft: 24, marginBottom: 12 }}>
-                  <li><strong>Personal Data:</strong> While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). This may include:
+                  <li><strong>Personal Data:</strong> While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you (&quot;Personal Data&quot;). This may include:
                     <ul style={{ paddingLeft: 24, marginTop: 8 }}>
                       <li>Email address</li>
                       <li>Name</li>
@@ -44,7 +44,7 @@ export default function PrivacyPolicy() {
                       <li>Files (CV, cover letters)</li>
                     </ul>
                   </li>
-                  <li><strong>Usage Data:</strong> We may also collect information about how the Service is accessed and used ("Usage Data"). This may include information such as your computer's Internet Protocol address, browser type, browser version, the pages you visit, the time and date of your visit, and other diagnostic data.</li>
+                  <li><strong>Usage Data:</strong> We may also collect information about how the Service is accessed and used (&quot;Usage Data&quot;). This may include information such as your computer&apos;s Internet Protocol address, browser type, browser version, the pages you visit, the time and date of your visit, and other diagnostic data.</li>
                 </ul>
               </section>
 
@@ -73,7 +73,7 @@ export default function PrivacyPolicy() {
               <section style={{ marginBottom: 32 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>5. Changes to This Privacy Policy</h2>
                 <p>
-                  We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date at the top of this Privacy Policy.
+                  We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the &quot;Last updated&quot; date at the top of this Privacy Policy.
                 </p>
               </section>
 

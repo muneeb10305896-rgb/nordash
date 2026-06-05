@@ -1,6 +1,7 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function ResetPassword() {
@@ -14,18 +15,7 @@ export default function ResetPassword() {
   const [verified, setVerified] = useState(false);
   const [verifying, setVerifying] = useState(true);
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const tokenFromUrl = params.get('token');
-      const emailFromUrl = params.get('email');
-      setToken(tokenFromUrl);
-      setEmail(emailFromUrl);
-      verifyToken(tokenFromUrl);
-    }
-  }, []);
-
-  const verifyToken = async (token) => {
+  const verifyToken = useCallback(async (token) => {
     if (!token) {
       setStatus({ type: 'error', message: 'No reset token provided' });
       setVerifying(false);
@@ -45,7 +35,20 @@ export default function ResetPassword() {
     } finally {
       setVerifying(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tokenFromUrl = params.get('token');
+      const emailFromUrl = params.get('email');
+      // Token/email come from the URL, which is only readable in the browser (not during SSR/render).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setToken(tokenFromUrl);
+      setEmail(emailFromUrl);
+      verifyToken(tokenFromUrl);
+    }
+  }, [verifyToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,9 +118,9 @@ export default function ResetPassword() {
             <p className="font-dm" style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 20px 0' }}>
               {status?.message || 'This reset link is invalid or has expired.'}
             </p>
-            <a href="/admin/forgot-password" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', padding: '12px 24px', fontSize: 13 }}>
+            <Link href="/admin/forgot-password" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block', padding: '12px 24px', fontSize: 13 }}>
               Request New Link
-            </a>
+            </Link>
           </div>
         </motion.div>
       </div>

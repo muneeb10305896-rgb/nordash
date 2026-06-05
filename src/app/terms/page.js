@@ -32,41 +32,41 @@ export default function TermsOfService() {
 
               <section style={{ marginBottom: 32 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>2. Use License</h2>
-                <p style={{ marginBottom: 12 }}>Permission is granted to temporarily download one copy of the materials (information or software) on NORDASH's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+                <p style={{ marginBottom: 12 }}>Permission is granted to temporarily download one copy of the materials (information or software) on NORDASH&apos;s website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
                 <ul style={{ paddingLeft: 24 }}>
                   <li>Modifying or copying the materials</li>
                   <li>Using the materials for any commercial purpose or for any public display</li>
                   <li>Attempting to decompile or reverse engineer any software contained on the website</li>
                   <li>Removing any copyright or other proprietary notations from the materials</li>
-                  <li>Transferring the materials to another person or "mirroring" the materials on any other server</li>
+                  <li>Transferring the materials to another person or &quot;mirroring&quot; the materials on any other server</li>
                 </ul>
               </section>
 
               <section style={{ marginBottom: 32 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>3. Disclaimer</h2>
                 <p>
-                  The materials on NORDASH's website are provided on an 'as is' basis. NORDASH makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
+                  The materials on NORDASH&apos;s website are provided on an &apos;as is&apos; basis. NORDASH makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.
                 </p>
               </section>
 
               <section style={{ marginBottom: 32 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>4. Limitations</h2>
                 <p>
-                  In no event shall NORDASH or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on NORDASH's website.
+                  In no event shall NORDASH or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on NORDASH&apos;s website.
                 </p>
               </section>
 
               <section style={{ marginBottom: 32 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>5. Accuracy of Materials</h2>
                 <p>
-                  The materials appearing on NORDASH's website could include technical, typographical, or photographic errors. NORDASH does not warrant that any of the materials on the website are accurate, complete, or current. NORDASH may make changes to the materials contained on its website at any time without notice.
+                  The materials appearing on NORDASH&apos;s website could include technical, typographical, or photographic errors. NORDASH does not warrant that any of the materials on the website are accurate, complete, or current. NORDASH may make changes to the materials contained on its website at any time without notice.
                 </p>
               </section>
 
               <section style={{ marginBottom: 32 }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>6. Links</h2>
                 <p>
-                  NORDASH has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by NORDASH of the site. Use of any such linked website is at the user's own risk.
+                  NORDASH has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by NORDASH of the site. Use of any such linked website is at the user&apos;s own risk.
                 </p>
               </section>
 

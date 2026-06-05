@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
 import MagneticButton from './MagneticButton';
 
 const links = ['Services', 'Process', 'Work', 'About'];
@@ -31,7 +32,7 @@ export default function Navbar({ onStartProject }) {
     >
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         {/* Logo */}
-        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', transition: 'filter 0.3s' }}
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none', transition: 'filter 0.3s' }}
           onMouseEnter={e => e.currentTarget.style.filter = 'drop-shadow(0 0 12px rgba(255,217,0,0.4))'}
           onMouseLeave={e => e.currentTarget.style.filter = 'drop-shadow(0 0 0px rgba(255,217,0,0))'}
         >
@@ -46,7 +47,7 @@ export default function Navbar({ onStartProject }) {
           <span className="font-syne" style={{ fontSize: 18, fontWeight: 800, letterSpacing: '0.12em', background: 'linear-gradient(135deg, #FFD700 0%, #FFC93C 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
             NORDASH
           </span>
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 36 }} className="hidden-mobile">

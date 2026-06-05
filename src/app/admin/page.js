@@ -1,9 +1,9 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const TABS = ['Dashboard', 'Services', 'Projects', 'Team', 'Testimonials', 'Leads'];
+const TABS = ['Dashboard', 'Services', 'Projects', 'Team', 'Testimonials', 'Leads', 'Settings'];
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -28,10 +28,40 @@ export default function AdminDashboard() {
   const [formData, setFormData] = useState({});
   const [saveStatus, setSaveStatus] = useState(null);
 
+  // Mobile sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Password change states
+  const [pwCurrent, setPwCurrent] = useState('');
+  const [pwNew, setPwNew] = useState('');
+  const [pwConfirm, setPwConfirm] = useState('');
+  const [pwStatus, setPwStatus] = useState(null);
+
+  const fetchAllData = useCallback(async () => {
+    setDataLoading(true);
+    try {
+      const [sRes, pRes, tRes, testRes, lRes] = await Promise.all([
+        fetch('/api/services'), fetch('/api/projects'), fetch('/api/team'),
+        fetch('/api/testimonials'), fetch('/api/leads'),
+      ]);
+      const [s, p, t, test, l] = await Promise.all([
+        sRes.json(), pRes.json(), tRes.json(), testRes.json(), lRes.json(),
+      ]);
+      setServices(s.services || []);
+      setProjects(p.projects || []);
+      setTeam(t.members || []);
+      setTestimonials(test.testimonials || []);
+      setLeads(l.leads || []);
+    } catch (err) { console.error('Failed to fetch data:', err); }
+    finally { setDataLoading(false); }
+  }, []);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const adminEmail = localStorage.getItem('admin_email');
       if (adminEmail) {
+        // One-time mount sync from localStorage; can't run during SSR/render.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setAuthenticated(true);
         setEmail(adminEmail);
       }
@@ -40,8 +70,19 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
+    // Syncs admin data from the API on auth/tab change — external sync, not derived render state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (authenticated) fetchAllData();
-  }, [authenticated, activeTab]);
+  }, [authenticated, activeTab, fetchAllData]);
+
+  // Lock the page behind the form modal so the browser scrolls the modal,
+  // not the body, while it's open.
+  useEffect(() => {
+    if (!showForm) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [showForm]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -73,25 +114,6 @@ export default function AdminDashboard() {
     setAuthenticated(false);
     setEmail('');
     setPassword('');
-  };
-
-  const fetchAllData = async () => {
-    setDataLoading(true);
-    try {
-      const [sRes, pRes, tRes, testRes, lRes] = await Promise.all([
-        fetch('/api/services'), fetch('/api/projects'), fetch('/api/team'),
-        fetch('/api/testimonials'), fetch('/api/leads'),
-      ]);
-      const [s, p, t, test, l] = await Promise.all([
-        sRes.json(), pRes.json(), tRes.json(), testRes.json(), lRes.json(),
-      ]);
-      setServices(s.services || []);
-      setProjects(p.projects || []);
-      setTeam(t.members || []);
-      setTestimonials(test.testimonials || []);
-      setLeads(l.leads || []);
-    } catch (err) { console.error('Failed to fetch data:', err); }
-    finally { setDataLoading(false); }
   };
 
   // ── CRUD helpers ──
@@ -161,6 +183,29 @@ export default function AdminDashboard() {
     } catch (err) { console.error('Delete failed:', err); }
   };
 
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    if (!pwCurrent || !pwNew || !pwConfirm) { setPwStatus({ type: 'error', message: 'All fields are required' }); return; }
+    if (pwNew.length < 6) { setPwStatus({ type: 'error', message: 'New password must be at least 6 characters' }); return; }
+    if (pwNew !== pwConfirm) { setPwStatus({ type: 'error', message: 'New passwords do not match' }); return; }
+    setPwStatus({ type: 'loading', message: 'Updating password...' });
+    try {
+      const res = await fetch('/api/admin/change-password', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, currentPassword: pwCurrent, newPassword: pwNew }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setPwStatus({ type: 'success', message: 'Password updated successfully!' });
+        setPwCurrent(''); setPwNew(''); setPwConfirm('');
+        setTimeout(() => setPwStatus(null), 3000);
+      } else {
+        setPwStatus({ type: 'error', message: data.error || 'Update failed' });
+      }
+    } catch { setPwStatus({ type: 'error', message: 'Network error' }); }
+  };
+
   // ── Stats ──
   const stats = [
     { label: 'Services', value: services.length, color: '#00E5FF' },
@@ -196,15 +241,24 @@ export default function AdminDashboard() {
   // ── Main Dashboard ──
   return (
     <div style={{ minHeight: '100vh', background: '#080C1A', display: 'flex' }}>
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9, display: 'none' }}
+          className="admin-overlay"
+        />
+      )}
+
       {/* Sidebar */}
-      <div style={{ width: 220, background: '#0D1626', borderRight: '1px solid rgba(255,255,255,0.05)', padding: '24px 0', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, bottom: 0, left: 0, zIndex: 10 }}>
+      <div className={`admin-sidebar${sidebarOpen ? ' open' : ''}`} style={{ width: 220, background: '#0D1626', borderRight: '1px solid rgba(255,255,255,0.05)', padding: '24px 0', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, bottom: 0, left: 0, zIndex: 10, transition: 'transform 0.3s ease' }}>
         <div style={{ padding: '0 20px', marginBottom: 32 }}>
           <h2 className="font-syne" style={{ fontSize: 16, fontWeight: 800, color: '#EDF2FF', margin: 0, letterSpacing: '0.1em' }}>NORDASH</h2>
           <p className="font-dm" style={{ fontSize: 10, color: 'rgba(237,242,255,0.25)', margin: '2px 0 0' }}>Admin Panel</p>
         </div>
         {TABS.map(tab => (
           <button key={tab}
-            onClick={() => { setActiveTab(tab); setShowForm(false); }}
+            onClick={() => { setActiveTab(tab); setShowForm(false); setSidebarOpen(false); }}
             style={{
               padding: '12px 20px', textAlign: 'left', border: 'none',
               background: activeTab === tab ? 'rgba(0,229,255,0.06)' : 'transparent',
@@ -224,10 +278,23 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content */}
-      <div style={{ marginLeft: 220, flex: 1, padding: '40px 36px' }}>
+      <div className="admin-content" style={{ marginLeft: 220, flex: 1, padding: '40px 36px' }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 36 }}>
-          <h1 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: '#EDF2FF', margin: 0 }}>{activeTab}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="admin-hamburger"
+              style={{ display: 'none', flexDirection: 'column', gap: 5, padding: 6, background: 'none', border: 'none', cursor: 'pointer' }}
+              aria-label="Toggle menu"
+            >
+              {[0,1,2].map(i => (
+                <span key={i} style={{ display: 'block', width: 22, height: 2, background: '#EDF2FF', borderRadius: 2 }} />
+              ))}
+            </button>
+            <h1 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: '#EDF2FF', margin: 0 }}>{activeTab}</h1>
+          </div>
           {['Services', 'Projects', 'Team', 'Testimonials'].includes(activeTab) && (
             <button onClick={handleAdd}
               style={{ padding: '12px 24px', background: 'linear-gradient(135deg, #00B8D4, #7B61FF)', border: 'none', borderRadius: 10, color: '#FFF', fontFamily: "'Syne',sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', cursor: 'pointer' }}>
@@ -263,7 +330,7 @@ export default function AdminDashboard() {
               {leads.length} lead{leads.length !== 1 ? 's' : ''} from contact form submissions.
             </p>
             {leads.length === 0 ? (
-              <p className="font-dm" style={{ color: 'rgba(237,242,255,0.3)', textAlign: 'center', padding: 40 }}>No leads yet. They'll appear when someone submits the contact form.</p>
+              <p className="font-dm" style={{ color: 'rgba(237,242,255,0.3)', textAlign: 'center', padding: 40 }}>No leads yet. They&apos;ll appear when someone submits the contact form.</p>
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -292,6 +359,51 @@ export default function AdminDashboard() {
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Settings Tab */}
+        {activeTab === 'Settings' && (
+          <div style={{ maxWidth: 520 }}>
+            <div style={{ background: '#0F1D36', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '32px', marginBottom: 24 }}>
+              <h3 className="font-syne" style={{ fontSize: 16, fontWeight: 700, color: '#EDF2FF', margin: '0 0 4px' }}>Account</h3>
+              <p className="font-dm" style={{ fontSize: 12, color: 'rgba(237,242,255,0.35)', margin: '0 0 20px' }}>Signed in as</p>
+              <div style={{ padding: '12px 16px', background: 'rgba(0,229,255,0.05)', border: '1px solid rgba(0,229,255,0.15)', borderRadius: 10 }}>
+                <p className="font-dm" style={{ fontSize: 13, color: '#00E5FF', margin: 0 }}>{email}</p>
+              </div>
+            </div>
+
+            <div style={{ background: '#0F1D36', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 14, padding: '32px' }}>
+              <h3 className="font-syne" style={{ fontSize: 16, fontWeight: 700, color: '#EDF2FF', margin: '0 0 4px' }}>Change Password</h3>
+              <p className="font-dm" style={{ fontSize: 12, color: 'rgba(237,242,255,0.35)', margin: '0 0 24px' }}>Update your admin password</p>
+              <form onSubmit={handlePasswordChange} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {[
+                  { label: 'Current Password', value: pwCurrent, setter: setPwCurrent, ph: 'Enter current password' },
+                  { label: 'New Password', value: pwNew, setter: setPwNew, ph: 'At least 6 characters' },
+                  { label: 'Confirm New Password', value: pwConfirm, setter: setPwConfirm, ph: 'Repeat new password' },
+                ].map(f => (
+                  <div key={f.label}>
+                    <label className="font-syne" style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(237,242,255,0.35)', display: 'block', marginBottom: 6 }}>{f.label}</label>
+                    <input
+                      type="password"
+                      value={f.value}
+                      onChange={e => f.setter(e.target.value)}
+                      placeholder={f.ph}
+                      style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none', fontFamily: "'DM Sans',sans-serif" }}
+                    />
+                  </div>
+                ))}
+                {pwStatus && (
+                  <p className="font-dm" style={{ fontSize: 12, color: pwStatus.type === 'error' ? '#FF6B6B' : pwStatus.type === 'success' ? '#00FF94' : 'rgba(237,242,255,0.5)', margin: 0 }}>
+                    {pwStatus.message}
+                  </p>
+                )}
+                <button type="submit" disabled={pwStatus?.type === 'loading'}
+                  style={{ padding: '13px', background: 'linear-gradient(135deg, #00B8D4, #7B61FF)', border: 'none', borderRadius: 10, color: '#FFF', fontFamily: "'Syne',sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: '0.06em', cursor: pwStatus?.type === 'loading' ? 'not-allowed' : 'pointer', opacity: pwStatus?.type === 'loading' ? 0.7 : 1, marginTop: 4 }}>
+                  {pwStatus?.type === 'loading' ? 'Updating...' : 'Update Password'}
+                </button>
+              </form>
+            </div>
           </div>
         )}
 
@@ -348,6 +460,7 @@ export default function AdminDashboard() {
                 exit={{ opacity: 0, y: 30, scale: 0.96 }}
                 transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
                 style={{ background: '#0F1D36', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: '36px 32px', width: '100%', maxWidth: 600, maxHeight: '85vh', overflow: 'auto' }}
+                data-lenis-prevent
                 onClick={e => e.stopPropagation()}
               >
                 <h2 className="font-syne" style={{ fontSize: 22, fontWeight: 800, color: '#EDF2FF', margin: '0 0 24px' }}>
@@ -436,6 +549,20 @@ export default function AdminDashboard() {
           )}
         </AnimatePresence>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .admin-sidebar { transform: translateX(-220px) !important; }
+          .admin-sidebar.open { transform: translateX(0) !important; box-shadow: 4px 0 40px rgba(0,0,0,0.6); }
+          .admin-overlay { display: block !important; }
+          .admin-content { margin-left: 0 !important; padding: 24px 16px !important; }
+          .admin-hamburger { display: flex !important; }
+        }
+        @media (min-width: 769px) {
+          .admin-sidebar { transform: translateX(0) !important; }
+          .admin-hamburger { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }

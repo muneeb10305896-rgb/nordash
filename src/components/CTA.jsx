@@ -43,7 +43,7 @@ export default function CTA({ modalType, setModalType }) {
           className="font-syne"
           style={{ fontSize: 'clamp(40px, 7vw, 88px)', fontWeight: 800, lineHeight: 1.0, letterSpacing: '-0.03em', marginBottom: 24 }}
         >
-          <span style={{ color: 'var(--text-primary)' }}>Let's Build Something</span>
+          <span style={{ color: 'var(--text-primary)' }}>Let&apos;s Build Something</span>
           <br />
           <span className="text-gradient-aurora">Extraordinary.</span>
         </motion.h2>
@@ -55,7 +55,7 @@ export default function CTA({ modalType, setModalType }) {
           className="font-dm"
           style={{ fontSize: 17, color: 'var(--text-muted)', lineHeight: 1.7, maxWidth: 560, margin: '0 auto 52px', fontWeight: 300 }}
         >
-          Tell us what you're building. We'll tell you how to make it world-class.
+          Tell us what you&apos;re building. We&apos;ll tell you how to make it world-class.
           First consultation is always free.
         </motion.p>
 
