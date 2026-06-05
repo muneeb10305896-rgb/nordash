@@ -2,6 +2,7 @@ import dbConnect from '@/lib/mongodb';
 import Service from '@/models/Service';
 import TeamMember from '@/models/TeamMember';
 import Testimonial from '@/models/Testimonial';
+import { verifyAdminAuth } from '@/lib/apiUtils';
 
 // All existing data from the frontend components
 const DEFAULT_SERVICES = [
@@ -30,6 +31,7 @@ export async function GET() { return handleSeed(); }
 export async function POST() { return handleSeed(); }
 
 async function handleSeed() {
+  if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
     const results = { services: 0, team: 0, testimonials: 0 };

@@ -9,7 +9,7 @@ const stats = [
   { label: 'Team', value: '12', accent: '#00FF94' },
 ];
 
-export default function About() {
+export default function About({ onStartProject }) {
   const ref = useRef(null);
   const headRef = useRef(null);
   const inView = useInView(ref, { once: false, margin: '-100px' });
@@ -262,12 +262,12 @@ export default function About() {
           }}>
             Ready to build something extraordinary?
           </p>
-          <a href="#" className="btn-primary" style={{ padding: '16px 46px', fontSize: 12, textDecoration: 'none', display: 'inline-flex' }}>
+          <button className="btn-primary" onClick={() => onStartProject?.()} style={{ padding: '16px 46px', fontSize: 12, border: 'none', cursor: 'pointer' }}>
             <span>Start a Project</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ position: 'relative', zIndex: 1 }}>
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-          </a>
+          </button>
         </motion.div>
       </div>
     </section>

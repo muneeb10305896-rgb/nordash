@@ -18,21 +18,18 @@ export default function SmoothScroll({ children }) {
       gestureOrientation: 'vertical',
     });
 
-    // Wire Lenis into GSAP ticker AND broadcast scroll progress
-    // as a custom window event so PakistaniTruckScroll can sync to it.
-    lenis.on('scroll', (e) => {
-      ScrollTrigger.update(e);
-      window.dispatchEvent(
-        new CustomEvent('lenis:scroll', { detail: { progress: e.progress } })
-      );
+    // Wire Lenis into GSAP ticker
+    lenis.on('scroll', () => {
+      ScrollTrigger.update();
     });
 
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    const tickerCallback = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(tickerCallback);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
       lenis.destroy();
-      gsap.ticker.remove((time) => lenis.raf(time * 1000));
+      gsap.ticker.remove(tickerCallback);
     };
   }, []);
 

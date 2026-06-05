@@ -2,6 +2,8 @@
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 const caseStudies = {
   'oktopus-group-social-media': {
@@ -124,20 +126,26 @@ export default function CaseStudy() {
 
   if (!study) {
     return (
-      <section style={{ background: 'var(--midnight)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ textAlign: 'center' }}>
-          <h1 style={{ fontSize: 48, color: 'var(--text-primary)', marginBottom: 16 }}>404</h1>
-          <p style={{ color: 'var(--text-muted)', marginBottom: 32 }}>Case study not found</p>
-          <Link href="/portfolio">
-            <button className="btn-primary">Back to Portfolio</button>
-          </Link>
-        </div>
-      </section>
+      <>
+        <Navbar />
+        <section style={{ background: 'var(--midnight)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <h1 style={{ fontSize: 48, color: 'var(--text-primary)', marginBottom: 16 }}>404</h1>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 32 }}>Case study not found</p>
+            <Link href="/#portfolio">
+              <button className="btn-primary">Back to Portfolio</button>
+            </Link>
+          </div>
+        </section>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <section style={{ background: 'var(--midnight)', padding: '120px 24px' }}>
+    <>
+      <Navbar />
+      <section style={{ background: 'var(--midnight)', padding: '120px 24px' }}>
       {/* Hero Image */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -297,7 +305,7 @@ export default function CaseStudy() {
           <p className="font-dm" style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 24 }}>
             Ready to work on a similar project?
           </p>
-          <Link href="/#contact">
+          <Link href="/#work">
             <button className="btn-primary" style={{ padding: '14px 32px', fontSize: 14 }}>
               Start Your Project
             </button>
@@ -305,5 +313,7 @@ export default function CaseStudy() {
         </motion.div>
       </div>
     </section>
+    <Footer />
+    </>
   );
 }

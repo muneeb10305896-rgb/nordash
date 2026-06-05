@@ -7,7 +7,7 @@ export function middleware(request) {
   if (pathname.startsWith('/admin')) {
     // Check for admin token in cookies
     const token = request.cookies.get('admin_token')?.value;
-    const adminToken = process.env.NEXT_PUBLIC_ADMIN_TOKEN;
+    const adminToken = process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN;
 
     // Allow access to login, forgot-password, and reset-password pages without token
     if (

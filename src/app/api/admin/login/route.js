@@ -30,6 +30,7 @@ export async function POST(request) {
       success: true,
       message: 'Login successful',
       email: normalizedEmail,
+      token: storedPassword,
     });
 
   } catch (error) {

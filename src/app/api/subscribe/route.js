@@ -1,4 +1,6 @@
 import { Resend } from 'resend';
+import dbConnect from '@/lib/mongodb';
+import Subscriber from '@/models/Subscriber';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -8,6 +10,19 @@ export async function POST(request) {
 
     if (!email || !email.includes('@')) {
       return Response.json({ error: 'Invalid email address' }, { status: 400 });
+    }
+
+    // Save to database
+    try {
+      await dbConnect();
+      await Subscriber.findOneAndUpdate(
+        { email: email.toLowerCase().trim() },
+        { email: email.toLowerCase().trim(), subscribedAt: new Date(), source: 'website' },
+        { upsert: true, new: true }
+      );
+    } catch (dbError) {
+      console.error('Failed to save subscriber to DB:', dbError);
+      // Continue — email still sends even if DB fails
     }
 
     const emailHtml = `

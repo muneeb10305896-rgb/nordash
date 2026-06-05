@@ -1,5 +1,6 @@
 import dbConnect from '@/lib/mongodb';
 import Project from '@/models/Project';
+import { verifyAdminAuth } from '@/lib/apiUtils';
 
 export async function GET(request) {
   try {
@@ -25,6 +26,7 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
+  if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
     const data = await request.json();

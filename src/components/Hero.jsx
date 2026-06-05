@@ -19,7 +19,7 @@ const marqueeItems = [
   { label: '✦',                     accent: true  },
 ];
 
-export default function Hero() {
+export default function Hero({ onStartProject }) {
   const ref = useRef(null);
   const isLowEnd = typeof window !== 'undefined' && window.innerWidth < 768;
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
@@ -150,7 +150,7 @@ export default function Hero() {
           style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap' }}
         >
           <MagneticButton strength={0.35}>
-            <button className="btn-primary" style={{ padding: '16px 46px', fontSize: 12 }}>
+            <button className="btn-primary" style={{ padding: '16px 46px', fontSize: 12 }} onClick={() => onStartProject?.()}>
               <span>Start a Project</span>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ position: 'relative', zIndex: 1 }}>
                 <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>

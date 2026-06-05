@@ -1,3 +1,15 @@
+import { cookies } from 'next/headers';
+
+export async function verifyAdminAuth() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('admin_token')?.value;
+  const adminToken = process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN;
+  if (!token || token !== adminToken) {
+    return false;
+  }
+  return true;
+}
+
 export class APIError extends Error {
   constructor(message, status = 500) {
     super(message);

@@ -5,7 +5,6 @@ import Link from 'next/link';
 
 export default function CRMDashboard() {
   const [leads, setLeads] = useState([]);
-  const [applications, setApplications] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
   const [filter, setFilter] = useState('new');
   const [loading, setLoading] = useState(true);
@@ -19,12 +18,10 @@ export default function CRMDashboard() {
     }
 
     fetchLeads();
-    fetchApplications();
 
     // Auto-refresh every 15 seconds
     const interval = setInterval(() => {
       fetchLeads();
-      fetchApplications();
     }, 15000);
 
     return () => clearInterval(interval);
@@ -41,18 +38,6 @@ export default function CRMDashboard() {
       console.error('Failed to fetch leads:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchApplications = async () => {
-    try {
-      const response = await fetch('/api/admin/applications');
-      if (response.ok) {
-        const data = await response.json();
-        setApplications(data.applications || []);
-      }
-    } catch (error) {
-      console.error('Failed to fetch applications:', error);
     }
   };
 
@@ -110,12 +95,6 @@ export default function CRMDashboard() {
             <p className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Total Leads</p>
             <h3 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: 'var(--aurora-cyan)', margin: '8px 0 0 0' }}>
               {leads.length}
-            </h3>
-          </div>
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: 20, borderRadius: 12 }}>
-            <p className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Job Applications</p>
-            <h3 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: 'var(--truck-saffron)', margin: '8px 0 0 0' }}>
-              {applications.length}
             </h3>
           </div>
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: 20, borderRadius: 12 }}>

@@ -4,9 +4,28 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 const footerLinks = {
-  Services: ['Video Editing', 'Thumbnail Design', 'Social Media', 'Software Dev', 'Brand Strategy', 'UI/UX Design'],
-  Company: ['About Us', 'Our Process', 'Case Studies', 'Blog', 'Contact'],
-  Connect: ['hello@nordash.agency', 'Instagram', 'LinkedIn', 'Twitter / X', 'Behance'],
+  Services: [
+    { label: 'Video Editing', href: '#services' },
+    { label: 'Thumbnail Design', href: '#services' },
+    { label: 'Social Media', href: '#services' },
+    { label: 'Software Dev', href: '#services' },
+    { label: 'Brand Strategy', href: '#services' },
+    { label: 'UI/UX Design', href: '#services' },
+  ],
+  Company: [
+    { label: 'About Us', href: '#about' },
+    { label: 'Our Process', href: '#process' },
+    { label: 'Case Studies', href: '#portfolio' },
+    { label: 'Blog', href: '#' },
+    { label: 'Contact', href: '#work' },
+  ],
+  Connect: [
+    { label: 'hello@nordash.agency', href: 'mailto:hello@nordash.agency' },
+    { label: 'Instagram', href: 'https://www.instagram.com/muneeb.ahmed.butt.fi/' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/muneeb-ahmed-butt-4a384438a/' },
+    { label: 'Twitter / X', href: '#' },
+    { label: 'Behance', href: '#' },
+  ],
 };
 
 const socials = [
@@ -133,11 +152,11 @@ export default function Footer() {
                 <div className="font-syne" style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--aurora-cyan)', marginBottom: 20 }}>{cat}</div>
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {items.map(item => (
-                    <li key={item}>
-                      <a href="#" className="font-dm" style={{ fontSize: 13, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s', display: 'block' }}
+                    <li key={item.label}>
+                      <a href={item.href} className="font-dm" style={{ fontSize: 13, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s', display: 'block' }}
                         onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
                         onMouseLeave={e => e.target.style.color = 'var(--text-faint)'}
-                      >{item}</a>
+                      >{item.label}</a>
                     </li>
                   ))}
                 </ul>

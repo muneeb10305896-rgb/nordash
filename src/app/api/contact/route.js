@@ -20,7 +20,6 @@ export async function POST(request) {
       await Lead.create({
         name, email, phone, country,
         serviceInterested: service || (isBookCall ? 'Free Consultation Call' : 'Quote Request'),
-        type: isBookCall ? 'book-call' : 'quote',
         message: message || '',
         status: 'new',
         source: 'website',
@@ -152,7 +151,8 @@ export async function POST(request) {
 
     if (error) {
       console.error('Resend email error:', error);
-      return Response.json({ error: 'Failed to send email. Please try again or email us directly at hello@nordash.agency' }, { status: 500 });
+      // Lead is already saved — return success even if email fails
+      return Response.json({ success: true, warning: 'Email delivery delayed. We will contact you soon.' });
     }
 
     return Response.json({ success: true, id: data?.id });

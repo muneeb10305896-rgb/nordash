@@ -56,6 +56,8 @@ export default function AdminDashboard() {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem('admin_email', email);
+        // Set the admin_token cookie so middleware allows subpages
+        document.cookie = `admin_token=${data.token || 'nordash2025'}; path=/; max-age=86400; SameSite=Lax`;
         setAuthenticated(true);
       } else {
         setLoginError(data.error || 'Invalid credentials');
@@ -67,6 +69,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('admin_email');
+    document.cookie = 'admin_token=; path=/; max-age=0';
     setAuthenticated(false);
     setEmail('');
     setPassword('');

@@ -1,7 +1,7 @@
 // Shared reset token store for password recovery
 let resetTokens = {};
 let adminPasswords = {
-  'muneeb10305896@gmail.com': process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'nordash2025',
+  'muneeb10305896@gmail.com': process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'nordash2025',
 };
 
 export function createResetToken(email) {

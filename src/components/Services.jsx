@@ -1,8 +1,8 @@
 "use client";
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
-const services = [
+const defaultServices = [
   {
     id: '01', title: 'Video Editing',
     desc: 'Cinematic cuts, colour grading, motion graphics and reels that stop the scroll and demand a second watch.',
@@ -176,6 +176,29 @@ function Card3D({ service, index }) {
 export default function Services() {
   const headRef = useRef(null);
   const inView = useInView(headRef, { once: false, margin: '-80px' });
+  const [services, setServices] = useState(defaultServices);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/services')
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then(data => {
+        if (data.services?.length > 0) {
+          // Map API data to the format Card3D expects
+          const mapped = data.services.map((s, i) => ({
+            id: String(i + 1).padStart(2, '0'),
+            title: s.name,
+            desc: s.description,
+            icon: defaultServices[i]?.icon || defaultServices[0].icon,
+            accent: defaultServices[i]?.accent || '#00E5FF',
+            tag: s.category?.charAt(0).toUpperCase() + s.category?.slice(1) || 'Creative',
+          }));
+          setServices(mapped);
+        }
+      })
+      .catch(() => { /* use defaults */ })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <section id="services" style={{ background: '#08101F', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>

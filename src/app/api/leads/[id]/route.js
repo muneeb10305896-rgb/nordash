@@ -1,10 +1,13 @@
 import dbConnect from '@/lib/mongodb';
 import Lead from '@/models/Lead';
+import { verifyAdminAuth } from '@/lib/apiUtils';
 
 export async function GET(request, { params }) {
+  if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
-    const lead = await Lead.findById(params.id);
+    const { id } = await params;
+    const lead = await Lead.findById(id);
 
     if (!lead) {
       return Response.json({ error: 'Lead not found' }, { status: 404 });
@@ -18,10 +21,12 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
+  if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
+    const { id } = await params;
     const data = await request.json();
-    const lead = await Lead.findByIdAndUpdate(params.id, data, { new: true });
+    const lead = await Lead.findByIdAndUpdate(id, data, { new: true });
 
     return Response.json({ lead }, { status: 200 });
   } catch (error) {
@@ -31,9 +36,11 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
+  if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
-    await Lead.findByIdAndDelete(params.id);
+    const { id } = await params;
+    await Lead.findByIdAndDelete(id);
 
     return Response.json({ success: true }, { status: 200 });
   } catch (error) {
