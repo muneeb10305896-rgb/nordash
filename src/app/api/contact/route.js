@@ -5,6 +5,16 @@ import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 export async function POST(request) {
   try {
     // Rate limit: 3 submissions per minute per IP
@@ -21,6 +31,14 @@ export async function POST(request) {
     }
 
     const isBookCall = type === 'book-call';
+
+    // Escape all user input for safe HTML rendering
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safePhone = escapeHtml(phone);
+    const safeCountry = escapeHtml(country);
+    const safeService = escapeHtml(service || '');
+    const safeMessage = escapeHtml(message || '');
 
     // ── Save lead to MongoDB ──
     try {
@@ -77,45 +95,45 @@ export async function POST(request) {
               <tr>
                 <td style="padding: 16px 0; border-bottom: 1px solid #EEEEEE; width: 35%;">
                   <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">📝 Name</span>
-                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${name}</span>
+                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${safeName}</span>
                 </td>
                 <td style="padding: 16px 0 16px 24px; border-bottom: 1px solid #EEEEEE;">
                   <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">📧 Email</span>
-                  <a href="mailto:${email}" style="color: #00E5FF; font-weight: 600; font-size: 15px; text-decoration: none;">${email}</a>
+                  <a href="mailto:${safeEmail}" style="color: #00E5FF; font-weight: 600; font-size: 15px; text-decoration: none;">${safeEmail}</a>
                 </td>
               </tr>
               <tr>
                 <td style="padding: 16px 0; border-bottom: 1px solid #EEEEEE;">
                   <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">📱 Phone</span>
-                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${phone}</span>
+                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${safePhone}</span>
                 </td>
                 <td style="padding: 16px 0 16px 24px; border-bottom: 1px solid #EEEEEE;">
                   <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">🌍 Country</span>
-                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${country}</span>
+                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${safeCountry}</span>
                 </td>
               </tr>
-              ${service ? `<tr>
+              ${safeService ? `<tr>
                 <td colspan="2" style="padding: 16px 0;">
                   <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;">⚡ Service Interested In</span>
                   <div style="display: inline-block; background: linear-gradient(135deg, rgba(123,97,255,0.15), rgba(123,97,255,0.05)); border: 1px solid rgba(123,97,255,0.3); padding: 8px 16px; border-radius: 6px;">
-                    <span style="color: #7B61FF; font-weight: 700; font-size: 14px;">${service}</span>
+                    <span style="color: #7B61FF; font-weight: 700; font-size: 14px;">${safeService}</span>
                   </div>
                 </td>
               </tr>` : ''}
             </table>
           </div>
 
-          ${message ? `
+          ${safeMessage ? `
           <!-- Message Section -->
           <div style="margin-bottom: 36px; background: linear-gradient(135deg, rgba(0,229,255,0.08), rgba(123,97,255,0.08)); border: 1px solid rgba(0,229,255,0.2); padding: 24px; border-radius: 12px; border-left: 4px solid #00E5FF;">
             <h3 style="color: #0D1626; margin: 0 0 12px 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">💼 Project Brief</h3>
-            <p style="color: #333333; margin: 0; line-height: 1.8; font-size: 14px; white-space: pre-wrap;">${message}</p>
+            <p style="color: #333333; margin: 0; line-height: 1.8; font-size: 14px; white-space: pre-wrap;">${safeMessage}</p>
           </div>
           ` : ''}
 
           <!-- CTA Buttons -->
           <div style="display: flex; gap: 16px; margin: 36px 0; flex-wrap: wrap;">
-            <a href="mailto:${email}?subject=Re: ${isBookCall ? 'Call Booking' : 'Quote Request'} - NORDASH" style="background: linear-gradient(135deg, #00E5FF 0%, #7B61FF 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 700; font-size: 14px; line-height: 1; letter-spacing: 0.05em; flex: 1; text-align: center; min-width: 160px;">
+            <a href="mailto:${safeEmail}?subject=Re: ${isBookCall ? 'Call Booking' : 'Quote Request'} - NORDASH" style="background: linear-gradient(135deg, #00E5FF 0%, #7B61FF 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 700; font-size: 14px; line-height: 1; letter-spacing: 0.05em; flex: 1; text-align: center; min-width: 160px;">
               ↩️ Reply Now
             </a>
             <a href="https://nordash.vercel.app/" style="background: rgba(0,229,255,0.1); color: #00E5FF; border: 2px solid rgba(0,229,255,0.3); padding: 14px 32px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 700; font-size: 14px; line-height: 1; letter-spacing: 0.05em; flex: 1; text-align: center; min-width: 160px;">
@@ -153,7 +171,7 @@ export async function POST(request) {
       from: 'NORDASH <onboarding@resend.dev>',
       to: ['muneeb10305896@gmail.com'],
       replyTo: email,
-      subject: `${isBookCall ? '📞 Book a Free Call' : '💼 Quote Request'} - ${name}`,
+      subject: `${isBookCall ? '📞 Book a Free Call' : '💼 Quote Request'} - ${safeName}`,
       html: emailHtml,
     });
 

@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { SkeletonGrid } from '@/components/Skeleton';
 
 // Icon lookup by type — ensures correct icon regardless of service order
 const iconByType = {
@@ -254,6 +255,9 @@ export default function Services() {
         </motion.div>
 
         {/* Grid */}
+        {loading ? (
+          <SkeletonGrid count={4} columns={4} cardHeight={420} />
+        ) : (
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
@@ -268,6 +272,7 @@ export default function Services() {
             </div>
           ))}
         </div>
+        )}
       </div>
 
       <style>{`

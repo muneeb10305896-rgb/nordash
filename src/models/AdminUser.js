@@ -31,13 +31,12 @@ const adminUserSchema = new mongoose.Schema(
 );
 
 // Hash password before saving
-adminUserSchema.pre('save', async function (next) {
-  if (!this.isModified('passwordHash')) return next();
+adminUserSchema.pre('save', async function () {
+  if (!this.isModified('passwordHash')) return;
   // Only hash if it's not already a bcrypt hash
   if (!this.passwordHash.startsWith('$2')) {
     this.passwordHash = await bcrypt.hash(this.passwordHash, 12);
   }
-  next();
 });
 
 // Compare password

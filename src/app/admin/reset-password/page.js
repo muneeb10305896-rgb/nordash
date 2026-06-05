@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 export default function ResetPassword() {
   const router = useRouter();
   const [token, setToken] = useState(null);
+  const [email, setEmail] = useState(null);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,9 @@ export default function ResetPassword() {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const tokenFromUrl = params.get('token');
+      const emailFromUrl = params.get('email');
       setToken(tokenFromUrl);
+      setEmail(emailFromUrl);
       verifyToken(tokenFromUrl);
     }
   }, []);
@@ -69,7 +72,7 @@ export default function ResetPassword() {
       const response = await fetch('/api/admin/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, newPassword }),
+        body: JSON.stringify({ token, email, newPassword }),
       });
 
       const data = await response.json();

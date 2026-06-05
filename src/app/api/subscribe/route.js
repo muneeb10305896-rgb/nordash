@@ -18,7 +18,7 @@ export async function POST(request) {
       await Subscriber.findOneAndUpdate(
         { email: email.toLowerCase().trim() },
         { email: email.toLowerCase().trim(), subscribedAt: new Date(), source: 'website' },
-        { upsert: true, new: true }
+        { upsert: true, returnDocument: 'after' }
       );
     } catch (dbError) {
       console.error('Failed to save subscriber to DB:', dbError);
