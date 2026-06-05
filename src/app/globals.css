@@ -106,26 +106,22 @@ h1, h2, h3, h4 {
   background-clip: text;
 }
 
-/* ─── PAGE CONTENT LAYER (sits above global 3D truck at z=0) ── */
-/* The global truck canvas is position:fixed z-index:0.
-   Giving <main> and <footer> z=2 ensures all content paints above it.
-   Navbar is z=50 via inline style. */
+/* ─── PAGE CONTENT LAYER ───────────────────────────────── */
 main, footer {
   position: relative;
   z-index: 2;
 }
 
-/* ─── ENSURE BODY HAS BACKGROUND FOR TRUCK TRANSPARENCY ──── */
 body {
   background-color: var(--deep);
 }
 
-/* ─── SMOOTH PAGE TRANSITIONS ────────────────────────────── */
+/* ─── SMOOTH PAGE ENTRANCE ───────────────────────────── */
 main {
-  animation: pageIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  animation: pageIn 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
