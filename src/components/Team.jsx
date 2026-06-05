@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { SkeletonGrid } from '@/components/Skeleton';
 
 export default function Team() {
   const [members, setMembers] = useState([]);
@@ -79,9 +80,7 @@ export default function Team() {
 
         {/* Team Grid */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <p className="font-dm" style={{ color: 'var(--text-muted)' }}>Loading team...</p>
-          </div>
+          <SkeletonGrid count={2} columns={2} cardHeight={340} />
         ) : members.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
             <p className="font-dm" style={{ color: 'var(--text-muted)' }}>Team members coming soon!</p>

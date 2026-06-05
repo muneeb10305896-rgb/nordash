@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { SkeletonGrid } from '@/components/Skeleton';
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState([]);
@@ -81,9 +82,7 @@ export default function Testimonials() {
         </motion.div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <p className="font-dm" style={{ color: 'var(--text-muted)' }}>Loading testimonials...</p>
-          </div>
+          <SkeletonGrid count={3} columns={3} cardHeight={240} />
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
             {testimonials.map((t, i) => (

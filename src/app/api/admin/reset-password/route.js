@@ -1,26 +1,18 @@
-import { updatePassword, verifyResetToken } from '@/lib/resetTokenStore';
+import { resetPassword } from '@/lib/adminAuth';
 
 export async function POST(request) {
   try {
-    const { token, newPassword } = await request.json();
+    const { token, email, newPassword } = await request.json();
 
-    if (!token || !newPassword) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!token || !email || !newPassword) {
+      return Response.json({ error: 'Token, email, and new password are required' }, { status: 400 });
     }
 
     if (newPassword.length < 6) {
       return Response.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
     }
 
-    // Verify token
-    const verification = verifyResetToken(token);
-
-    if (!verification.valid) {
-      return Response.json({ error: verification.error }, { status: 400 });
-    }
-
-    // Update password
-    const result = updatePassword(token, verification.email, newPassword);
+    const result = await resetPassword(token, email, newPassword);
 
     if (!result.success) {
       return Response.json({ error: result.error }, { status: 400 });
@@ -28,11 +20,11 @@ export async function POST(request) {
 
     return Response.json({
       success: true,
-      message: 'Password reset successfully. You can now login with your new password.',
+      message: 'Password reset successfully. You can now log in with your new password.',
     });
 
   } catch (error) {
     console.error('Reset password error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to reset password' }, { status: 500 });
   }
 }

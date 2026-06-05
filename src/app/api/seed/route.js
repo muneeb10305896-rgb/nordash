@@ -2,6 +2,7 @@ import dbConnect from '@/lib/mongodb';
 import Service from '@/models/Service';
 import TeamMember from '@/models/TeamMember';
 import Testimonial from '@/models/Testimonial';
+import AdminUser from '@/models/AdminUser';
 import { verifyAdminAuth } from '@/lib/apiUtils';
 
 // All existing data from the frontend components
@@ -34,7 +35,20 @@ async function handleSeed() {
   if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
-    const results = { services: 0, team: 0, testimonials: 0 };
+    const results = { services: 0, team: 0, testimonials: 0, admin: false };
+
+    // Seed admin user
+    const adminCount = await AdminUser.countDocuments();
+    if (adminCount === 0) {
+      const password = process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'nordash2025';
+      await AdminUser.create({
+        email: 'muneeb10305896@gmail.com',
+        passwordHash: password, // pre-save hook hashes it
+        name: 'Muneeb',
+        role: 'superadmin',
+      });
+      results.admin = true;
+    }
 
     // Seed services
     const serviceCount = await Service.countDocuments();

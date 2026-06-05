@@ -1,68 +1,37 @@
-import { getAdminPassword, isAuthorizedAdmin, setAdminPassword } from '@/lib/resetTokenStore';
+import { verifyCredentials } from '@/lib/adminAuth';
+import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 export async function POST(request) {
   try {
+    // Rate limit: 5 attempts per minute per IP
+    const ip = getClientIP(request);
+    const rateLimit = checkRateLimit('login', ip, 5, 60000);
+    if (!rateLimit.allowed) {
+      return Response.json({ error: `Too many attempts. Try again in ${rateLimit.resetIn}s` }, { status: 429 });
+    }
+
     const { email, password } = await request.json();
 
     if (!email || !password) {
       return Response.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const normalizedEmail = email.toLowerCase();
+    const result = await verifyCredentials(email, password);
 
-    // Check if email is registered
-    if (!isAuthorizedAdmin(normalizedEmail)) {
-      return Response.json({
-        error: 'Email not found. Please contact Muneeb to register.',
-      }, { status: 401 });
-    }
-
-    // Verify password
-    const storedPassword = getAdminPassword(normalizedEmail);
-
-    if (storedPassword !== password) {
-      return Response.json({
-        error: 'Invalid password. Please try again or reset your password.',
-      }, { status: 401 });
+    if (!result.success) {
+      return Response.json({ error: result.error }, { status: 401 });
     }
 
     return Response.json({
       success: true,
       message: 'Login successful',
-      email: normalizedEmail,
-      token: storedPassword,
+      email: result.admin.email,
+      name: result.admin.name,
+      token: process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN,
     });
 
   } catch (error) {
     console.error('Login error:', error);
     return Response.json({ error: 'Login failed' }, { status: 500 });
-  }
-}
-
-// Update password
-export async function PUT(request) {
-  try {
-    const { email, newPassword } = await request.json();
-
-    if (!email || !newPassword) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
-    }
-
-    const normalizedEmail = email.toLowerCase();
-
-    if (!isAuthorizedAdmin(normalizedEmail)) {
-      return Response.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    setAdminPassword(normalizedEmail, newPassword);
-
-    return Response.json({
-      success: true,
-      message: 'Password updated successfully',
-    });
-
-  } catch (error) {
-    console.error('Update password error:', error);
-    return Response.json({ error: 'Failed to update password' }, { status: 500 });
   }
 }

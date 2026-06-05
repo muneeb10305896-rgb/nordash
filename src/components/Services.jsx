@@ -2,6 +2,26 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
 
+// Icon lookup by type — ensures correct icon regardless of service order
+const iconByType = {
+  video: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="2" y="6" width="19" height="18" rx="2.5" stroke="currentColor" strokeWidth="1.6"/><path d="M21 11l7-4v16l-7-4V11z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><path d="M8 13l6 3.5-6 3.5V13z" fill="currentColor"/></svg>),
+  image: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="2" y="4" width="26" height="22" rx="2.5" stroke="currentColor" strokeWidth="1.6"/><circle cx="9" cy="12" r="3.5" stroke="currentColor" strokeWidth="1.6"/><path d="M2 22l8-7 6 6 4-4 10 9" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/></svg>),
+  chart: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><path d="M4 22l7-9 5 6 5-7 6 10" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/><circle cx="24" cy="6" r="3.5" stroke="currentColor" strokeWidth="1.6"/><circle cx="6" cy="24" r="2.5" stroke="currentColor" strokeWidth="1.6"/></svg>),
+  code: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="2" y="4" width="26" height="22" rx="2.5" stroke="currentColor" strokeWidth="1.6"/><path d="M9 11l-5 4.5 5 4.5M21 11l5 4.5-5 4.5M17 8l-4 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  target: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><circle cx="15" cy="15" r="11" stroke="currentColor" strokeWidth="1.6"/><circle cx="15" cy="15" r="5" stroke="currentColor" strokeWidth="1.6"/><path d="M15 2v5M15 23v5M2 15h5M23 15h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
+  layout: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="2" y="2" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.6"/><rect x="17" y="2" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.6"/><rect x="2" y="17" width="11" height="11" rx="2" stroke="currentColor" strokeWidth="1.6"/><circle cx="22.5" cy="22.5" r="5.5" stroke="currentColor" strokeWidth="1.6"/><path d="M22.5 20v5M20 22.5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
+  search: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="1.6"/><path d="M18.5 18.5l7.07 7.07" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M9 12h6M12 9v6M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
+  smartphone: (<svg width="30" height="30" viewBox="0 0 30 30" fill="none"><rect x="5" y="2" width="20" height="26" rx="2.5" stroke="currentColor" strokeWidth="1.6"/><circle cx="15" cy="25" r="1.5" fill="currentColor"/><line x1="8" y1="5" x2="22" y2="5" stroke="currentColor" strokeWidth="1.6"/><path d="M10 10l3 4 5-8 2 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+};
+
+// Accent colors by category
+const accentByCategory = {
+  design: '#FFB300',
+  marketing: '#7B61FF',
+  development: '#00FF94',
+  strategy: '#D72B2B',
+};
+
 const defaultServices = [
   {
     id: '01', title: 'Video Editing',
@@ -184,13 +204,13 @@ export default function Services() {
       .then(res => res.ok ? res.json() : Promise.reject())
       .then(data => {
         if (data.services?.length > 0) {
-          // Map API data to the format Card3D expects
+          // Map API data to the format Card3D expects — icons by type, accents by category
           const mapped = data.services.map((s, i) => ({
             id: String(i + 1).padStart(2, '0'),
             title: s.name,
             desc: s.description,
-            icon: defaultServices[i]?.icon || defaultServices[0].icon,
-            accent: defaultServices[i]?.accent || '#00E5FF',
+            icon: iconByType[s.icon] || iconByType.code,
+            accent: accentByCategory[s.category] || '#00E5FF',
             tag: s.category?.charAt(0).toUpperCase() + s.category?.slice(1) || 'Creative',
           }));
           setServices(mapped);

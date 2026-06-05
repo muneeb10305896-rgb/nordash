@@ -1,8 +1,10 @@
 import { Resend } from 'resend';
+import { verifyAdminAuth } from '@/lib/apiUtils';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request) {
+  if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     const { to, testType } = await request.json();
 

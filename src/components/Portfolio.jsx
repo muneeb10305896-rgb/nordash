@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Skeleton, { SkeletonGrid } from '@/components/Skeleton';
 
 export default function Portfolio() {
   const [projects, setProjects] = useState([]);
@@ -150,9 +151,7 @@ export default function Portfolio() {
 
         {/* Projects Grid */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <p className="font-dm" style={{ color: 'var(--text-muted)' }}>Loading projects...</p>
-          </div>
+          <SkeletonGrid count={4} columns={3} cardHeight={380} />
         ) : filteredProjects.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
             <p className="font-dm" style={{ color: 'var(--text-muted)' }}>No projects yet. Check back soon!</p>

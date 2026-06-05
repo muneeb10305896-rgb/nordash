@@ -1,11 +1,19 @@
 import { Resend } from 'resend';
 import dbConnect from '@/lib/mongodb';
 import Lead from '@/models/Lead';
+import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request) {
   try {
+    // Rate limit: 3 submissions per minute per IP
+    const ip = getClientIP(request);
+    const rateLimit = checkRateLimit('contact', ip, 3, 60000);
+    if (!rateLimit.allowed) {
+      return Response.json({ error: `Please wait ${rateLimit.resetIn}s before sending another request.` }, { status: 429 });
+    }
+
     const { type, name, email, phone, country, service, message } = await request.json();
 
     if (!name || !email || !phone || !country) {
