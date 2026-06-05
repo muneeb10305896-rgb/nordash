@@ -16,15 +16,12 @@ const footerLinks = {
     { label: 'About Us', href: '#about' },
     { label: 'Our Process', href: '#process' },
     { label: 'Case Studies', href: '#portfolio' },
-    { label: 'Blog', href: '#' },
     { label: 'Contact', href: '#work' },
   ],
   Connect: [
     { label: 'hello@nordash.agency', href: 'mailto:hello@nordash.agency' },
     { label: 'Instagram', href: 'https://www.instagram.com/muneeb.ahmed.butt.fi/' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/muneeb-ahmed-butt-4a384438a/' },
-    { label: 'Twitter / X', href: '#' },
-    { label: 'Behance', href: '#' },
   ],
 };
 
@@ -229,7 +226,6 @@ export default function Footer() {
             {[
               { label: 'Privacy', href: '/privacy' },
               { label: 'Terms', href: '/terms' },
-              { label: 'Cookies', href: '/cookies' },
             ].map(l => (
               <a key={l.label} href={l.href} className="font-dm" style={{ fontSize: 12, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s' }}
                 onMouseEnter={e => e.target.style.color = 'var(--text-muted)'}
