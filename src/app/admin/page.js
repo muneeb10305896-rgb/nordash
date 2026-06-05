@@ -278,7 +278,7 @@ export default function AdminDashboard() {
                         <td className="font-dm" style={{ padding: '12px 16px', fontSize: 12, color: '#00E5FF' }}>{lead.email}</td>
                         <td className="font-dm" style={{ padding: '12px 16px', fontSize: 12, color: 'rgba(237,242,255,0.5)' }}>{lead.phone || '-'}</td>
                         <td className="font-dm" style={{ padding: '12px 16px', fontSize: 12, color: 'rgba(237,242,255,0.5)' }}>{lead.country || '-'}</td>
-                        <td className="font-dm" style={{ padding: '12px 16px', fontSize: 12, color: 'rgba(237,242,255,0.5)' }}>{lead.service || '-'}</td>
+                        <td className="font-dm" style={{ padding: '12px 16px', fontSize: 12, color: 'rgba(237,242,255,0.5)' }}>{lead.serviceInterested || lead.service || '-'}</td>
                         <td style={{ padding: '12px 16px' }}>
                           <span className="font-dm" style={{ fontSize: 10, padding: '4px 10px', borderRadius: 10, background: lead.status === 'new' ? 'rgba(0,229,255,0.15)' : 'rgba(0,255,148,0.15)', color: lead.status === 'new' ? '#00E5FF' : '#00FF94', textTransform: 'capitalize' }}>{lead.status || 'new'}</span>
                         </td>

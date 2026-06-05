@@ -1,4 +1,6 @@
 import { Resend } from 'resend';
+import dbConnect from '@/lib/mongodb';
+import Lead from '@/models/Lead';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -11,6 +13,23 @@ export async function POST(request) {
     }
 
     const isBookCall = type === 'book-call';
+
+    // ── Save lead to MongoDB ──
+    try {
+      await dbConnect();
+      await Lead.create({
+        name, email, phone, country,
+        serviceInterested: service || (isBookCall ? 'Free Consultation Call' : 'Quote Request'),
+        type: isBookCall ? 'book-call' : 'quote',
+        message: message || '',
+        status: 'new',
+        source: 'website',
+        createdAt: new Date(),
+      });
+    } catch (dbError) {
+      console.error('Failed to save lead to DB:', dbError);
+      // Continue — email still sends even if DB fails
+    }
 
     const emailHtml = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif; max-width: 620px; margin: 0 auto; padding: 0; background: #FFFFFF; overflow: hidden;">

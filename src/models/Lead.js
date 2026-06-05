@@ -11,11 +11,11 @@ const leadSchema = new mongoose.Schema(
       required: true,
     },
     phone: String,
+    country: String,
     company: String,
     message: String,
     serviceInterested: {
       type: String,
-      enum: ['web-development', 'mobile-app', 'digital-marketing', 'branding', 'software', 'other'],
     },
     budget: String,
     timeline: String,
