@@ -57,8 +57,43 @@ export default function Team() {
   }, [fetchTeam]);
 
   return (
-    <section id="team" style={{ background: 'var(--surface)', padding: '120px 24px', position: 'relative' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+    <section id="team" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>
+      {/* ── Blurry background orbs ── */}
+      <motion.div
+        animate={{ scale: [1, 1.15, 1], opacity: [0.10, 0.20, 0.10] }}
+        transition={{ duration: 12, repeat: Infinity }}
+        style={{
+          position: 'absolute', top: '-25%', left: '5%',
+          width: 500, height: 500, borderRadius: '50%',
+          background: 'radial-gradient(ellipse, #00E5FF, transparent)',
+          filter: 'blur(80px)', pointerEvents: 'none',
+        }}
+      />
+      <motion.div
+        animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.18, 0.08] }}
+        transition={{ duration: 15, repeat: Infinity, delay: 2 }}
+        style={{
+          position: 'absolute', bottom: '-20%', right: '5%',
+          width: 600, height: 600, borderRadius: '50%',
+          background: 'radial-gradient(ellipse, #7B61FF, transparent)',
+          filter: 'blur(100px)', pointerEvents: 'none',
+        }}
+      />
+      <motion.div
+        animate={{ scale: [1, 1.2, 1], opacity: [0.06, 0.14, 0.06] }}
+        transition={{ duration: 18, repeat: Infinity, delay: 5 }}
+        style={{
+          position: 'absolute', top: '40%', right: '15%',
+          width: 350, height: 350, borderRadius: '50%',
+          background: 'radial-gradient(ellipse, #FFD700, transparent)',
+          filter: 'blur(90px)', pointerEvents: 'none',
+        }}
+      />
+
+      {/* ── Diamond grid overlay ── */}
+      <div className="truck-pattern-dense" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
+
+      <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -95,9 +130,8 @@ export default function Team() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
+                className="glass"
                 style={{
-                  background: 'var(--midnight)',
-                  border: '1px solid var(--border)',
                   borderRadius: 12,
                   padding: 24,
                   textAlign: 'center',
