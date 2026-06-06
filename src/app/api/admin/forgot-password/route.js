@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { createResetToken } from '@/lib/adminAuth';
+import { createResetToken, verifyResetToken } from '@/lib/adminAuth';
 import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -72,7 +72,6 @@ export async function GET(request) {
       return Response.json({ error: 'Token is required' }, { status: 400 });
     }
 
-    const { verifyResetToken } = await import('@/lib/adminAuth');
     const verification = await verifyResetToken(token);
 
     if (!verification.valid) {
@@ -81,6 +80,6 @@ export async function GET(request) {
 
     return Response.json({ valid: true, email: verification.email });
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to verify token' }, { status: 500 });
   }
 }

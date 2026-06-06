@@ -62,7 +62,7 @@ export default class ErrorBoundary extends Component {
               onClick={() => this.setState({ hasError: false, error: null })}
               className="btn-ghost"
               style={{
-                padding: '10px 24px', fontSize: 11, border: 'none', cursor: 'pointer',
+                padding: '10px 24px', fontSize: 11, cursor: 'pointer',
                 color: 'var(--aurora-cyan)', border: '1px solid rgba(0,229,255,0.3)',
                 background: 'rgba(0,229,255,0.05)', borderRadius: 8,
               }}

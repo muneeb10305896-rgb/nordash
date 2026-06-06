@@ -1,11 +1,10 @@
 "use client";
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
 export default function CTA({ modalType, setModalType }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: false, margin: '-100px' });
-  const [hovered, setHovered] = useState(false);
 
   return (
     <section id="work" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>

@@ -61,7 +61,7 @@ export default function Navbar({ onStartProject }) {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <MagneticButton strength={0.32} className="hidden-mobile">
-            <button className="btn-primary" style={{ padding: '10px 24px', fontSize: 11 }} onClick={onStartProject}>
+            <button className="btn-primary" style={{ padding: '10px 24px', fontSize: 11 }} onClick={() => onStartProject?.()}>
               <span>Start Project</span>
             </button>
           </MagneticButton>
@@ -103,7 +103,7 @@ export default function Navbar({ onStartProject }) {
                   {l}
                 </motion.a>
               ))}
-              <button className="btn-primary" style={{ marginTop: 8 }} onClick={() => { setOpen(false); onStartProject(); }}><span>Start Project</span></button>
+              <button className="btn-primary" style={{ marginTop: 8 }} onClick={() => { setOpen(false); onStartProject?.(); }}><span>Start Project</span></button>
             </div>
           </motion.div>
         )}

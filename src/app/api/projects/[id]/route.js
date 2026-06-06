@@ -25,7 +25,11 @@ export async function PUT(request, { params }) {
     await dbConnect();
     const { id } = await params;
     const data = await request.json();
-    const project = await Project.findByIdAndUpdate(id, data, { new: true });
+    const project = await Project.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+
+    if (!project) {
+      return Response.json({ error: 'Project not found' }, { status: 404 });
+    }
 
     return Response.json({ project }, { status: 200 });
   } catch (error) {

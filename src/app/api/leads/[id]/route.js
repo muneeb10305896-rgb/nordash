@@ -26,9 +26,11 @@ export async function PUT(request, { params }) {
     await dbConnect();
     const { id } = await params;
     const data = await request.json();
-    const lead = await Lead.findByIdAndUpdate(id, data, { new: true });
+    const lead = await Lead.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 
-    return Response.json({ lead }, { status: 200 });
+    if (!lead) {
+      return Response.json({ error: 'Lead not found' }, { status: 404 });
+    }
   } catch (error) {
     console.error('Error updating lead:', error);
     return Response.json({ error: error.message }, { status: 500 });

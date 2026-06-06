@@ -29,7 +29,8 @@ export async function GET(request) {
     // Force the correct imageUrl for known slugs — DB may have stale placeholders
     const enriched = projects.map(p => {
       const defaultImage = DEFAULT_IMAGES[p.slug];
-      if (defaultImage) {
+      // Only overwrite if DB has no image or a placeholder — preserve real uploads
+      if (defaultImage && (!p.imageUrl || p.imageUrl.includes('via.placeholder'))) {
         return { ...p.toObject(), imageUrl: defaultImage };
       }
       return p;

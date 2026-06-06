@@ -28,7 +28,9 @@ const DEFAULT_TESTIMONIALS = [
   { quote: 'The thumbnail designs they created boosted our CTR by over 40%. Technical skill combined with genuine creative insight — rare to find both.', author: 'Marcus Virtanen', position: 'Content Creator', company: 'Independent', rating: 5, featured: false, approved: true, order: 3 },
 ];
 
-export async function GET() { return handleSeed(); }
+export async function GET() {
+  return Response.json({ error: 'Use POST to seed the database' }, { status: 405 });
+}
 export async function POST() { return handleSeed(); }
 
 async function handleSeed() {

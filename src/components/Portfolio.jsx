@@ -131,7 +131,7 @@ export default function Portfolio() {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'center', marginBottom: 24 }}>
             <div style={{ width: 40, height: 1, background: 'var(--aurora-cyan)' }} />
-            <span className="section-label-aurora" style={{ color: 'var(--aurora-cyan)' }}>Our Work</span>
+            <span className="section-label" style={{ color: 'var(--aurora-cyan)' }}>Our Work</span>
             <div style={{ width: 40, height: 1, background: 'var(--aurora-cyan)' }} />
           </div>
 
@@ -224,7 +224,7 @@ export default function Portfolio() {
                     {project.title}
                   </h3>
                   <p className="font-dm" style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 12px 0', lineHeight: 1.5 }}>
-                    {project.description.substring(0, 100)}...
+                    {project.description?.substring(0, 100) || ''}...
                   </p>
                   <p className="font-dm" style={{ fontSize: 12, color: 'var(--text-faint)', margin: '0 0 16px 0' }}>
                     Client: <strong>{project.client}</strong>
@@ -238,14 +238,12 @@ export default function Portfolio() {
                       ))}
                     </div>
                   )}
-                  <Link href={`/portfolio/${project.slug}`}>
-                    <motion.button
-                      className="btn-ghost"
-                      whileHover={{ scale: 1.05 }}
-                      style={{ width: '100%', padding: '10px 16px', fontSize: 12 }}
-                    >
-                      View Case Study →
-                    </motion.button>
+                  <Link
+                    href={`/portfolio/${project.slug}`}
+                    className="btn-ghost"
+                    style={{ width: '100%', padding: '10px 16px', fontSize: 12, textAlign: 'center', textDecoration: 'none', display: 'inline-block' }}
+                  >
+                    View Case Study →
                   </Link>
                 </div>
               </motion.div>

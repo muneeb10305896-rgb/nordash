@@ -16,6 +16,7 @@ export default function ContactModal({ isOpen, onClose, type = 'book-call' }) {
   const [status, setStatus] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
   const modalRef = useRef(null);
+  const timeoutRef = useRef(null);
   const isBookCall = type === 'book-call';
 
   // Lock body scroll when modal is open
@@ -32,6 +33,11 @@ export default function ContactModal({ isOpen, onClose, type = 'book-call' }) {
         document.body.style.width = '';
         document.body.style.overflow = '';
         window.scrollTo(0, scrollY);
+        // Clear any pending status reset / close timeout
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
       };
     }
   }, [isOpen]);
@@ -59,7 +65,7 @@ export default function ContactModal({ isOpen, onClose, type = 'book-call' }) {
         setStatus({ type: 'success', message: "Request sent! We'll be in touch within 24 hours." });
         track('contact_form_submitted', { type });
         setFormData({ name: '', email: '', phone: '', country: '', service: '', message: '' });
-        setTimeout(() => { onClose(); setTimeout(() => setStatus(null), 400); }, 2200);
+        timeoutRef.current = setTimeout(() => { onClose(); timeoutRef.current = setTimeout(() => setStatus(null), 400); }, 2200);
       }
     } catch {
       setStatus({ type: 'error', message: 'Failed to send. Please try again.' });

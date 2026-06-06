@@ -5,6 +5,10 @@ import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function escapeHtml(str) {
+  return (str || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
 export async function POST(request) {
   try {
     const ip = getClientIP(request);
@@ -37,7 +41,7 @@ export async function POST(request) {
         <h2 style="color: #EDF2FF; margin-bottom: 20px;">✉️ New Newsletter Subscription</h2>
 
         <div style="background: rgba(13, 22, 38, 0.6); padding: 20px; border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; margin-bottom: 20px;">
-          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
           <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
         </div>
 
@@ -94,7 +98,11 @@ export async function POST(request) {
     return Response.json({ success: true, id: subData?.id || 'subscription-recorded' });
   } catch (error) {
     console.error('Subscribe API error:', error);
-    // Still return success for UX — the lead is not lost
+    // Differentiate parse errors from downstream failures
+    if (error instanceof SyntaxError) {
+      return Response.json({ error: 'Invalid request body' }, { status: 400 });
+    }
+    // For non-parse errors, the subscriber was already saved — return success for UX
     return Response.json({ success: true, id: 'subscription-recorded' });
   }
 }

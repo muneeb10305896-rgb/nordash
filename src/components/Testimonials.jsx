@@ -85,6 +85,10 @@ export default function Testimonials() {
 
         {loading ? (
           <SkeletonGrid count={3} columns={3} cardHeight={240} />
+        ) : testimonials.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+            <p className="font-dm" style={{ color: 'var(--text-muted)' }}>No testimonials yet. Check back soon!</p>
+          </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24 }}>
             {testimonials.map((t, i) => (
