@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useSyncExternalStore } from 'react';
 import Marquee from 'react-fast-marquee';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import MagneticButton from './MagneticButton';
@@ -21,9 +21,16 @@ const marqueeItems = [
 
 export default function Hero({ onStartProject }) {
   const ref = useRef(null);
-  const [isLowEnd, setIsLowEnd] = useState(false);
+  const isLowEnd = useSyncExternalStore(
+    (callback) => {
+      const mql = window.matchMedia('(max-width: 767px)');
+      mql.addEventListener('change', callback);
+      return () => mql.removeEventListener('change', callback);
+    },
+    () => window.innerWidth < 768,
+    () => false
+  );
   const prefersReducedMotion = useReducedMotion();
-  useEffect(() => { setIsLowEnd(window.innerWidth < 768); }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const contentY       = useTransform(scrollYProgress, [0, 1],    ['0%',  isLowEnd ? '0%' : '18%']);
   const contentOpacity = useTransform(scrollYProgress, [0.80, 1], [1,     0   ]);
