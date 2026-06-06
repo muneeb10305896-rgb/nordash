@@ -2,6 +2,14 @@ import dbConnect from '@/lib/mongodb';
 import Project from '@/models/Project';
 import { verifyAdminAuth } from '@/lib/apiUtils';
 
+// Default images for known portfolio slugs — used as fallback when DB records lack them
+const DEFAULT_IMAGES = {
+  'oktopus-group-social-media': 'https://i.ibb.co/YB2Wfnq7/Gemini-Generated-Image-mcimd7mcimd7mcim.png',
+  'hovertise-agency-partnerships': 'https://i.ibb.co/LD0WR1RG/Gemini-Generated-Image-64ac664ac664ac66.png',
+  'uef-social-media-content': 'https://i.ibb.co/whnXq2YT/Gemini-Generated-Image-3ssr8b3ssr8b3ssr.png',
+  'fonezone-tiktok-ads': 'https://i.ibb.co/BHSsmP3j/Gemini-Generated-Image-f3scznf3scznf3sc.png',
+};
+
 export async function GET(request) {
   try {
     await dbConnect();
@@ -18,7 +26,16 @@ export async function GET(request) {
       .sort({ createdAt: -1 })
       .limit(featured ? 6 : 100);
 
-    return Response.json({ projects }, { status: 200 });
+    // Force the correct imageUrl for known slugs — DB may have stale placeholders
+    const enriched = projects.map(p => {
+      const defaultImage = DEFAULT_IMAGES[p.slug];
+      if (defaultImage) {
+        return { ...p.toObject(), imageUrl: defaultImage };
+      }
+      return p;
+    });
+
+    return Response.json({ projects: enriched }, { status: 200 });
   } catch (error) {
     console.error('Error fetching projects:', error);
     return Response.json({ projects: [] }, { status: 200 });
