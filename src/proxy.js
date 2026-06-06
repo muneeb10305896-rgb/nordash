@@ -5,7 +5,7 @@ export function proxy(request) {
 
   if (pathname.startsWith('/admin')) {
     const token = request.cookies.get('admin_token')?.value;
-    const adminToken = process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN;
+    const adminToken = process.env.ADMIN_TOKEN;
 
     if (
       pathname === '/admin' ||

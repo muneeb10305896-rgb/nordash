@@ -10,10 +10,13 @@ const DEFAULT_ADMIN_NAME = 'Muneeb';
  * Called on first login attempt — creates the user with password from env vars.
  */
 async function ensureDefaultAdmin() {
+  const password = process.env.ADMIN_TOKEN;
+  if (!password) {
+    throw new Error('ADMIN_TOKEN is not set — cannot seed default admin password');
+  }
   await dbConnect();
   const existing = await AdminUser.findOne({ email: DEFAULT_ADMIN_EMAIL });
   if (!existing) {
-    const password = process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'nordash2025';
     const admin = new AdminUser({
       email: DEFAULT_ADMIN_EMAIL,
       passwordHash: password, // pre-save hook will hash it

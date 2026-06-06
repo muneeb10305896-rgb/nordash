@@ -40,7 +40,10 @@ async function handleSeed() {
     // Seed admin user
     const adminCount = await AdminUser.countDocuments();
     if (adminCount === 0) {
-      const password = process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN || 'nordash2025';
+      const password = process.env.ADMIN_TOKEN;
+      if (!password) {
+        return Response.json({ error: 'ADMIN_TOKEN is not set — cannot seed default admin password' }, { status: 500 });
+      }
       await AdminUser.create({
         email: 'muneeb10305896@gmail.com',
         passwordHash: password, // pre-save hook hashes it

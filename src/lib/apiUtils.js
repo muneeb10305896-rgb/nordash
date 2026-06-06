@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 export async function verifyAdminAuth() {
   const cookieStore = await cookies();
   const token = cookieStore.get('admin_token')?.value;
-  const adminToken = process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN;
+  const adminToken = process.env.ADMIN_TOKEN;
   if (!token || token !== adminToken) {
     return false;
   }
@@ -27,21 +27,4 @@ export function errorResponse(error, status = 500) {
 
 export function successResponse(data, status = 200) {
   return Response.json(data, { status });
-}
-
-export async function validateRequest(request, requiredFields = []) {
-  try {
-    const data = await request.json();
-
-    for (const field of requiredFields) {
-      if (!data[field]) {
-        throw new APIError(`Missing required field: ${field}`, 400);
-      }
-    }
-
-    return data;
-  } catch (error) {
-    if (error instanceof APIError) throw error;
-    throw new APIError('Invalid request body', 400);
-  }
 }

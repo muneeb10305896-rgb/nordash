@@ -14,10 +14,16 @@ export async function POST(request) {
       return Response.json({ error: result.error }, { status: 401 });
     }
 
+    const token = process.env.ADMIN_TOKEN;
+    if (!token) {
+      console.error('Verify login error: ADMIN_TOKEN is not set');
+      return Response.json({ error: 'Server is misconfigured' }, { status: 500 });
+    }
+
     return Response.json({
       success: true,
       email: result.admin.email,
-      token: process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN,
+      token,
       message: 'Login verified',
     });
 

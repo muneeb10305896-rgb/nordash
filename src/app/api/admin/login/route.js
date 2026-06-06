@@ -1,3 +1,4 @@
+import { NextResponse } from 'next/server';
 import { verifyCredentials } from '@/lib/adminAuth';
 import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
@@ -22,13 +23,16 @@ export async function POST(request) {
       return Response.json({ error: result.error }, { status: 401 });
     }
 
-    return Response.json({
-      success: true,
-      message: 'Login successful',
-      email: result.admin.email,
-      name: result.admin.name,
-      token: process.env.ADMIN_TOKEN || process.env.NEXT_PUBLIC_ADMIN_TOKEN,
-    });
+    const token = process.env.ADMIN_TOKEN;
+    if (!token) {
+      console.error('Login error: ADMIN_TOKEN is not set');
+      return Response.json({ error: 'Server is misconfigured' }, { status: 500 });
+    }
+    const isSecure = process.env.NODE_ENV === 'production';
+    const response = NextResponse.json({ success: true, email: result.admin.email, name: result.admin.name });
+    response.cookies.set({ name: 'admin_token', value: token, httpOnly: true, sameSite: 'lax', maxAge: 86400, path: '/', secure: isSecure });
+    response.cookies.set({ name: 'admin_email', value: result.admin.email, sameSite: 'lax', maxAge: 86400, path: '/', secure: isSecure });
+    return response;
 
   } catch (error) {
     console.error('Login error:', error);
