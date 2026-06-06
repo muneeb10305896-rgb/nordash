@@ -32,8 +32,8 @@ export default function Hero({ onStartProject }) {
   );
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
-  const contentY       = useTransform(scrollYProgress, [0, 1],    ['0%',  isLowEnd ? '0%' : '18%']);
-  const contentOpacity = useTransform(scrollYProgress, [0.80, 1], [1,     0   ]);
+  const contentY       = useTransform(scrollYProgress, [0, 1],    ['0%',  isLowEnd ? '0%' : '6%']);
+  const contentOpacity = useTransform(scrollYProgress, [0.85, 1], [1,     0   ]);
 
   return (
     <section ref={ref} style={{
