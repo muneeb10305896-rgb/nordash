@@ -70,7 +70,20 @@ export default function Portfolio() {
       const response = await fetch('/api/projects?featured=true');
       if (response.ok) {
         const data = await response.json();
-        setProjects(data.projects && data.projects.length > 0 ? data.projects : getDefaultProjects());
+        if (data.projects && data.projects.length > 0) {
+          // Merge imageUrl from defaults — DB records may lack images
+          const defaults = getDefaultProjects();
+          const merged = data.projects.map(p => {
+            const match = defaults.find(d => d.slug === p.slug);
+            return {
+              ...p,
+              imageUrl: p.imageUrl || match?.imageUrl || '',
+            };
+          });
+          setProjects(merged);
+        } else {
+          setProjects(getDefaultProjects());
+        }
       } else {
         setProjects(getDefaultProjects());
       }
