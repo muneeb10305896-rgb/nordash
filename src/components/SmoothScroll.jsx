@@ -17,12 +17,17 @@ export default function SmoothScroll({ children }) {
   useEffect(() => {
     if (isAdmin) return;
 
+    // Detect touch-capable device to tune scroll feel per platform.
+    // Checking at mount is fine — device capabilities don't change during a session.
+    const isTouchDevice = typeof window !== 'undefined'
+      && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+
     const lenis = new Lenis({
-      duration: 1.0,
+      duration: isTouchDevice ? 1.2 : 1.0,
       easing: (t) => (t === 1 ? 1 : 1 - Math.pow(1 - t, 3)),
-      smoothWheel: true,
-      wheelMultiplier: 1.4,
-      touchMultiplier: 1.8,
+      smoothWheel: !isTouchDevice,
+      wheelMultiplier: 1.2,
+      touchMultiplier: 1.0,
       syncTouch: true,
       gestureOrientation: 'vertical',
       // Let any element marked data-lenis-prevent (e.g. modal scroll areas)
@@ -37,7 +42,9 @@ export default function SmoothScroll({ children }) {
 
     const tickerCallback = (time) => lenis.raf(time * 1000);
     gsap.ticker.add(tickerCallback);
-    gsap.ticker.lagSmoothing(0);
+    // Re-enable GSAP lag smoothing (was set to 0 — disabled) so frame spikes on
+    // mobile don't translate to sudden scroll jumps.
+    gsap.ticker.lagSmoothing(500, 16);
 
     return () => {
       lenis.destroy();
