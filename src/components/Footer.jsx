@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
@@ -76,6 +76,16 @@ export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribeStatus, setSubscribeStatus] = useState(null);
   const [loading, setLoading] = useState(false);
+  const statusTimeoutRef = useRef(null);
+
+  // Clear status timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (statusTimeoutRef.current) {
+        clearTimeout(statusTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
@@ -92,7 +102,7 @@ export default function Footer() {
       if (response.ok) {
         setSubscribeStatus({ type: 'success', message: 'Subscribed! Check your email.' });
         setEmail('');
-        setTimeout(() => setSubscribeStatus(null), 3000);
+        statusTimeoutRef.current = setTimeout(() => setSubscribeStatus(null), 3000);
       } else {
         setSubscribeStatus({ type: 'error', message: 'Failed to subscribe. Try again.' });
       }
