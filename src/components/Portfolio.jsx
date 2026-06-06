@@ -71,14 +71,14 @@ export default function Portfolio() {
       if (response.ok) {
         const data = await response.json();
         if (data.projects && data.projects.length > 0) {
-          // Merge imageUrl from defaults — DB records may lack images
+          // Always use default imageUrl for known slugs — DB may lack images
           const defaults = getDefaultProjects();
           const merged = data.projects.map(p => {
             const match = defaults.find(d => d.slug === p.slug);
-            return {
-              ...p,
-              imageUrl: p.imageUrl || match?.imageUrl || '',
-            };
+            if (match) {
+              return { ...match, ...p, imageUrl: match.imageUrl };
+            }
+            return { ...p, imageUrl: p.imageUrl || '' };
           });
           setProjects(merged);
         } else {
