@@ -25,22 +25,25 @@ export default function CRMDashboard() {
   }, [filter]);
 
   useEffect(() => {
-    const adminEmail = localStorage.getItem('admin_email');
-    if (!adminEmail) {
-      window.location.href = '/admin';
-      return;
-    }
+    let intervalId;
+    let cancelled = false;
 
-    // Initial load + auto-refresh; fetchLeads syncs from the API, not render.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchLeads();
+    (async () => {
+      try {
+        const r = await fetch('/api/admin/session');
+        if (cancelled) return;
+        if (!r.ok) { window.location.href = '/admin'; return; }
+        fetchLeads();
+        intervalId = setInterval(fetchLeads, 15000);
+      } catch {
+        if (!cancelled) window.location.href = '/admin';
+      }
+    })();
 
-    // Auto-refresh every 15 seconds
-    const interval = setInterval(() => {
-      fetchLeads();
-    }, 15000);
-
-    return () => clearInterval(interval);
+    return () => {
+      cancelled = true;
+      if (intervalId) clearInterval(intervalId);
+    };
   }, [fetchLeads]);
 
   const updateLeadStatus = async (leadId, newStatus) => {

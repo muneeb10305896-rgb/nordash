@@ -26,18 +26,29 @@ export default function CookieBanner() {
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
           style={{
-            position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)',
+            // Pinned to bottom on both viewports. env(safe-area-inset-bottom)
+            // lifts the banner above the iPhone home indicator / gesture bar.
+            position: 'fixed',
+            bottom: 'max(16px, env(safe-area-inset-bottom, 16px))',
+            left: 16,
+            right: 16,
+            margin: '0 auto',
+            maxWidth: 720,
             zIndex: 99990,
-            width: 'calc(100% - 40px)', maxWidth: 720,
             background: 'linear-gradient(135deg, #0F1D36 0%, #0A1326 100%)',
             border: '1px solid rgba(0,229,255,0.18)',
             borderRadius: 16,
-            padding: '18px 24px',
-            display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap',
+            padding: '16px 20px',
+            // Single-row on desktop; wraps to two rows on narrow viewports.
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 16,
+            flexWrap: 'wrap',
             boxShadow: '0 24px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.03)',
           }}
         >
-          <div style={{ flex: 1, minWidth: 180 }}>
+          <div style={{ flex: '1 1 200px', minWidth: 0 }}>
             <p className="font-syne" style={{ fontSize: 13, fontWeight: 700, color: '#EDF2FF', margin: '0 0 3px' }}>
               We use cookies
             </p>
@@ -48,13 +59,17 @@ export default function CookieBanner() {
               </Link>
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 10, flexShrink: 0, marginLeft: 'auto' }}>
             <button
               onClick={() => respond('declined')}
               className="font-dm"
               style={{
-                padding: '8px 16px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
+                // 44px min touch target, never wraps mid-word.
+                padding: '10px 18px',
+                minHeight: 44, minWidth: 88,
+                border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
                 background: 'transparent', color: 'rgba(237,242,255,0.42)', fontSize: 12, cursor: 'pointer',
+                whiteSpace: 'nowrap',
               }}
             >
               Decline
@@ -63,9 +78,12 @@ export default function CookieBanner() {
               onClick={() => respond('accepted')}
               className="font-syne"
               style={{
-                padding: '8px 20px', border: 'none', borderRadius: 8,
+                padding: '10px 22px',
+                minHeight: 44, minWidth: 100,
+                border: 'none', borderRadius: 8,
                 background: 'linear-gradient(135deg, #00B8D4, #7B61FF)',
                 color: '#fff', fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', cursor: 'pointer',
+                whiteSpace: 'nowrap',
               }}
             >
               Accept All

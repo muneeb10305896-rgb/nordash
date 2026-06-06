@@ -1,11 +1,18 @@
 import { Resend } from 'resend';
 import dbConnect from '@/lib/mongodb';
 import Subscriber from '@/models/Subscriber';
+import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request) {
   try {
+    const ip = getClientIP(request);
+    const rateLimit = checkRateLimit('subscribe', ip, 5, 300000);
+    if (!rateLimit.allowed) {
+      return Response.json({ error: `Please wait ${rateLimit.resetIn}s before subscribing again.` }, { status: 429 });
+    }
+
     const { email } = await request.json();
 
     if (!email || !email.includes('@')) {

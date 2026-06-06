@@ -1,7 +1,7 @@
 "use client";
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Marquee from 'react-fast-marquee';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 import MagneticButton from './MagneticButton';
 
 const marqueeItems = [
@@ -21,7 +21,9 @@ const marqueeItems = [
 
 export default function Hero({ onStartProject }) {
   const ref = useRef(null);
-  const isLowEnd = typeof window !== 'undefined' && window.innerWidth < 768;
+  const [isLowEnd, setIsLowEnd] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+  useEffect(() => { setIsLowEnd(window.innerWidth < 768); }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const contentY       = useTransform(scrollYProgress, [0, 1],    ['0%',  isLowEnd ? '0%' : '18%']);
   const contentOpacity = useTransform(scrollYProgress, [0.80, 1], [1,     0   ]);
@@ -74,8 +76,8 @@ export default function Hero({ onStartProject }) {
             width: d.size, height: d.size,
             background: d.color,
             boxShadow: `0 0 ${d.size * 2}px ${d.color}, 0 0 ${d.size * 4}px ${d.glow}`,
-            willChange: 'transform, opacity',
-            animation: `diamondFloat ${d.dur} ease-in-out infinite ${d.delay}`,
+            willChange: prefersReducedMotion ? 'auto' : 'transform, opacity',
+            animation: prefersReducedMotion ? undefined : `diamondFloat ${d.dur} ease-in-out infinite ${d.delay}`,
           }} />
         </div>
       ))}

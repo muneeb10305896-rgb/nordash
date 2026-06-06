@@ -57,16 +57,16 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const adminEmail = localStorage.getItem('admin_email');
-      if (adminEmail) {
-        // One-time mount sync from localStorage; can't run during SSR/render.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setAuthenticated(true);
-        setEmail(adminEmail);
-      }
-      setLoading(false);
-    }
+    fetch('/api/admin/session')
+      .then(r => r.json())
+      .then(data => {
+        if (data.authenticated) {
+          setAuthenticated(true);
+          setEmail(data.email || '');
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -96,9 +96,6 @@ export default function AdminDashboard() {
       });
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem('admin_email', email);
-        // Set the admin_token cookie so middleware allows subpages
-        document.cookie = `admin_token=${data.token || 'nordash2025'}; path=/; max-age=86400; SameSite=Lax`;
         setAuthenticated(true);
       } else {
         setLoginError(data.error || 'Invalid credentials');
@@ -108,9 +105,8 @@ export default function AdminDashboard() {
     } finally { setLoading(false); }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin_email');
-    document.cookie = 'admin_token=; path=/; max-age=0';
+  const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' });
     setAuthenticated(false);
     setEmail('');
     setPassword('');
@@ -245,7 +241,7 @@ export default function AdminDashboard() {
       {sidebarOpen && (
         <div
           onClick={() => setSidebarOpen(false)}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9, display: 'none' }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9 }}
           className="admin-overlay"
         />
       )}
@@ -503,10 +499,17 @@ export default function AdminDashboard() {
                               <option key={c} value={c} style={{ background: '#0D1626', textTransform: 'capitalize' }}>{c}</option>
                             )}
                           </select>
+                        ) : key === 'category' && activeTab === 'Projects' ? (
+                          <select value={formData[key] || ''} onChange={e => setFormData({ ...formData, [key]: e.target.value })}
+                            style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none' }}>
+                            {['web-development', 'mobile-app', 'digital-marketing', 'branding', 'software'].map(c =>
+                              <option key={c} value={c} style={{ background: '#0D1626' }}>{c.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
+                            )}
+                          </select>
                         ) : key === 'status' ? (
                           <select value={formData[key] || ''} onChange={e => setFormData({ ...formData, [key]: e.target.value })}
                             style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none' }}>
-                            {['draft', 'in-progress', 'completed'].map(s =>
+                            {['completed', 'in-progress', 'archived'].map(s =>
                               <option key={s} value={s} style={{ background: '#0D1626', textTransform: 'capitalize' }}>{s}</option>
                             )}
                           </select>
@@ -551,10 +554,11 @@ export default function AdminDashboard() {
       </div>
 
       <style>{`
+        .admin-overlay { display: none; }
         @media (max-width: 768px) {
           .admin-sidebar { transform: translateX(-220px) !important; }
           .admin-sidebar.open { transform: translateX(0) !important; box-shadow: 4px 0 40px rgba(0,0,0,0.6); }
-          .admin-overlay { display: block !important; }
+          .admin-overlay { display: block; }
           .admin-content { margin-left: 0 !important; padding: 24px 16px !important; }
           .admin-hamburger { display: flex !important; }
         }
