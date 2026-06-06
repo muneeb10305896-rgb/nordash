@@ -12,25 +12,48 @@ import Testimonials from '@/components/Testimonials';
 import CTA from '@/components/CTA';
 import Footer from '@/components/Footer';
 import ContactModal from '@/components/ContactModal';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export default function Home() {
   const [modalType, setModalType] = useState(null);
 
   return (
     <>
-      <Navbar onStartProject={() => setModalType('book-call')} />
+      <ErrorBoundary fallback="Navbar" padding="0">
+        <Navbar onStartProject={() => setModalType('book-call')} />
+      </ErrorBoundary>
       <main>
-        <Hero onStartProject={() => setModalType('book-call')} />
-        <Stats />
-        <Services />
-        <Process />
-        <About onStartProject={() => setModalType('book-call')} />
-        <Portfolio />
-        <Team />
-        <Testimonials />
-        <CTA modalType={modalType} setModalType={setModalType} />
+        <ErrorBoundary fallback="Hero" message="The hero section couldn't load. Try refreshing.">
+          <Hero onStartProject={() => setModalType('book-call')} />
+        </ErrorBoundary>
+        <ErrorBoundary fallback="Stats">
+          <Stats />
+        </ErrorBoundary>
+        <ErrorBoundary fallback="Services">
+          <Services />
+        </ErrorBoundary>
+        <ErrorBoundary fallback="Process">
+          <Process />
+        </ErrorBoundary>
+        <ErrorBoundary fallback="About">
+          <About onStartProject={() => setModalType('book-call')} />
+        </ErrorBoundary>
+        <ErrorBoundary fallback="Portfolio">
+          <Portfolio />
+        </ErrorBoundary>
+        <ErrorBoundary fallback="Team">
+          <Team />
+        </ErrorBoundary>
+        <ErrorBoundary fallback="Testimonials">
+          <Testimonials />
+        </ErrorBoundary>
+        <ErrorBoundary fallback="CTA">
+          <CTA modalType={modalType} setModalType={setModalType} />
+        </ErrorBoundary>
       </main>
-      <Footer />
+      <ErrorBoundary fallback="Footer" padding="0">
+        <Footer />
+      </ErrorBoundary>
       <ContactModal
         isOpen={modalType !== null}
         onClose={() => setModalType(null)}

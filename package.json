@@ -29,10 +29,8 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
-    "jest": "^30.4.2",
-    "tailwindcss": "^4"
+    "jest": "^30.4.2"
   }
 }
