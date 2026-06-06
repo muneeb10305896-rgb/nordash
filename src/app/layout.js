@@ -112,8 +112,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
       <head>
-        <link rel="icon" href="/nordash-logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/nordash-logo.png" />
+        <link rel="icon" href="/nordash-logo.webp" type="image/webp" />
+        <link rel="apple-touch-icon" href="/nordash-logo-64.webp" />
         <meta name="theme-color" content="#0D1626" />
         <meta name="google-site-verification" content="G0tFP3VO5M1yw4IrNxt7F7QQsiOv4UsigAotNN5h8Jw" />
         <script

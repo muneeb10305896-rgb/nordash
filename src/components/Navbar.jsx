@@ -37,7 +37,7 @@ export default function Navbar({ onStartProject }) {
           onMouseLeave={e => e.currentTarget.style.filter = 'drop-shadow(0 0 0px rgba(255,217,0,0))'}
         >
           <Image
-            src="/nordash-logo.png"
+            src="/nordash-logo.webp"
             alt="NORDASH Logo"
             width={48}
             height={48}

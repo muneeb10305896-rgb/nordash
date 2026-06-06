@@ -1,13 +1,11 @@
 import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 
 export async function verifyAdminAuth() {
   const cookieStore = await cookies();
   const token = cookieStore.get('admin_token')?.value;
-  const adminToken = process.env.ADMIN_TOKEN;
-  if (!token || token !== adminToken) {
-    return false;
-  }
-  return true;
+  const payload = await verifyToken(token);
+  return payload?.email ? payload : false;
 }
 
 export class APIError extends Error {

@@ -116,7 +116,7 @@ export default function Footer() {
           <div style={{ maxWidth: 380 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
               <Image
-                src="/nordash-logo.png"
+                src="/nordash-logo.webp"
                 alt="NORDASH Logo"
                 width={40}
                 height={40}

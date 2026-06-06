@@ -1,14 +1,19 @@
 import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/jwt';
 
 export async function GET() {
   const cookieStore = await cookies();
   const token = cookieStore.get('admin_token')?.value;
-  const email = cookieStore.get('admin_email')?.value;
-  const adminToken = process.env.ADMIN_TOKEN;
 
-  if (!token || !adminToken || token !== adminToken) {
+  // Verify the JWT signature — rejects forged/expired tokens
+  const payload = await verifyToken(token);
+  if (!payload?.email) {
     return Response.json({ authenticated: false }, { status: 401 });
   }
 
-  return Response.json({ authenticated: true, email: email || '' });
+  return Response.json({
+    authenticated: true,
+    email: payload.email,
+    role: payload.role || 'admin',
+  });
 }

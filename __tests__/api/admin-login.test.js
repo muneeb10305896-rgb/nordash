@@ -1,3 +1,6 @@
+jest.mock('@/lib/jwt', () => ({
+  createToken: jest.fn(),
+}));
 jest.mock('@/lib/adminAuth', () => ({
   verifyCredentials: jest.fn(),
 }));
@@ -6,6 +9,7 @@ jest.mock('@/lib/rateLimit', () => ({
   getClientIP: jest.fn().mockReturnValue('127.0.0.1'),
 }));
 
+const { createToken } = require('@/lib/jwt');
 const { verifyCredentials } = require('@/lib/adminAuth');
 const { checkRateLimit } = require('@/lib/rateLimit');
 const { POST } = require('@/app/api/admin/login/route');
@@ -18,11 +22,13 @@ const makeRequest = (body) =>
   });
 
 describe('POST /api/admin/login', () => {
-  beforeAll(() => { process.env.ADMIN_TOKEN = 'test-secret-token'; });
-  afterAll(() => { delete process.env.ADMIN_TOKEN; });
-
   beforeEach(() => {
     checkRateLimit.mockReturnValue({ allowed: true, remaining: 4, resetIn: 60 });
+    createToken.mockResolvedValue('signed-jwt-token-value');
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('returns 400 when email or password is missing', async () => {
@@ -45,15 +51,23 @@ describe('POST /api/admin/login', () => {
     expect(body.error).toBe('Invalid email or password');
   });
 
-  it('returns 200 and sets httpOnly cookie for valid credentials', async () => {
+  it('returns 200 and sets httpOnly JWT cookie for valid credentials', async () => {
     verifyCredentials.mockResolvedValue({ success: true, admin: { email: 'admin@nordash.com', name: 'Admin' } });
     const res = await POST(makeRequest({ email: 'admin@nordash.com', password: 'correct' }));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.success).toBe(true);
     expect(body.email).toBe('admin@nordash.com');
+    // Confirm a signed JWT was created with the admin's info
+    expect(createToken).toHaveBeenCalledWith({
+      email: 'admin@nordash.com',
+      role: 'admin',
+    });
+
     const setCookie = res.headers.get('set-cookie');
     expect(setCookie).toMatch(/admin_token/);
     expect(setCookie).toMatch(/HttpOnly/i);
+    // Cookie value is a JWT, NOT the raw ADMIN_TOKEN
+    expect(setCookie).toContain('signed-jwt-token-value');
   });
 });
