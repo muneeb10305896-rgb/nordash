@@ -37,20 +37,97 @@ export async function POST(request) {
       // Continue — email still sends even if DB fails
     }
 
-    const emailHtml = `
-      <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #EDF2FF; margin-bottom: 20px;">✉️ New Newsletter Subscription</h2>
+    const adminEmailHtml = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 580px; margin: 0 auto; background: #FFFFFF;">
+        <div style="height: 4px; background: linear-gradient(90deg, #00E5FF, #7B61FF);"></div>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #0B1220;">
+          <tr>
+            <td style="padding: 36px 40px; text-align: center;">
+              <img src="https://nordash.vercel.app/nordash-logo.webp" alt="NORDASH" width="140" height="auto" style="display: block; margin: 0 auto; max-width: 140px;" />
+            </td>
+          </tr>
+        </table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding: 40px;">
+              <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; margin: 0 0 6px;">Newsletter</p>
+              <h2 style="color: #0D1626; font-size: 22px; font-weight: 800; margin: 0 0 24px;">New Subscriber</h2>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #F8F9FC; border-radius: 8px; border: 1px solid #EEEEEE;">
+                <tr>
+                  <td style="padding: 20px 24px;">
+                    <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 7px;">Email Address</p>
+                    <p style="color: #009BB5; font-size: 15px; font-weight: 700; margin: 0 0 16px;">${escapeHtml(email)}</p>
+                    <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 7px;">Subscribed</p>
+                    <p style="color: #0D1626; font-size: 14px; font-weight: 600; margin: 0;">${new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' })}</p>
+                  </td>
+                </tr>
+              </table>
+              <p style="color: #888888; font-size: 13px; line-height: 1.7; margin: 24px 0 0;">Someone just subscribed to the NORDASH newsletter for monthly insights on brand, content, and digital growth.</p>
+            </td>
+          </tr>
+        </table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #F6F7FA; border-top: 1px solid #E8EAEE;">
+          <tr>
+            <td style="padding: 20px 40px; text-align: center;">
+              <p style="color: #CCCCCC; font-size: 10px; margin: 0;">Automated notification from nordash.vercel.app</p>
+            </td>
+          </tr>
+        </table>
+        <div style="height: 4px; background: linear-gradient(90deg, #7B61FF, #00E5FF);"></div>
+      </div>
+    `;
 
-        <div style="background: rgba(13, 22, 38, 0.6); padding: 20px; border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; margin-bottom: 20px;">
-          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-          <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-        </div>
-
-        <p style="color: rgba(237,242,255,0.7);">Someone just subscribed to the NORDASH newsletter for monthly insights on brand, content, and digital growth.</p>
-
-        <div style="border-top: 1px solid rgba(255,255,255,0.07); padding-top: 20px; color: rgba(237,242,255,0.5); font-size: 12px;">
-          <p>This is an automated notification from NORDASH website.</p>
-        </div>
+    const subscriberWelcomeHtml = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #FFFFFF;">
+        <div style="height: 5px; background: linear-gradient(90deg, #00E5FF 0%, #7B61FF 50%, #FFB300 100%);"></div>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #0B1220;">
+          <tr>
+            <td style="padding: 52px 40px 44px; text-align: center;">
+              <img src="https://nordash.vercel.app/nordash-logo.webp" alt="NORDASH" width="160" height="auto" style="display: block; margin: 0 auto 18px; max-width: 160px;" />
+              <div style="width: 48px; height: 2px; background: linear-gradient(90deg, #00E5FF, #7B61FF); margin: 0 auto 14px;"></div>
+              <p style="color: rgba(0,229,255,0.85); font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin: 0;">Digital Agency</p>
+            </td>
+          </tr>
+        </table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding: 52px 44px 40px; text-align: center;">
+              <h1 style="color: #0D1626; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 14px;">Welcome Aboard</h1>
+              <p style="color: #666666; font-size: 15px; line-height: 1.8; margin: 0 0 36px; max-width: 440px; display: block;">You're now part of the NORDASH community. Expect monthly insights on brand strategy, content creation, and digital growth — straight to your inbox.</p>
+              <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background: linear-gradient(135deg, #F0FDFF, #F5F0FF); border: 1px solid rgba(0,229,255,0.2); border-radius: 12px; margin-bottom: 36px;">
+                <tr>
+                  <td style="padding: 28px 32px; text-align: center;">
+                    <p style="color: #009BB5; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; margin: 0 0 8px;">Our Mission</p>
+                    <p style="color: #0D1626; font-size: 17px; font-weight: 800; letter-spacing: -0.01em; margin: 0;">Nordic Precision. Asian Energy.</p>
+                  </td>
+                </tr>
+              </table>
+              <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto 8px;">
+                <tr>
+                  <td>
+                    <a href="https://nordash.vercel.app/" style="display: inline-block; background: linear-gradient(135deg, #00C4DB 0%, #6B4FFF 100%); color: #FFFFFF; padding: 14px 32px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; letter-spacing: 0.05em;">Explore Our Work &rarr;</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #F6F7FA; border-top: 1px solid #E8EAEE;">
+          <tr>
+            <td style="padding: 32px 40px; text-align: center;">
+              <img src="https://nordash.vercel.app/nordash-logo-64.webp" alt="NORDASH" width="40" height="auto" style="display: block; margin: 0 auto 12px; opacity: 0.4; max-width: 40px;" />
+              <p style="color: #0D1626; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin: 0 0 4px;">NORDASH</p>
+              <p style="color: #999999; font-size: 11px; margin: 0 0 14px;">Nordic Precision &middot; Asian Energy</p>
+              <p style="color: #CCCCCC; font-size: 10px; margin: 0; line-height: 1.8;">
+                <a href="https://nordash.vercel.app/privacy" style="color: #009BB5; text-decoration: none;">Privacy</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://nordash.vercel.app/terms" style="color: #009BB5; text-decoration: none;">Terms</a>
+                &nbsp;&middot;&nbsp;You subscribed at nordash.vercel.app
+              </p>
+            </td>
+          </tr>
+        </table>
+        <div style="height: 4px; background: linear-gradient(90deg, #7B61FF 0%, #00E5FF 100%);"></div>
       </div>
     `;
 
@@ -58,32 +135,16 @@ export async function POST(request) {
     const { data: subData, error: subError } = await resend.emails.send({
       from: 'NORDASH <onboarding@resend.dev>',
       to: [email],
-      subject: '✉️ Welcome to NORDASH Newsletter',
-      html: `
-        <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #EDF2FF; margin-bottom: 20px;">Welcome to NORDASH</h2>
-          <p style="color: rgba(237,242,255,0.8); line-height: 1.6; margin-bottom: 20px;">
-            Thank you for subscribing to our newsletter! 🎉
-          </p>
-          <p style="color: rgba(237,242,255,0.8); line-height: 1.6; margin-bottom: 20px;">
-            You'll now receive monthly insights on brand strategy, content creation, and digital growth directly to your inbox.
-          </p>
-          <div style="background: rgba(0,229,255,0.1); border-left: 4px solid #00E5FF; padding: 20px; margin: 20px 0; border-radius: 4px;">
-            <p style="color: #00E5FF; margin: 0; font-weight: 600;">Nordic Precision. Asian Energy.</p>
-          </div>
-          <p style="color: rgba(237,242,255,0.6); font-size: 12px; margin-top: 30px;">
-            © NORDASH Agency | <a href="https://nordash.vercel.app" style="color: #00E5FF; text-decoration: none;">Visit our website</a>
-          </p>
-        </div>
-      `,
+      subject: 'Welcome to NORDASH — You\'re In',
+      html: subscriberWelcomeHtml,
     });
 
     // Send notification to admin
     const { data: adminData, error: adminError } = await resend.emails.send({
       from: 'NORDASH <onboarding@resend.dev>',
       to: ['muneeb10305896@gmail.com'],
-      subject: `✉️ New Newsletter Subscription - ${email}`,
-      html: emailHtml,
+      subject: `New Newsletter Subscriber — ${email}`,
+      html: adminEmailHtml,
     });
 
     // If Resend fails (e.g. test mode limits), still return success

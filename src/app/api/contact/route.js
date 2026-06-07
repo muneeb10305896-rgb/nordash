@@ -62,113 +62,132 @@ export async function POST(request) {
     }
 
     const emailHtml = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif; max-width: 620px; margin: 0 auto; padding: 0; background: #FFFFFF; overflow: hidden;">
-        <!-- Top gradient bar -->
-        <div style="height: 6px; background: linear-gradient(90deg, #00E5FF 0%, #7B61FF 33%, #FFB300 66%, #007A4C 100%);"></div>
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; max-width: 620px; margin: 0 auto; background: #FFFFFF;">
+
+        <!-- Top bar -->
+        <div style="height: 5px; background: linear-gradient(90deg, #00E5FF 0%, #7B61FF 50%, #FFB300 100%);"></div>
 
         <!-- Header -->
-        <div style="background: linear-gradient(135deg, #0D1626 0%, #1A2332 100%); padding: 56px 40px 48px; text-align: center; position: relative; overflow: hidden;">
-          <!-- Decorative elements -->
-          <div style="position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; background: radial-gradient(circle, rgba(0,229,255,0.1), transparent); border-radius: 50%;"></div>
-          <div style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(123,97,255,0.08), transparent); border-radius: 50%;"></div>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #0B1220;">
+          <tr>
+            <td style="padding: 52px 40px 44px; text-align: center;">
+              <img src="https://nordash.vercel.app/nordash-logo.webp" alt="NORDASH" width="160" height="auto" style="display: block; margin: 0 auto 18px; max-width: 160px;" />
+              <div style="width: 48px; height: 2px; background: linear-gradient(90deg, #00E5FF, #7B61FF); margin: 0 auto 14px;"></div>
+              <p style="color: rgba(0,229,255,0.85); font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin: 0;">Digital Agency</p>
+            </td>
+          </tr>
+        </table>
 
-          <div style="position: relative; z-index: 1;">
-            <!-- Logo -->
-            <div style="display: inline-block; width: 56px; height: 56px; background: linear-gradient(135deg, #00E5FF 0%, #7B61FF 100%); border-radius: 14px; margin-bottom: 20px; transform: rotate(45deg);"></div>
-            <div style="display: inline-block; width: 48px; height: 48px; background: linear-gradient(135deg, #00E5FF 0%, #7B61FF 100%); border-radius: 12px; margin-bottom: 20px; position: absolute; left: 50%; top: 12px; transform: translate(-50%, 0);"></div>
+        <!-- Badge strip -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: ${isBookCall ? 'rgba(0,229,255,0.06)' : 'rgba(255,179,0,0.06)'}; border-top: 1px solid ${isBookCall ? 'rgba(0,229,255,0.2)' : 'rgba(255,179,0,0.2)'}; border-bottom: 1px solid ${isBookCall ? 'rgba(0,229,255,0.2)' : 'rgba(255,179,0,0.2)'};">
+          <tr>
+            <td style="padding: 14px 40px; text-align: center;">
+              <span style="color: ${isBookCall ? '#00C4DB' : '#E6A200'}; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;">${isBookCall ? '📞 New Call Booking Request' : '💼 New Quote Request'}</span>
+            </td>
+          </tr>
+        </table>
 
-            <h1 style="color: #FFFFFF; margin: 24px 0 6px 0; font-size: 36px; font-weight: 800; letter-spacing: -0.01em;">NORDASH</h1>
-            <p style="color: rgba(0,229,255,0.9); margin: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">Digital Agency</p>
-          </div>
-        </div>
+        <!-- Main content -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #FFFFFF;">
+          <tr>
+            <td style="padding: 48px 40px 16px;">
+              <h2 style="color: #0D1626; margin: 0 0 10px; font-size: 26px; font-weight: 800; letter-spacing: -0.02em;">New ${isBookCall ? 'Call Request' : 'Quote Inquiry'}</h2>
+              <p style="color: #777777; font-size: 14px; line-height: 1.7; margin: 0 0 36px;">Submitted just now via nordash.vercel.app — reply directly to follow up.</p>
 
-        <!-- Main Content -->
-        <div style="padding: 48px 40px; background: #FFFFFF;">
-          <!-- Request type badge -->
-          <div style="display: inline-block; background: ${isBookCall ? 'linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,229,255,0.05))' : 'linear-gradient(135deg, rgba(255,179,0,0.15), rgba(255,179,0,0.05))'}; border: 1px solid ${isBookCall ? 'rgba(0,229,255,0.3)' : 'rgba(255,179,0,0.3)'}; padding: 8px 16px; border-radius: 8px; margin-bottom: 24px;">
-            <span style="color: ${isBookCall ? '#00E5FF' : '#FFB300'}; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;">🔔 ${isBookCall ? 'Call Booking' : 'Quote Request'}</span>
-          </div>
-
-          <h2 style="color: #0D1626; margin: 0 0 12px 0; font-size: 28px; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em;">New ${isBookCall ? 'Call Request' : 'Quote Inquiry'}</h2>
-          <p style="color: #666666; margin: 0 0 36px 0; font-size: 15px; line-height: 1.7;">
-            A new ${isBookCall ? 'call booking request' : 'quote inquiry'} has been submitted. Here are the details:
-          </p>
-
-          <!-- Contact Information Cards -->
-          <div style="margin-bottom: 36px;">
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr>
-                <td style="padding: 16px 0; border-bottom: 1px solid #EEEEEE; width: 35%;">
-                  <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">📝 Name</span>
-                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${safeName}</span>
-                </td>
-                <td style="padding: 16px 0 16px 24px; border-bottom: 1px solid #EEEEEE;">
-                  <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">📧 Email</span>
-                  <a href="mailto:${safeEmail}" style="color: #00E5FF; font-weight: 600; font-size: 15px; text-decoration: none;">${safeEmail}</a>
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 16px 0; border-bottom: 1px solid #EEEEEE;">
-                  <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">📱 Phone</span>
-                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${safePhone}</span>
-                </td>
-                <td style="padding: 16px 0 16px 24px; border-bottom: 1px solid #EEEEEE;">
-                  <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px;">🌍 Country</span>
-                  <span style="color: #0D1626; font-weight: 700; font-size: 15px;">${safeCountry}</span>
-                </td>
-              </tr>
-              ${safeService ? `<tr>
-                <td colspan="2" style="padding: 16px 0;">
-                  <span style="color: #999999; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px;">⚡ Service Interested In</span>
-                  <div style="display: inline-block; background: linear-gradient(135deg, rgba(123,97,255,0.15), rgba(123,97,255,0.05)); border: 1px solid rgba(123,97,255,0.3); padding: 8px 16px; border-radius: 6px;">
-                    <span style="color: #7B61FF; font-weight: 700; font-size: 14px;">${safeService}</span>
-                  </div>
-                </td>
-              </tr>` : ''}
-            </table>
-          </div>
+              <!-- Info grid -->
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td width="48%" style="padding-bottom: 24px; vertical-align: top; border-bottom: 1px solid #F0F0F0;">
+                    <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 7px;">Name</p>
+                    <p style="color: #0D1626; font-size: 15px; font-weight: 700; margin: 0;">${safeName}</p>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="padding-bottom: 24px; vertical-align: top; border-bottom: 1px solid #F0F0F0;">
+                    <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 7px;">Email</p>
+                    <a href="mailto:${safeEmail}" style="color: #009BB5; font-size: 15px; font-weight: 700; text-decoration: none;">${safeEmail}</a>
+                  </td>
+                </tr>
+                <tr><td colspan="3" style="height: 20px;"></td></tr>
+                <tr>
+                  <td width="48%" style="padding-bottom: 24px; vertical-align: top; border-bottom: 1px solid #F0F0F0;">
+                    <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 7px;">Phone</p>
+                    <p style="color: #0D1626; font-size: 15px; font-weight: 700; margin: 0;">${safePhone}</p>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="padding-bottom: 24px; vertical-align: top; border-bottom: 1px solid #F0F0F0;">
+                    <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 7px;">Country</p>
+                    <p style="color: #0D1626; font-size: 15px; font-weight: 700; margin: 0;">${safeCountry}</p>
+                  </td>
+                </tr>
+                ${safeService ? `
+                <tr><td colspan="3" style="height: 20px;"></td></tr>
+                <tr>
+                  <td colspan="3" style="padding-bottom: 8px;">
+                    <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 10px;">Service Interested</p>
+                    <table cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="background: #F3F0FF; border: 1px solid rgba(123,97,255,0.3); border-radius: 6px; padding: 9px 18px;">
+                          <span style="color: #6B4FFF; font-size: 13px; font-weight: 700;">${safeService}</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>` : ''}
+              </table>
+            </td>
+          </tr>
 
           ${safeMessage ? `
-          <!-- Message Section -->
-          <div style="margin-bottom: 36px; background: linear-gradient(135deg, rgba(0,229,255,0.08), rgba(123,97,255,0.08)); border: 1px solid rgba(0,229,255,0.2); padding: 24px; border-radius: 12px; border-left: 4px solid #00E5FF;">
-            <h3 style="color: #0D1626; margin: 0 0 12px 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;">💼 Project Brief</h3>
-            <p style="color: #333333; margin: 0; line-height: 1.8; font-size: 14px; white-space: pre-wrap;">${safeMessage}</p>
-          </div>
+          <tr>
+            <td style="padding: 8px 40px 8px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #F8F8FB; border-left: 3px solid #7B61FF; border-radius: 0 8px 8px 0;">
+                <tr>
+                  <td style="padding: 20px 24px;">
+                    <p style="color: #AAAAAA; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin: 0 0 10px;">Project Brief</p>
+                    <p style="color: #333333; font-size: 14px; line-height: 1.8; margin: 0; white-space: pre-wrap;">${safeMessage}</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
           ` : ''}
 
-          <!-- CTA Buttons -->
-          <div style="display: flex; gap: 16px; margin: 36px 0; flex-wrap: wrap;">
-            <a href="mailto:${safeEmail}?subject=Re: ${isBookCall ? 'Call Booking' : 'Quote Request'} - NORDASH" style="background: linear-gradient(135deg, #00E5FF 0%, #7B61FF 100%); color: white; padding: 16px 32px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 700; font-size: 14px; line-height: 1; letter-spacing: 0.05em; flex: 1; text-align: center; min-width: 160px;">
-              ↩️ Reply Now
-            </a>
-            <a href="https://nordash.vercel.app/" style="background: rgba(0,229,255,0.1); color: #00E5FF; border: 2px solid rgba(0,229,255,0.3); padding: 14px 32px; border-radius: 8px; text-decoration: none; display: inline-block; font-weight: 700; font-size: 14px; line-height: 1; letter-spacing: 0.05em; flex: 1; text-align: center; min-width: 160px;">
-              Visit Site →
-            </a>
-          </div>
-        </div>
+          <!-- CTAs -->
+          <tr>
+            <td style="padding: 36px 40px 48px;">
+              <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding-right: 14px;">
+                    <a href="mailto:${safeEmail}?subject=Re: ${isBookCall ? 'Free Call' : 'Quote'} — NORDASH" style="display: inline-block; background: linear-gradient(135deg, #00C4DB 0%, #6B4FFF 100%); color: #FFFFFF; padding: 14px 28px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; letter-spacing: 0.04em;">Reply to ${safeName} &rarr;</a>
+                  </td>
+                  <td>
+                    <a href="https://nordash.vercel.app/" style="display: inline-block; background: #F4F6FA; color: #0D1626; border: 1px solid #DDDDDD; padding: 13px 24px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none;">Visit Site</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
 
         <!-- Footer -->
-        <div style="background: linear-gradient(135deg, #F8F9FA 0%, #F0F2F5 100%); padding: 40px; text-align: center; border-top: 1px solid #EEEEEE;">
-          <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #EEEEEE;">
-            <p style="color: #0D1626; font-size: 13px; margin: 0 0 4px 0; font-weight: 700;">
-              NORDASH
-            </p>
-            <p style="color: #666666; font-size: 12px; margin: 0; line-height: 1.6;">
-              Digital Agency — Nordic Precision meets Asian Energy
-            </p>
-          </div>
-          <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 16px;">
-            <a href="https://nordash.vercel.app" style="display: inline-block; width: 32px; height: 32px; background: white; border: 1px solid #EEEEEE; border-radius: 6px; text-align: center; line-height: 32px; color: #00E5FF; text-decoration: none; font-weight: 700; font-size: 14px;">🌐</a>
-            <a href="mailto:hello@nordash.agency" style="display: inline-block; width: 32px; height: 32px; background: white; border: 1px solid #EEEEEE; border-radius: 6px; text-align: center; line-height: 32px; color: #7B61FF; text-decoration: none; font-weight: 700; font-size: 14px;">✉️</a>
-          </div>
-          <p style="color: #999999; font-size: 11px; margin: 0; line-height: 1.6;">
-            This is an automated message from nordash.vercel.app<br>
-            <a href="https://nordash.vercel.app/privacy" style="color: #00E5FF; text-decoration: none;">Privacy Policy</a> • <a href="https://nordash.vercel.app/terms" style="color: #00E5FF; text-decoration: none;">Terms</a>
-          </p>
-        </div>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background: #F6F7FA; border-top: 1px solid #E8EAEE;">
+          <tr>
+            <td style="padding: 32px 40px; text-align: center;">
+              <img src="https://nordash.vercel.app/nordash-logo-64.webp" alt="NORDASH" width="40" height="auto" style="display: block; margin: 0 auto 12px; opacity: 0.45; max-width: 40px;" />
+              <p style="color: #0D1626; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin: 0 0 4px;">NORDASH</p>
+              <p style="color: #999999; font-size: 11px; margin: 0 0 16px;">Nordic Precision &middot; Asian Energy</p>
+              <p style="color: #BBBBBB; font-size: 10px; margin: 0; line-height: 1.8;">
+                <a href="https://nordash.vercel.app/privacy" style="color: #009BB5; text-decoration: none;">Privacy</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://nordash.vercel.app/terms" style="color: #009BB5; text-decoration: none;">Terms</a>
+                &nbsp;&middot;&nbsp;Automated from nordash.vercel.app
+              </p>
+            </td>
+          </tr>
+        </table>
 
-        <!-- Bottom gradient bar -->
-        <div style="height: 4px; background: linear-gradient(90deg, #007A4C 0%, #FFB300 33%, #7B61FF 66%, #00E5FF 100%);"></div>
+        <!-- Bottom bar -->
+        <div style="height: 4px; background: linear-gradient(90deg, #7B61FF 0%, #00E5FF 100%);"></div>
       </div>
     `;
 
