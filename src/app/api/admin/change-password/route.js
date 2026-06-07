@@ -6,16 +6,17 @@ export async function PUT(request) {
     const auth = await verifyAdminAuth();
     if (!auth) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { email, currentPassword, newPassword } = await request.json();
+    const { currentPassword, newPassword } = await request.json();
 
-    if (!email || !currentPassword || !newPassword) {
+    if (!currentPassword || !newPassword) {
       return Response.json({ error: 'All fields are required' }, { status: 400 });
     }
-    if (newPassword.length < 6) {
-      return Response.json({ error: 'New password must be at least 6 characters' }, { status: 400 });
+    if (newPassword.length < 8) {
+      return Response.json({ error: 'New password must be at least 8 characters' }, { status: 400 });
     }
 
-    const result = await changePassword(email, currentPassword, newPassword);
+    // Always use the authenticated session's email — never trust the request body
+    const result = await changePassword(auth.email, currentPassword, newPassword);
     if (!result.success) {
       return Response.json({ error: result.error }, { status: 400 });
     }

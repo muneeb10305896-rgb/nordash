@@ -168,7 +168,7 @@ export default function Portfolio() {
                 textTransform: 'capitalize',
               }}
             >
-              {cat === 'all' ? 'All Projects' : cat.replace('-', ' ')}
+              {cat === 'all' ? 'All Projects' : cat.replace(/-/g, ' ')}
             </button>
           ))}
         </motion.div>
@@ -218,7 +218,7 @@ export default function Portfolio() {
                 </div>
                 <div style={{ padding: 24 }}>
                   <p className="font-dm" style={{ fontSize: 11, color: 'var(--aurora-cyan)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 8px 0' }}>
-                    {project.category.replace('-', ' ')}
+                    {project.category.replace(/-/g, ' ')}
                   </p>
                   <h3 className="font-syne" style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 8px 0' }}>
                     {project.title}

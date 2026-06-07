@@ -30,6 +30,11 @@ export async function POST(request) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return Response.json({ error: 'Invalid email address' }, { status: 400 });
+    }
+
     const isBookCall = type === 'book-call';
 
     // Escape all user input for safe HTML rendering

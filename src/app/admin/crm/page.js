@@ -4,25 +4,27 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 export default function CRMDashboard() {
-  const [leads, setLeads] = useState([]);
+  const [allLeads, setAllLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
   const [filter, setFilter] = useState('new');
   const [loading, setLoading] = useState(true);
   const [editingStatus, setEditingStatus] = useState(null);
 
+  const leads = filter === 'all' ? allLeads : allLeads.filter(l => l.status === filter);
+
   const fetchLeads = useCallback(async () => {
     try {
-      const response = await fetch(`/api/leads?status=${filter}`);
+      const response = await fetch('/api/leads');
       if (response.ok) {
         const data = await response.json();
-        setLeads(data.leads || []);
+        setAllLeads(data.leads || []);
       }
     } catch (error) {
       console.error('Failed to fetch leads:', error);
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, []);
 
   useEffect(() => {
     let intervalId;
@@ -63,8 +65,9 @@ export default function CRMDashboard() {
     }
   };
 
-  const statuses = ['new', 'contacted', 'qualified', 'proposal-sent', 'negotiating', 'won', 'lost'];
+  const statuses = ['all', 'new', 'contacted', 'qualified', 'proposal-sent', 'negotiating', 'won', 'lost'];
   const statusColors = {
+    all: 'rgba(237,242,255,0.4)',
     new: '#00E5FF',
     contacted: '#FFB300',
     qualified: '#7B61FF',
@@ -99,19 +102,19 @@ export default function CRMDashboard() {
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: 20, borderRadius: 12 }}>
             <p className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Total Leads</p>
             <h3 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: 'var(--aurora-cyan)', margin: '8px 0 0 0' }}>
-              {leads.length}
+              {allLeads.length}
             </h3>
           </div>
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: 20, borderRadius: 12 }}>
             <p className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Won Deals</p>
             <h3 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: '#00FF94', margin: '8px 0 0 0' }}>
-              {leads.filter(l => l.status === 'won').length}
+              {allLeads.filter(l => l.status === 'won').length}
             </h3>
           </div>
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: 20, borderRadius: 12 }}>
             <p className="font-dm" style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0 }}>Conversion Rate</p>
             <h3 className="font-syne" style={{ fontSize: 28, fontWeight: 800, color: '#FFB300', margin: '8px 0 0 0' }}>
-              {leads.length > 0 ? Math.round((leads.filter(l => l.status === 'won').length / leads.length) * 100) : 0}%
+              {allLeads.length > 0 ? Math.round((allLeads.filter(l => l.status === 'won').length / allLeads.length) * 100) : 0}%
             </h3>
           </div>
         </div>
@@ -140,7 +143,7 @@ export default function CRMDashboard() {
                     textTransform: 'capitalize',
                   }}
                 >
-                  {status.replace('-', ' ')}
+                  {status.replace(/-/g, ' ')}
                 </button>
               ))}
             </div>
@@ -190,7 +193,7 @@ export default function CRMDashboard() {
                             textTransform: 'capitalize',
                           }}
                         >
-                          {statuses.map(s => <option key={s} value={s}>{s.replace('-', ' ')}</option>)}
+                          {statuses.filter(s => s !== 'all').map(s => <option key={s} value={s}>{s.replace(/-/g, ' ')}</option>)}
                         </select>
                       </td>
                       <td className="font-dm" style={{ padding: '16px 20px', fontSize: 12, color: 'var(--text-faint)' }}>

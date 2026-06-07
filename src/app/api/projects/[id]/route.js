@@ -1,11 +1,15 @@
 import dbConnect from '@/lib/mongodb';
 import Project from '@/models/Project';
 import { verifyAdminAuth } from '@/lib/apiUtils';
+import mongoose from 'mongoose';
 
 export async function GET(request, { params }) {
   try {
     await dbConnect();
     const { id } = await params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return Response.json({ error: 'Invalid ID' }, { status: 400 });
+    }
     const project = await Project.findById(id);
 
     if (!project) {
@@ -24,6 +28,9 @@ export async function PUT(request, { params }) {
   try {
     await dbConnect();
     const { id } = await params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return Response.json({ error: 'Invalid ID' }, { status: 400 });
+    }
     const data = await request.json();
     const project = await Project.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 
@@ -43,6 +50,9 @@ export async function DELETE(request, { params }) {
   try {
     await dbConnect();
     const { id } = await params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return Response.json({ error: 'Invalid ID' }, { status: 400 });
+    }
     await Project.findByIdAndDelete(id);
 
     return Response.json({ success: true }, { status: 200 });

@@ -8,8 +8,8 @@ export async function POST(request) {
       return Response.json({ error: 'Token, email, and new password are required' }, { status: 400 });
     }
 
-    if (newPassword.length < 6) {
-      return Response.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
+    if (newPassword.length < 8) {
+      return Response.json({ error: 'Password must be at least 8 characters' }, { status: 400 });
     }
 
     const result = await resetPassword(token, email, newPassword);

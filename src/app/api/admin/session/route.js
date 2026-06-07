@@ -7,13 +7,15 @@ export async function GET() {
 
   // Verify the JWT signature — rejects forged/expired tokens
   const payload = await verifyToken(token);
+  const headers = { 'Cache-Control': 'no-store' };
+
   if (!payload?.email) {
-    return Response.json({ authenticated: false }, { status: 401 });
+    return Response.json({ authenticated: false }, { status: 401, headers });
   }
 
   return Response.json({
     authenticated: true,
     email: payload.email,
     role: payload.role || 'admin',
-  });
+  }, { headers });
 }

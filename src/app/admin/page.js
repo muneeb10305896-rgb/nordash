@@ -11,7 +11,8 @@ export default function AdminDashboard() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('Dashboard');
 
   // Data states
@@ -66,14 +67,14 @@ export default function AdminDashboard() {
         }
       })
       .catch(() => {})
-      .finally(() => setLoading(false));
+      .finally(() => setSessionLoading(false));
   }, []);
 
   useEffect(() => {
-    // Syncs admin data from the API on auth/tab change — external sync, not derived render state.
+    // Fetch all data once after login, then only on explicit refreshes (save/delete).
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (authenticated) fetchAllData();
-  }, [authenticated, activeTab, fetchAllData]);
+  }, [authenticated, fetchAllData]);
 
   // Lock the page behind the form modal so the browser scrolls the modal,
   // not the body, while it's open.
@@ -174,22 +175,30 @@ export default function AdminDashboard() {
   const handleDelete = async (id) => {
     if (!confirm('Delete this item? This cannot be undone.')) return;
     try {
-      await fetch(`${getApiPath(activeTab)}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${getApiPath(activeTab)}/${id}`, { method: 'DELETE' });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert(err.error || 'Delete failed. Please try again.');
+        return;
+      }
       fetchAllData();
-    } catch (err) { console.error('Delete failed:', err); }
+    } catch (err) {
+      console.error('Delete failed:', err);
+      alert('Network error. Delete failed.');
+    }
   };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (!pwCurrent || !pwNew || !pwConfirm) { setPwStatus({ type: 'error', message: 'All fields are required' }); return; }
-    if (pwNew.length < 6) { setPwStatus({ type: 'error', message: 'New password must be at least 6 characters' }); return; }
     if (pwNew !== pwConfirm) { setPwStatus({ type: 'error', message: 'New passwords do not match' }); return; }
+    if (pwNew.length < 8) { setPwStatus({ type: 'error', message: 'New password must be at least 8 characters' }); return; }
     setPwStatus({ type: 'loading', message: 'Updating password...' });
     try {
       const res = await fetch('/api/admin/change-password', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, currentPassword: pwCurrent, newPassword: pwNew }),
+        body: JSON.stringify({ currentPassword: pwCurrent, newPassword: pwNew }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -210,6 +219,15 @@ export default function AdminDashboard() {
     { label: 'Testimonials', value: testimonials.length, color: '#00FF94' },
     { label: 'Leads', value: leads.length, color: '#FF6B6B' },
   ];
+
+  // ── Session check in progress ──
+  if (sessionLoading) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#080C1A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p className="font-dm" style={{ fontSize: 13, color: 'rgba(237,242,255,0.35)' }}>Loading...</p>
+      </div>
+    );
+  }
 
   // ── Login Screen ──
   if (!authenticated) {
