@@ -5,8 +5,8 @@ import Link from 'next/link';
 export default function NotFound() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--midnight)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', position: 'relative', overflow: 'hidden' }}>
-      {/* Aurora background */}
-      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.12, 0.05] }} transition={{ duration: 12, repeat: Infinity }}
+      {/* Static background orb — one-shot fade-in */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 0.12 }} transition={{ duration: 2 }}
         style={{ position: 'absolute', inset: 0, width: '800px', height: '600px', borderRadius: '50%', background: 'radial-gradient(ellipse, #FF6B6B 0%, #FFB300 50%, transparent 70%)', filter: 'blur(100px)', pointerEvents: 'none', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
 
       <motion.div
@@ -16,14 +16,12 @@ export default function NotFound() {
         style={{ maxWidth: 600, textAlign: 'center', position: 'relative', zIndex: 1 }}
       >
         <div style={{ marginBottom: 32 }}>
-          <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ duration: 3, repeat: Infinity }}
+          <div
             className="font-syne"
             style={{ fontSize: 128, fontWeight: 900, background: 'linear-gradient(135deg, #FF6B6B, #FFB300)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', margin: 0, lineHeight: 1 }}
           >
             404
-          </motion.div>
+          </div>
         </div>
 
         <h1 className="font-syne" style={{ fontSize: 40, fontWeight: 800, color: 'var(--text-primary)', marginBottom: 16 }}>
@@ -62,17 +60,9 @@ export default function NotFound() {
           </Link>
         </motion.div>
 
-        {/* Decorative elements */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-          style={{ position: 'absolute', top: -40, left: -40, width: 80, height: 80, border: '1px solid rgba(255,107,107,0.1)', transform: 'rotate(45deg)', pointerEvents: 'none' }}
-        />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-          style={{ position: 'absolute', bottom: -40, right: -40, width: 120, height: 120, border: '1px solid rgba(255,179,0,0.1)', transform: 'rotate(45deg)', pointerEvents: 'none' }}
-        />
+        {/* Decorative elements — CSS animations (compositor-thread) */}
+        <div style={{ position: 'absolute', top: -40, left: -40, width: 80, height: 80, border: '1px solid rgba(255,107,107,0.1)', transform: 'rotate(45deg)', pointerEvents: 'none', animation: 'truckSpin 20s linear infinite' }} />
+        <div style={{ position: 'absolute', bottom: -40, right: -40, width: 120, height: 120, border: '1px solid rgba(255,179,0,0.1)', transform: 'rotate(45deg)', pointerEvents: 'none', animation: 'truckSpin 30s linear infinite reverse' }} />
       </motion.div>
     </div>
   );

@@ -17,7 +17,8 @@ export async function POST(request) {
       return Response.json({ error: `Please wait ${rateLimit.resetIn}s before subscribing again.` }, { status: 429 });
     }
 
-    const { email } = await request.json();
+    const body = await request.json();
+    const { email } = body;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email.trim())) {

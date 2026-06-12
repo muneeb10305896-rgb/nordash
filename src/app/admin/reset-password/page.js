@@ -8,6 +8,18 @@ export default function ResetPassword() {
   const router = useRouter();
   const [token, setToken] = useState(null);
   const [email, setEmail] = useState(null);
+
+  // Prevent referrer header leaking the reset token
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Replace the URL hash/params without keeping in history
+      // so the token is not in browser history after use
+      const meta = document.createElement('meta');
+      meta.name = 'referrer';
+      meta.content = 'no-referrer';
+      document.head.appendChild(meta);
+    }
+  }, []);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -47,6 +59,8 @@ export default function ResetPassword() {
       setToken(tokenFromUrl);
       setEmail(emailFromUrl);
       verifyToken(tokenFromUrl);
+      // Clean URL params from browser history to prevent token exposure
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [verifyToken]);
 

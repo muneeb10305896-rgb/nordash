@@ -17,8 +17,9 @@ export class APIError extends Error {
 
 export function errorResponse(error, status = 500) {
   console.error('API Error:', error);
+  // Never leak error details to the client — prevents stack trace exposure
   return Response.json(
-    { error: error.message || 'An error occurred' },
+    { error: 'An internal error occurred' },
     { status }
   );
 }

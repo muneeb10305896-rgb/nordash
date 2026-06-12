@@ -2,6 +2,16 @@ import dbConnect from '@/lib/mongodb';
 import Lead from '@/models/Lead';
 import { verifyAdminAuth } from '@/lib/apiUtils';
 
+const ALLOWED_FIELDS = ['name', 'email', 'phone', 'country', 'company', 'message', 'serviceInterested', 'budget', 'timeline', 'status', 'notes', 'assignedTo', 'lastContact', 'followUpDate', 'source'];
+
+function sanitize(body) {
+  const data = {};
+  for (const field of ALLOWED_FIELDS) {
+    if (body[field] !== undefined) data[field] = body[field];
+  }
+  return data;
+}
+
 export async function GET(request) {
   if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
@@ -24,26 +34,25 @@ export async function POST(request) {
   if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
-    const data = await request.json();
+    const body = await request.json();
 
     // Validate required fields
-    if (!data.name || !data.email) {
+    if (!body.name || !body.email) {
       return Response.json(
         { error: 'Name and email required' },
         { status: 400 }
       );
     }
 
-    const lead = new Lead({
-      ...data,
-      createdAt: new Date(),
-    });
+    const data = sanitize(body);
+    data.createdAt = new Date();
 
+    const lead = new Lead(data);
     await lead.save();
 
     return Response.json({ lead }, { status: 201 });
   } catch (error) {
     console.error('Error creating lead:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to create lead' }, { status: 500 });
   }
 }

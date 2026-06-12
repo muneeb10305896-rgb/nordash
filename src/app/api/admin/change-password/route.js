@@ -24,6 +24,6 @@ export async function PUT(request) {
     return Response.json({ success: true, message: result.message });
   } catch (error) {
     console.error('Change password error:', error);
-    return Response.json({ error: error.message || 'Failed to change password' }, { status: 500 });
+    return Response.json({ error: 'Failed to change password' }, { status: 500 });
   }
 }

@@ -83,15 +83,23 @@ function Card3D({ service, index }) {
   // useMotionValue.set() never causes a React re-render
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const springCfg = { stiffness: 180, damping: 18, restDelta: 0.001 };
+  // Higher restDelta stops springs sooner — same visual result, less CPU
+  const springCfg = { stiffness: 180, damping: 18, restDelta: 0.01 };
   const sx = useSpring(mx, springCfg);
   const sy = useSpring(my, springCfg);
   const rotateY = useTransform(sx, [-0.5, 0.5], [-12, 12]);
   const rotateX = useTransform(sy, [-0.5, 0.5], [12, -12]);
 
+  // Cache bounding rect to avoid getBoundingClientRect on every mousemove
+  const rectCache = useRef(null);
+
   const onMove = (e) => {
-    const rect = wrapRef.current?.getBoundingClientRect();
-    if (!rect) return;
+    let rect = rectCache.current;
+    if (!rect) {
+      rect = wrapRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      rectCache.current = rect;
+    }
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
     mx.set(x - 0.5);
@@ -114,6 +122,7 @@ function Card3D({ service, index }) {
 
   const onLeave = () => {
     mx.set(0); my.set(0);
+    rectCache.current = null; // invalidate cache on leave
     if (wrapRef.current) {
       wrapRef.current.style.borderColor = 'rgba(255,255,255,0.07)';
       wrapRef.current.style.boxShadow = 'none';
@@ -131,14 +140,11 @@ function Card3D({ service, index }) {
         transition={{ duration: 0.7, delay: (index % 3) * 0.08, ease: [0.23, 1, 0.32, 1] }}
         style={{
           rotateX, rotateY,
-          transformPerspective: 1100,
-          transformStyle: 'preserve-3d',
           willChange: 'transform',
           padding: '36px 30px',
           position: 'relative', overflow: 'hidden',
           background: 'rgba(13,22,38,0.85)',
           border: '1px solid rgba(255,255,255,0.07)',
-          transition: 'border-color 0.4s, box-shadow 0.4s',
           cursor: 'default',
           height: '100%',
           minHeight: '420px',

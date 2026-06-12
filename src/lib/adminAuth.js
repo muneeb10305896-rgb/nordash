@@ -136,6 +136,9 @@ export async function changePassword(email, currentPassword, newPassword) {
       return { success: false, error: 'Current password is incorrect.' };
     }
     admin.passwordHash = newPassword;
+    // Invalidate any outstanding password reset tokens
+    admin.resetToken = undefined;
+    admin.resetTokenExpires = undefined;
     await admin.save();
     return { success: true, message: 'Password changed successfully.' };
   } catch (err) {

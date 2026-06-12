@@ -2,12 +2,22 @@ import { SignJWT, jwtVerify } from 'jose';
 
 /**
  * Get the JWT signing key from the environment.
- * Uses ADMIN_TOKEN as the base, hashed to a proper key length.
+ * Requires JWT_SECRET — does NOT fall back to ADMIN_TOKEN to avoid
+ * using the admin password as a cryptographic signing key.
  */
 function getJWTSecret() {
-  const secret = process.env.JWT_SECRET || process.env.ADMIN_TOKEN;
+  const secret = process.env.JWT_SECRET;
   if (!secret) {
-    throw new Error('JWT_SECRET (or ADMIN_TOKEN) must be set');
+    throw new Error(
+      'JWT_SECRET environment variable is required. '
+      + 'Set a unique, random string in .env.local (do NOT reuse ADMIN_TOKEN).'
+    );
+  }
+  if (secret.length < 16) {
+    throw new Error(
+      'JWT_SECRET must be at least 16 characters long. '
+      + 'Generate a random string with: openssl rand -hex 32'
+    );
   }
   return new TextEncoder().encode(secret);
 }

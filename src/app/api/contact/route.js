@@ -24,10 +24,22 @@ export async function POST(request) {
       return Response.json({ error: `Please wait ${rateLimit.resetIn}s before sending another request.` }, { status: 429 });
     }
 
-    const { type, name, email, phone, country, service, message } = await request.json();
+    const body = await request.json();
+    const { type, name, email, phone, country, service, message } = body;
 
     if (!name || !email || !phone || !country) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Input size limits to prevent abuse
+    if (name.length > 100 || email.length > 200 || phone.length > 30 || (country && country.length > 100)) {
+      return Response.json({ error: 'Input fields exceed maximum length' }, { status: 400 });
+    }
+    if (service && service.length > 200) {
+      return Response.json({ error: 'Service field exceeds maximum length' }, { status: 400 });
+    }
+    if (message && message.length > 5000) {
+      return Response.json({ error: 'Message exceeds maximum length (5000 chars)' }, { status: 400 });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
