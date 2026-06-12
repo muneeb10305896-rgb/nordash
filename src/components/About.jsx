@@ -17,37 +17,25 @@ export default function About({ onStartProject }) {
 
   return (
     <section id="about" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>
-      {/* Animated orbs */}
-      <motion.div
-        animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.16, 0.08] }}
-        transition={{ duration: 12, repeat: Infinity }}
-        style={{
-          position: 'absolute',
-          top: '-30%',
-          left: '5%',
-          width: '500px',
-          height: '500px',
-          borderRadius: '50%',
-          background: 'radial-gradient(ellipse, #00E5FF, transparent)',
-          filter: 'blur(80px)',
-          pointerEvents: 'none',
-        }}
-      />
-      <motion.div
-        animate={{ scale: [1, 1.1, 1], opacity: [0.06, 0.14, 0.06] }}
-        transition={{ duration: 15, repeat: Infinity, delay: 2 }}
-        style={{
-          position: 'absolute',
-          bottom: '-20%',
-          right: '5%',
-          width: '600px',
-          height: '600px',
-          borderRadius: '50%',
-          background: 'radial-gradient(ellipse, #7B61FF, transparent)',
-          filter: 'blur(100px)',
-          pointerEvents: 'none',
-        }}
-      />
+      {/* Static background orbs — one-shot fade-in instead of infinite loop */}
+      {[{ top: '-30%', left: '5%', w: 500, h: 500, color: '#00E5FF' }, { bottom: '-20%', right: '5%', w: 600, h: 600, color: '#7B61FF' }].map((orb, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: i === 0 ? 0.16 : 0.14 }}
+          transition={{ duration: 2, delay: i * 0.5 }}
+          style={{
+            position: 'absolute',
+            [orb.top ? 'top' : 'bottom']: orb.top || orb.bottom,
+            [orb.left ? 'left' : 'right']: orb.left || orb.right,
+            width: orb.w, height: orb.h,
+            borderRadius: '50%',
+            background: `radial-gradient(ellipse, ${orb.color}, transparent)`,
+            filter: 'blur(80px)',
+            pointerEvents: 'none',
+          }}
+        />
+      ))}
 
       {/* Truck art pattern */}
       <div className="truck-pattern-dense" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />

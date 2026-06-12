@@ -2,6 +2,16 @@ import dbConnect from '@/lib/mongodb';
 import Service from '@/models/Service';
 import { verifyAdminAuth } from '@/lib/apiUtils';
 
+const ALLOWED_FIELDS = ['name', 'slug', 'description', 'longDescription', 'icon', 'category', 'features', 'pricing', 'deliverables', 'timeline', 'imageUrl', 'order', 'featured'];
+
+function sanitize(body) {
+  const data = {};
+  for (const field of ALLOWED_FIELDS) {
+    if (body[field] !== undefined) data[field] = body[field];
+  }
+  return data;
+}
+
 export async function GET(request) {
   try {
     await dbConnect();
@@ -23,12 +33,13 @@ export async function POST(request) {
   if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
-    const data = await request.json();
+    const body = await request.json();
+    const data = sanitize(body);
     const service = new Service(data);
     await service.save();
     return Response.json({ service }, { status: 201 });
   } catch (error) {
     console.error('Error creating service:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to create service' }, { status: 500 });
   }
 }

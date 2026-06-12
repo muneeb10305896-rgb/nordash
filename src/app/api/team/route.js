@@ -2,6 +2,16 @@ import dbConnect from '@/lib/mongodb';
 import TeamMember from '@/models/TeamMember';
 import { verifyAdminAuth } from '@/lib/apiUtils';
 
+const ALLOWED_FIELDS = ['name', 'position', 'bio', 'image', 'expertise', 'social', 'email', 'joinDate', 'order'];
+
+function sanitize(body) {
+  const data = {};
+  for (const field of ALLOWED_FIELDS) {
+    if (body[field] !== undefined) data[field] = body[field];
+  }
+  return data;
+}
+
 export async function GET(request) {
   try {
     await dbConnect();
@@ -17,12 +27,13 @@ export async function POST(request) {
   if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
-    const data = await request.json();
+    const body = await request.json();
+    const data = sanitize(body);
     const member = new TeamMember(data);
     await member.save();
     return Response.json({ member }, { status: 201 });
   } catch (error) {
     console.error('Error creating team member:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to create team member' }, { status: 500 });
   }
 }

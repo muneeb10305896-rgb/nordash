@@ -8,18 +8,16 @@ export default function CTA({ modalType, setModalType }) {
 
   return (
     <section id="work" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>
-      {/* Aurora background */}
-      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.08, 0.14, 0.08] }} transition={{ duration: 10, repeat: Infinity }}
+      {/* Static background orb — one-shot fade-in */}
+      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 0.14 }} transition={{ duration: 2 }}
         style={{ position: 'absolute', top: '-30%', left: '50%', transform: 'translateX(-50%)', width: '800px', height: '600px', borderRadius: '50%', background: 'radial-gradient(ellipse, #00E5FF 0%, #7B61FF 50%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none' }} />
 
       {/* Truck art pattern */}
       <div className="truck-pattern" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
 
-      {/* Rotating truck art diamond border */}
-      <motion.div animate={{ rotate: 360 }} transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-        style={{ position: 'absolute', top: '10%', left: '5%', width: 120, height: 120, border: '1px solid rgba(255,179,0,0.1)', transform: 'rotate(45deg)', pointerEvents: 'none' }} />
-      <motion.div animate={{ rotate: -360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-        style={{ position: 'absolute', bottom: '10%', right: '5%', width: 80, height: 80, border: '1px solid rgba(0,229,255,0.1)', transform: 'rotate(45deg)', pointerEvents: 'none' }} />
+      {/* Static decorative diamonds — CSS animations are compositor-thread friendly */}
+      <div style={{ position: 'absolute', top: '10%', left: '5%', width: 120, height: 120, border: '1px solid rgba(255,179,0,0.1)', transform: 'rotate(45deg)', pointerEvents: 'none', animation: 'truckSpin 40s linear infinite' }} />
+      <div style={{ position: 'absolute', bottom: '10%', right: '5%', width: 80, height: 80, border: '1px solid rgba(0,229,255,0.1)', transform: 'rotate(45deg)', pointerEvents: 'none', animation: 'truckSpin 30s linear infinite reverse' }} />
 
       <div ref={ref} style={{ maxWidth: 900, margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
         {/* Label */}

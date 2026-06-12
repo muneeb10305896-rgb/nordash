@@ -4,11 +4,12 @@ import { jwtVerify } from 'jose';
 /**
  * Inline JWT verification for Edge middleware.
  * Uses Web Crypto API (no Node.js dependency needed).
+ * Requires JWT_SECRET to be set (separate from ADMIN_TOKEN).
  */
 async function verifyEdgeToken(token) {
   if (!token) return null;
   try {
-    const secret = process.env.JWT_SECRET || process.env.ADMIN_TOKEN;
+    const secret = process.env.JWT_SECRET;
     if (!secret) return null;
     const key = new TextEncoder().encode(secret);
     const { payload } = await jwtVerify(token, key);

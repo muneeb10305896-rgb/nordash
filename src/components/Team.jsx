@@ -58,37 +58,27 @@ export default function Team() {
 
   return (
     <section id="team" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>
-      {/* ── Blurry background orbs ── */}
-      <motion.div
-        animate={{ scale: [1, 1.15, 1], opacity: [0.10, 0.20, 0.10] }}
-        transition={{ duration: 12, repeat: Infinity }}
-        style={{
-          position: 'absolute', top: '-25%', left: '5%',
-          width: 500, height: 500, borderRadius: '50%',
-          background: 'radial-gradient(ellipse, #00E5FF, transparent)',
-          filter: 'blur(80px)', pointerEvents: 'none',
-        }}
-      />
-      <motion.div
-        animate={{ scale: [1, 1.15, 1], opacity: [0.08, 0.18, 0.08] }}
-        transition={{ duration: 15, repeat: Infinity, delay: 2 }}
-        style={{
-          position: 'absolute', bottom: '-20%', right: '5%',
-          width: 600, height: 600, borderRadius: '50%',
-          background: 'radial-gradient(ellipse, #7B61FF, transparent)',
-          filter: 'blur(100px)', pointerEvents: 'none',
-        }}
-      />
-      <motion.div
-        animate={{ scale: [1, 1.2, 1], opacity: [0.06, 0.14, 0.06] }}
-        transition={{ duration: 18, repeat: Infinity, delay: 5 }}
-        style={{
-          position: 'absolute', top: '40%', right: '15%',
-          width: 350, height: 350, borderRadius: '50%',
-          background: 'radial-gradient(ellipse, #FFD700, transparent)',
-          filter: 'blur(90px)', pointerEvents: 'none',
-        }}
-      />
+      {/* ── Static background orbs — one-shot fade-in ── */}
+      {[
+        { top: '-25%', left: '5%', w: 500, h: 500, color: '#00E5FF', op: 0.20 },
+        { bottom: '-20%', right: '5%', w: 600, h: 600, color: '#7B61FF', op: 0.18 },
+        { top: '40%', right: '15%', w: 350, h: 350, color: '#FFD700', op: 0.14 },
+      ].map((orb, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: orb.op }}
+          transition={{ duration: 2, delay: i * 0.5 }}
+          style={{
+            position: 'absolute',
+            [orb.top ? 'top' : 'bottom']: orb.top || orb.bottom,
+            [orb.left ? 'left' : 'right']: orb.left || orb.right,
+            width: orb.w, height: orb.h, borderRadius: '50%',
+            background: `radial-gradient(ellipse, ${orb.color}, transparent)`,
+            filter: 'blur(80px)', pointerEvents: 'none',
+          }}
+        />
+      ))}
 
       {/* ── Diamond grid overlay ── */}
       <div className="truck-pattern-dense" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />

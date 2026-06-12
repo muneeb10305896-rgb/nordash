@@ -79,6 +79,6 @@ async function handleSeed() {
     return Response.json({ success: true, seeded: results, message: 'Database seeded successfully' });
   } catch (error) {
     console.error('Seed error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to seed database' }, { status: 500 });
   }
 }

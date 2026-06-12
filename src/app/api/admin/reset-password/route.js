@@ -1,7 +1,15 @@
 import { resetPassword } from '@/lib/adminAuth';
+import { checkRateLimit, getClientIP } from '@/lib/rateLimit';
 
 export async function POST(request) {
   try {
+    // Rate limit: 5 attempts per minute per IP
+    const ip = getClientIP(request);
+    const rateLimit = checkRateLimit('reset-password', ip, 5, 60000);
+    if (!rateLimit.allowed) {
+      return Response.json({ error: 'Too many attempts. Try again later.' }, { status: 429 });
+    }
+
     const { token, email, newPassword } = await request.json();
 
     if (!token || !email || !newPassword) {

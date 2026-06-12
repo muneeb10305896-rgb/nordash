@@ -2,6 +2,16 @@ import dbConnect from '@/lib/mongodb';
 import Testimonial from '@/models/Testimonial';
 import { verifyAdminAuth } from '@/lib/apiUtils';
 
+const ALLOWED_FIELDS = ['quote', 'author', 'position', 'company', 'image', 'rating', 'featured', 'approved', 'order'];
+
+function sanitize(body) {
+  const data = {};
+  for (const field of ALLOWED_FIELDS) {
+    if (body[field] !== undefined) data[field] = body[field];
+  }
+  return data;
+}
+
 export async function GET(request) {
   try {
     await dbConnect();
@@ -23,12 +33,13 @@ export async function POST(request) {
   if (!(await verifyAdminAuth())) return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     await dbConnect();
-    const data = await request.json();
+    const body = await request.json();
+    const data = sanitize(body);
     const testimonial = new Testimonial(data);
     await testimonial.save();
     return Response.json({ testimonial }, { status: 201 });
   } catch (error) {
     console.error('Error creating testimonial:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'Failed to create testimonial' }, { status: 500 });
   }
 }

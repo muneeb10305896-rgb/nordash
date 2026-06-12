@@ -117,8 +117,8 @@ export default function Portfolio() {
 
   return (
     <section id="portfolio" style={{ background: 'var(--midnight)', padding: '120px 24px', position: 'relative', overflow: 'hidden' }}>
-      {/* Background */}
-      <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.12, 0.05] }} transition={{ duration: 15, repeat: Infinity }}
+      {/* Static background glow — one-shot fade-in */}
+      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 0.12 }} transition={{ duration: 2 }}
         style={{ position: 'absolute', inset: 0, width: '800px', height: '600px', borderRadius: '50%', background: 'radial-gradient(ellipse, #00E5FF 0%, #7B61FF 50%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none', left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }} />
 
       <div style={{ maxWidth: 1280, margin: '0 auto', position: 'relative', zIndex: 1 }}>
@@ -207,7 +207,6 @@ export default function Portfolio() {
                       src={project.imageUrl}
                       alt={project.title}
                       fill
-                      unoptimized
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       style={{ objectFit: 'cover', objectPosition: 'center' }}
                       onError={e => { e.currentTarget.style.display = 'none'; }}

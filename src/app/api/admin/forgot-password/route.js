@@ -27,8 +27,6 @@ export async function POST(request) {
 
     // Build reset URL
     const resetUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://nordash.vercel.app'}/admin/reset-password?token=${result.token}&email=${encodeURIComponent(result.email)}`;
-
-    // Send reset email
     try {
       await resend.emails.send({
         from: 'NORDASH <onboarding@resend.dev>',
@@ -65,6 +63,13 @@ export async function POST(request) {
 // Verify token endpoint
 export async function GET(request) {
   try {
+    // Rate limit token verification: 10 attempts per minute per IP
+    const ip = getClientIP(request);
+    const rateLimit = checkRateLimit('verify-reset-token', ip, 10, 60000);
+    if (!rateLimit.allowed) {
+      return Response.json({ error: 'Too many attempts. Try again later.' }, { status: 429 });
+    }
+
     const { searchParams } = new URL(request.url);
     const token = searchParams.get('token');
 
@@ -78,8 +83,11 @@ export async function GET(request) {
       return Response.json({ error: verification.error }, { status: 400 });
     }
 
-    return Response.json({ valid: true, email: verification.email });
+    // Return minimal data — no email in response
+    return Response.json({ valid: true });
+
   } catch (error) {
+    console.error('Verify token error:', error);
     return Response.json({ error: 'Failed to verify token' }, { status: 500 });
   }
 }

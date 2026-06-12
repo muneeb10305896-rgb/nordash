@@ -12,7 +12,23 @@ export default function Navbar({ onStartProject }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 40);
+    let ticking = false;
+    let lastScrollY = window.scrollY;
+    const fn = () => {
+      const currentY = window.scrollY;
+      if (Math.abs(currentY - lastScrollY) < 15) {
+        lastScrollY = currentY;
+        return;
+      }
+      lastScrollY = currentY;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          setScrolled(currentY > 40);
+          ticking = false;
+        });
+      }
+    };
     window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
   }, []);

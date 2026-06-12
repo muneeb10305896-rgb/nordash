@@ -58,13 +58,13 @@ export default function Hero({ onStartProject }) {
 
       {/* ── Rotating geometric frames (CSS only) ── */}
       <div style={{ position: 'absolute', top: '7%', right: '5%', width: 220, height: 220, pointerEvents: 'none', zIndex: 1 }}>
-        <div style={{ position: 'absolute', inset: 0, border: '1px solid rgba(255,179,0,0.16)', willChange: 'transform', animation: 'cssRotate 80s linear infinite' }} />
-        <div style={{ position: 'absolute', inset: '18%', border: '1px solid rgba(0,229,255,0.12)', willChange: 'transform', animation: 'cssRotateRev 55s linear infinite' }} />
+        <div style={{ position: 'absolute', inset: 0, border: '1px solid rgba(255,179,0,0.16)', animation: 'cssRotate 80s linear infinite' }} />
+        <div style={{ position: 'absolute', inset: '18%', border: '1px solid rgba(0,229,255,0.12)', animation: 'cssRotateRev 55s linear infinite' }} />
         <div style={{ position: 'absolute', top: '50%', left: '50%', width: 10, height: 10, transform: 'translate(-50%,-50%) rotate(45deg)', background: 'rgba(255,179,0,0.5)', boxShadow: '0 0 16px rgba(255,179,0,0.6)' }} />
       </div>
       <div style={{ position: 'absolute', bottom: '22%', left: '3%', width: 100, height: 100, pointerEvents: 'none', zIndex: 1, opacity: 0.55 }}>
-        <div style={{ position: 'absolute', inset: 0, border: '1px solid rgba(0,229,255,0.18)', willChange: 'transform', animation: 'cssRotate 45s linear infinite' }} />
-        <div style={{ position: 'absolute', inset: '25%', border: '1px solid rgba(123,97,255,0.16)', willChange: 'transform', animation: 'cssRotateRev 30s linear infinite' }} />
+        <div style={{ position: 'absolute', inset: 0, border: '1px solid rgba(0,229,255,0.18)', animation: 'cssRotate 45s linear infinite' }} />
+        <div style={{ position: 'absolute', inset: '25%', border: '1px solid rgba(123,97,255,0.16)', animation: 'cssRotateRev 30s linear infinite' }} />
       </div>
 
       {/* ── Anti-gravity neon diamonds (CSS + different timing for organic feel) ── */}
@@ -83,7 +83,7 @@ export default function Hero({ onStartProject }) {
             width: d.size, height: d.size,
             background: d.color,
             boxShadow: `0 0 ${d.size * 2}px ${d.color}, 0 0 ${d.size * 4}px ${d.glow}`,
-            willChange: prefersReducedMotion ? 'auto' : 'transform, opacity',
+            willChange: prefersReducedMotion ? 'auto' : undefined,
             animation: prefersReducedMotion ? undefined : `diamondFloat ${d.dur} ease-in-out infinite ${d.delay}`,
           }} />
         </div>
