@@ -163,6 +163,7 @@ export default function Footer() {
                       <a href={item.href} className="font-dm" style={{ fontSize: 13, color: 'var(--text-faint)', textDecoration: 'none', transition: 'color 0.3s', display: 'block' }}
                         onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
                         onMouseLeave={e => e.target.style.color = 'var(--text-faint)'}
+                        {...(item.href.startsWith('mailto:') ? { 'data-lenis-prevent': '' } : {})}
                       >{item.label}</a>
                     </li>
                   ))}

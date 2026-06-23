@@ -153,6 +153,7 @@ export default function ContactPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {infoCards.map(card => (
                   <a key={card.label} href={card.href} target={card.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer"
+                    {...(card.href.startsWith('mailto:') ? { 'data-lenis-prevent': '' } : {})}
                     style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px 20px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, textDecoration: 'none', transition: 'border-color 0.3s, background 0.3s' }}
                     onMouseEnter={e => { e.currentTarget.style.borderColor = card.color; e.currentTarget.style.background = `${card.color}08`; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--surface)'; }}

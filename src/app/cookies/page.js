@@ -156,7 +156,7 @@ export default function CookiesPolicy() {
               <h2 className="font-syne" style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>Questions?</h2>
               <p className="font-dm" style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.8 }}>
                 Contact us at{' '}
-                <a href="mailto:muneeb10305896@gmail.com" style={{ color: '#FFB300', textDecoration: 'none' }}>muneeb10305896@gmail.com</a>{' '}
+                <a href="mailto:muneeb10305896@gmail.com" data-lenis-prevent style={{ color: '#FFB300', textDecoration: 'none' }}>muneeb10305896@gmail.com</a>{' '}
                 or read our{' '}
                 <Link href="/privacy" style={{ color: 'var(--aurora-cyan)', textDecoration: 'none' }}>Privacy Policy</Link>.
               </p>
