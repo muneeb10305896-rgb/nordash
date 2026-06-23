@@ -19,7 +19,7 @@ async function verifyEdgeToken(token) {
   }
 }
 
-export async function proxy(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   // Public admin pages — no auth needed

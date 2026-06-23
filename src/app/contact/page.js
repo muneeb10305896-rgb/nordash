@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
 import { track } from '@vercel/analytics';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
