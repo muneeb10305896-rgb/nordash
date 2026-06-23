@@ -19,7 +19,18 @@
       "Bash(git config *)",
       "Bash(git rebase *)",
       "Bash(git stash *)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(git push *)",
+      "Bash(gh auth *)",
+      "Bash(ssh -T git@github.com)",
+      "Bash(sudo pacman -S --noconfirm github-cli)",
+      "Bash(sudo apt install gh -y)",
+      "Bash(sudo dnf install gh -y)",
+      "Bash(yay *)",
+      "Read(//tmp/**)",
+      "Bash(curl -sL \"https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_linux_amd64.tar.gz\" -o gh.tar.gz)",
+      "Bash(tar xzf *)",
+      "Bash(sudo ./gh_2.95.0_linux_amd64/bin/gh --version)"
     ]
   }
 }

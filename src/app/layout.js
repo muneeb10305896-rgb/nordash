@@ -83,12 +83,12 @@ const jsonLd = {
   logo: `${SITE_URL}/nordash-logo.png`,
   description:
     'Full-spectrum digital agency offering video editing, social media marketing, software development, brand strategy, UI/UX design and more.',
-  email: 'hello@nordash.agency',
+  email: 'muneeb10305896@gmail.com',
   foundingDate: '2021',
   areaServed: 'Worldwide',
   contactPoint: {
     '@type': 'ContactPoint',
-    email: 'hello@nordash.agency',
+    email: 'muneeb10305896@gmail.com',
     contactType: 'Customer Service',
   },
   sameAs: [

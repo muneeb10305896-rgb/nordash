@@ -80,7 +80,7 @@ export default function PrivacyPolicy() {
               <section>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>6. Contact Us</h2>
                 <p>
-                  If you have any questions about this Privacy Policy, please contact us at <a href="mailto:hello@nordash.agency" style={{ color: '#FFB300', textDecoration: 'none' }}>hello@nordash.agency</a>
+                  If you have any questions about this Privacy Policy, please contact us at <a href="mailto:muneeb10305896@gmail.com" style={{ color: '#FFB300', textDecoration: 'none' }}>muneeb10305896@gmail.com</a>
                 </p>
               </section>
             </div>

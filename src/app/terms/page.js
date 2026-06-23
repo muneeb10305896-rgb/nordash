@@ -80,7 +80,7 @@ export default function TermsOfService() {
               <section>
                 <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>8. Contact Information</h2>
                 <p>
-                  If you have any questions about these Terms of Service, please contact us at <a href="mailto:hello@nordash.agency" style={{ color: '#FFB300', textDecoration: 'none' }}>hello@nordash.agency</a>
+                  If you have any questions about these Terms of Service, please contact us at <a href="mailto:muneeb10305896@gmail.com" style={{ color: '#FFB300', textDecoration: 'none' }}>muneeb10305896@gmail.com</a>
                 </p>
               </section>
             </div>

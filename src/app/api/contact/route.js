@@ -220,6 +220,6 @@ export async function POST(request) {
     return Response.json({ success: true, id: data?.id });
   } catch (error) {
     console.error('Contact API error:', error);
-    return Response.json({ error: 'Something went wrong. Please email us at hello@nordash.agency' }, { status: 500 });
+    return Response.json({ error: 'Something went wrong. Please email us at muneeb10305896@gmail.com' }, { status: 500 });
   }
 }

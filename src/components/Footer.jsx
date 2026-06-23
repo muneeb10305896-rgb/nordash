@@ -19,7 +19,7 @@ const footerLinks = {
     { label: 'Contact', href: '/contact' },
   ],
   Connect: [
-    { label: 'hello@nordash.agency', href: 'mailto:hello@nordash.agency' },
+    { label: 'muneeb10305896@gmail.com', href: 'mailto:muneeb10305896@gmail.com' },
     { label: 'Instagram', href: 'https://www.instagram.com/muneeb.ahmed.butt.fi/' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/muneeb-ahmed-butt-4a384438a/' },
   ],

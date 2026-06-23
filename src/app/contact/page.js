@@ -21,8 +21,8 @@ const infoCards = [
       </svg>
     ),
     label: 'Email us',
-    value: 'hello@nordash.agency',
-    href: 'mailto:hello@nordash.agency',
+    value: 'muneeb10305896@gmail.com',
+    href: 'mailto:muneeb10305896@gmail.com',
     color: '#00E5FF',
   },
   {
