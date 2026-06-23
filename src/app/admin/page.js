@@ -125,7 +125,7 @@ export default function AdminDashboard() {
   const getEmptyForm = (tab) => {
     if (tab === 'Services') return { name: '', slug: '', description: '', category: 'design', icon: '', order: 0, featured: false };
     if (tab === 'Projects') return { title: '', slug: '', description: '', category: '', client: '', imageUrl: '', technologies: '', status: 'completed', featured: false };
-    if (tab === 'Team') return { name: '', position: '', bio: '', image: '', expertise: '', order: 0 };
+    if (tab === 'Team') return { name: '', position: '', bio: '', image: '', expertise: '', social: { linkedin: '', twitter: '', github: '', portfolio: '' }, email: '', joinDate: '', order: 0 };
     if (tab === 'Testimonials') return { quote: '', author: '', position: '', company: '', rating: 5, featured: false, approved: true };
     return {};
   };
@@ -139,7 +139,11 @@ export default function AdminDashboard() {
   const handleEdit = (item) => {
     const d = { ...item };
     if (activeTab === 'Projects') d.technologies = (item.technologies || []).join(', ');
-    if (activeTab === 'Team') d.expertise = (item.expertise || []).join(', ');
+    if (activeTab === 'Team') {
+      d.expertise = (item.expertise || []).join(', ');
+      d.social = item.social || { linkedin: '', twitter: '', github: '', portfolio: '' };
+      if (item.joinDate) d.joinDate = new Date(item.joinDate).toISOString().split('T')[0];
+    }
     setFormData(d);
     setEditing(item._id);
     setShowForm(true);
@@ -152,7 +156,11 @@ export default function AdminDashboard() {
     const apiPath = getApiPath(activeTab);
     const body = { ...formData };
     if (activeTab === 'Projects') body.technologies = (body.technologies || '').split(',').map(s => s.trim()).filter(Boolean);
-    if (activeTab === 'Team') body.expertise = (body.expertise || '').split(',').map(s => s.trim()).filter(Boolean);
+    if (activeTab === 'Team') {
+      body.expertise = (body.expertise || '').split(',').map(s => s.trim()).filter(Boolean);
+      // Ensure social is an object with all fields
+      body.social = body.social || { linkedin: '', twitter: '', github: '', portfolio: '' };
+    }
 
     try {
       const res = await fetch(editing ? `${apiPath}/${editing}` : apiPath, {
@@ -481,7 +489,7 @@ export default function AdminDashboard() {
                   {editing ? 'Edit' : 'Add'} {activeTab === 'Team' ? 'Member' : activeTab.slice(0, -1)}
                 </h2>
                 <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {Object.keys(formData).filter(k => k !== '_id' && k !== '__v' && k !== 'createdAt' && k !== 'updatedAt' && k !== 'results' && k !== 'images' && k !== 'social' && k !== 'pricing' && k !== 'deliverables' && k !== 'features' && k !== 'timeline').map(key => {
+                  {Object.keys(formData).filter(k => k !== '_id' && k !== '__v' && k !== 'createdAt' && k !== 'updatedAt' && k !== 'results' && k !== 'images' && k !== 'social' && k !== 'pricing' && k !== 'deliverables' && k !== 'features' && k !== 'timeline' && k !== 'joinDate').map(key => {
                     const isBool = typeof formData[key] === 'boolean';
                     const isTextArea = ['description', 'bio', 'quote', 'longDescription', 'message'].includes(key);
                     const isImage = ['image', 'imageUrl'].includes(key);
@@ -539,6 +547,20 @@ export default function AdminDashboard() {
                               {['','⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'][formData[key] || 5]}
                             </span>
                           </div>
+                        ) : key === 'social' ? (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+                            {['linkedin', 'twitter', 'github', 'portfolio'].map(socialKey => (
+                              <div key={socialKey}>
+                                <label className="font-syne" style={{ fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(237,242,255,0.35)', display: 'block', marginBottom: 6 }}>{socialKey.charAt(0).toUpperCase() + socialKey.slice(1)} URL</label>
+                                <input type="text" value={formData.social?.[socialKey] || ''} onChange={e => setFormData({ ...formData, social: { ...formData.social, [socialKey]: e.target.value } })}
+                                  placeholder={`https://${socialKey}.com/...`}
+                                  style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none' }} />
+                              </div>
+                            ))}
+                          </div>
+                        ) : key === 'joinDate' ? (
+                          <input type="date" value={formData[key] || ''} onChange={e => setFormData({ ...formData, [key]: e.target.value })}
+                            style={{ width: '100%', padding: '11px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#EDF2FF', fontSize: 13, outline: 'none' }} />
                         ) : (
                           <input type="text" value={formData[key] || ''} onChange={e => setFormData({ ...formData, [key]: e.target.value })}
                             placeholder={isImage ? 'https://i.ibb.co/...' : key === 'slug' ? 'auto-generated-slug' : ''}
